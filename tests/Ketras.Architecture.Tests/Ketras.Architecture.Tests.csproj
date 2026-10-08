@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="NetArchTest.Rules" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The scan reads the sources, wherever the build output goes. -->
+    <AssemblyMetadata Include="RepositoryRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../..'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Ketras.Mavlink\Ketras.Mavlink.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Mavlink.Testing\Ketras.Mavlink.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Model\Ketras.Model.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Rosbridge\Ketras.Rosbridge.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Station\Ketras.Station.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Simulation.Px4Sitl\Ketras.Simulation.Px4Sitl.csproj" />
+    <ProjectReference Include="..\..\plugins\Ketras.Plugins.Template\Ketras.Plugins.Template.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Theme\Ketras.Theme.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Controls.Instruments\Ketras.Controls.Instruments.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Controls.Scene3D\Ketras.Controls.Scene3D.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Controls.Map\Ketras.Controls.Map.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.App\Ketras.App.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Terrain\Ketras.Terrain.csproj" />
+  </ItemGroup>
+</Project>

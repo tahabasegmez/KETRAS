@@ -1,0 +1,73 @@
+<!-- The Settings activity (docs/UI_RULES.md "Settings and log split"): a page title, then sections of field rows,
+     as wide as the column up to a readable maximum. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:settings="using:Ketras.App.Settings"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:common="using:Ketras.App.Common"
+             x:Class="Ketras.App.Settings.SettingsView"
+             x:DataType="settings:SettingsViewModel">
+  <UserControl.Styles>
+    <Style Selector="Grid.field > ComboBox">
+      <Setter Property="Width" Value="200" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer>
+    <StackPanel MaxWidth="720" HorizontalAlignment="Left" Margin="24,20,24,24">
+      <TextBlock Classes="page-title" Text="{x:Static r:Strings.SettingsTitle}" />
+
+      <Border Classes="section">
+        <TextBlock Text="{x:Static r:Strings.SettingsAppearance}"/>
+      </Border>
+      <Grid Classes="field" ColumnDefinitions="*,Auto">
+        <TextBlock Text="{x:Static r:Strings.SettingsTheme}" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1" ItemsSource="{Binding Themes}" SelectedIndex="0" />
+      </Grid>
+      <Grid Classes="field" ColumnDefinitions="*,Auto">
+        <TextBlock Text="{x:Static r:Strings.SettingsUnits}" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1" ItemsSource="{Binding Units}" SelectedItem="{Binding SelectedUnits, Mode=OneWay}"
+                  DisplayMemberBinding="{ReflectionBinding Label}" />
+      </Grid>
+
+      <Border Classes="section">
+        <TextBlock Text="{x:Static r:Strings.SettingsMap}"/>
+      </Border>
+      <Grid Classes="field" ColumnDefinitions="160,*" ToolTip.Tip="{x:Static r:Strings.SettingsTileUrlTip}">
+        <TextBlock Text="{x:Static r:Strings.SettingsTileUrl}" VerticalAlignment="Center" />
+        <TextBox x:Name="TileUrl" Grid.Column="1" Text="{Binding TileUrl}" FontFamily="{StaticResource Font.Mono}" Watermark="https://…/{z}/{x}/{y}.png"
+                 common:Commit.Command="{Binding CommitTilesCommand}" common:Commit.CancelCommand="{Binding CancelTilesCommand}" />
+      </Grid>
+      <Grid Classes="field" ColumnDefinitions="160,*">
+        <TextBlock Text="{x:Static r:Strings.SettingsTileAttribution}" VerticalAlignment="Center" />
+        <TextBox Grid.Column="1" Text="{Binding TileAttribution}"
+                 common:Commit.Command="{Binding CommitTilesCommand}" common:Commit.CancelCommand="{Binding CancelTilesCommand}" />
+      </Grid>
+      <TextBlock Classes="small error" Text="{Binding TileProblem}" Margin="20,0,12,4" IsVisible="{Binding TileProblem, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+
+      <Border Classes="section">
+        <TextBlock Text="{x:Static r:Strings.SettingsFolders}"/>
+      </Border>
+      <Grid Classes="field" ColumnDefinitions="160,*">
+        <TextBlock Text="{x:Static r:Strings.SettingsConfigFolder}" VerticalAlignment="Center" />
+        <SelectableTextBlock Grid.Column="1" Text="{Binding ConfigFolder}" VerticalAlignment="Center" FontFamily="{StaticResource Font.Mono}" FontSize="{StaticResource FontSize.Small}" Foreground="{DynamicResource Brush.Muted}" />
+      </Grid>
+      <Grid Classes="field" ColumnDefinitions="160,*">
+        <TextBlock Text="{x:Static r:Strings.SettingsDataFolder}" VerticalAlignment="Center" />
+        <SelectableTextBlock Grid.Column="1" Text="{Binding DataFolder}" VerticalAlignment="Center" FontFamily="{StaticResource Font.Mono}" FontSize="{StaticResource FontSize.Small}" Foreground="{DynamicResource Brush.Muted}" />
+      </Grid>
+
+      <Border Classes="section">
+        <TextBlock Text="{x:Static r:Strings.SettingsAbout}"/>
+      </Border>
+      <Grid Classes="field" ColumnDefinitions="160,*">
+        <TextBlock Text="{x:Static r:Strings.SettingsVersion}" VerticalAlignment="Center" />
+        <TextBlock Grid.Column="1" Classes="value" Text="{Binding Version}" VerticalAlignment="Center" />
+      </Grid>
+      <Grid Classes="field" ColumnDefinitions="160,*">
+        <TextBlock Text="{x:Static r:Strings.SettingsLicense}" VerticalAlignment="Center" />
+        <TextBlock Grid.Column="1" Classes="value" Text="{Binding License}" VerticalAlignment="Center" />
+      </Grid>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

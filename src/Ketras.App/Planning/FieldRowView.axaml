@@ -1,0 +1,33 @@
+<!-- A field row (docs/UI_RULES.md "Field row"): the label, then the editor at FieldWidth with the unit inside the box; a
+     2 px Success or Error line under the box for a second after a commit, and the reason a value was refused. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:planning="using:Ketras.App.Planning"
+             xmlns:common="using:Ketras.App.Common"
+             x:Class="Ketras.App.Planning.FieldRowView"
+             x:DataType="planning:FieldViewModel">
+  <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" Margin="0,2,0,0" MinHeight="{StaticResource Size.ControlHeight}">
+    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center" Margin="0,0,8,0">
+      <TextBlock Text="{Binding Label}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource Brush.Text}" />
+      <common:HelpMark Text="{Binding Help}" IsVisible="{Binding HasHelp}" VerticalAlignment="Center" />
+    </StackPanel>
+    <StackPanel Grid.Column="1" Width="{Binding EditorWidth}">
+      <Panel>
+        <TextBox x:Name="Box" IsVisible="{Binding IsNumber}" Text="{Binding Text}" FontFamily="{StaticResource Font.Mono}" Padding="6,0"
+                 common:Commit.Command="{Binding CommitCommand}" common:Commit.CancelCommand="{Binding CancelCommand}">
+          <TextBox.InnerRightContent>
+            <TextBlock Text="{Binding Unit}" FontSize="11" Foreground="{DynamicResource Brush.Faint}" VerticalAlignment="Center" Margin="0,0,6,0" />
+          </TextBox.InnerRightContent>
+        </TextBox>
+        <ComboBox x:Name="Choice" IsVisible="{Binding IsChoice}" ItemsSource="{Binding Choices}" SelectedItem="{Binding SelectedChoice}"
+                  HorizontalAlignment="Stretch" DisplayMemberBinding="{ReflectionBinding Label}" />
+      </Panel>
+      <Panel Height="2">
+        <Border Background="{DynamicResource Brush.Success}" IsVisible="{Binding IsSaved}" />
+        <Border Background="{DynamicResource Brush.Error}" IsVisible="{Binding IsRejected}" />
+      </Panel>
+    </StackPanel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Classes="small error" Text="{Binding Problem}" HorizontalAlignment="Right"
+               IsVisible="{Binding Problem, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+  </Grid>
+</UserControl>

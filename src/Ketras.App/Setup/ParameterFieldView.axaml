@@ -1,0 +1,40 @@
+<!-- A parameter field row: the label (tooltip: name, description, range, default), the editor at FieldWidth with the unit
+     inside the box, then the pending mark with its revert action, or the modified-from-default mark. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:setup="using:Ketras.App.Setup"
+             xmlns:common="using:Ketras.App.Common"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Setup.ParameterFieldView"
+             x:DataType="setup:ParameterFieldViewModel">
+  <Grid Classes="field" ColumnDefinitions="*,Auto,22" RowDefinitions="Auto,Auto" ToolTip.Tip="{Binding Tooltip}">
+    <TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" Margin="0,0,8,0" />
+    <Panel Grid.Column="1" IsEnabled="{Binding IsEditable}" HorizontalAlignment="Right">
+      <TextBox x:Name="Box" Width="{StaticResource Size.FieldWidth}" HorizontalAlignment="Right" IsVisible="{Binding IsNumber}" Text="{Binding Text}" FontFamily="{StaticResource Font.Mono}"
+               Classes.pending="{Binding IsPending}"
+               common:Commit.Command="{Binding CommitCommand}" common:Commit.CancelCommand="{Binding CancelCommand}">
+        <TextBox.InnerRightContent>
+          <TextBlock Classes="caption" Text="{Binding Unit}" VerticalAlignment="Center" Margin="0,0,6,0" />
+        </TextBox.InnerRightContent>
+      </TextBox>
+      <ComboBox x:Name="Choice" Width="180" IsVisible="{Binding IsChoice}" ItemsSource="{Binding Choices}" SelectedItem="{Binding SelectedChoice}"
+                HorizontalAlignment="Right" DisplayMemberBinding="{ReflectionBinding Label}" />
+    </Panel>
+    <Panel Grid.Column="2">
+      <Button Classes="row-action" IsVisible="{Binding IsPending}" Command="{Binding RevertCommand}" ToolTip.Tip="{x:Static r:Strings.ParamsRevertTip}">
+        <lucide:LucideIcon Kind="Undo2" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Warning}" />
+      </Button>
+      <Ellipse Width="6" Height="6" Fill="{DynamicResource Brush.Accent}" HorizontalAlignment="Center" VerticalAlignment="Center"
+               ToolTip.Tip="{x:Static r:Strings.ParamsModifiedMark}">
+        <Ellipse.IsVisible>
+          <MultiBinding Converter="{x:Static BoolConverters.And}">
+            <Binding Path="IsModified" />
+            <Binding Path="!IsPending" />
+          </MultiBinding>
+        </Ellipse.IsVisible>
+      </Ellipse>
+    </Panel>
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Classes="small error" Text="{Binding Problem}" HorizontalAlignment="Right" IsVisible="{Binding HasProblem}" />
+  </Grid>
+</UserControl>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Ketras.Mavlink\Ketras.Mavlink.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Mavlink.Testing\Ketras.Mavlink.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Fixtures\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

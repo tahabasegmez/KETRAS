@@ -1,0 +1,142 @@
+<!-- The right end of the status bar (docs/UI_RULES.md "Status bar"): the active conditions in the most severe one's
+     status fill, and the bell, replaced by the unread count in the most severe unread event's fill. Each opens a list
+     340 wide under a 26 px title row: one 22 px line per notification (icon, title, time); pressing a line wraps the
+     whole title and opens its detail and source under it. Rows unread before the history opened carry the unread
+     tint while it is open. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:notifications="using:Ketras.App.Notifications"
+             xmlns:common="using:Ketras.App.Common"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Notifications.NotificationCenterView"
+             x:DataType="notifications:NotificationCenterViewModel">
+  <UserControl.Styles>
+    <Style Selector="FlyoutPresenter.notifications">
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Background" Value="{DynamicResource Brush.Overlay}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+      <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+    </Style>
+    <Style Selector="Border.notifications-header">
+      <Setter Property="Height" Value="{StaticResource Size.ControlHeight}" />
+      <Setter Property="Padding" Value="8,0,2,0" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+      <Setter Property="BorderThickness" Value="0,0,0,1" />
+    </Style>
+    <!-- One line high until opened; an opened row grows with its wrapped title. -->
+    <Style Selector="Button.notification">
+      <Setter Property="Height" Value="NaN" />
+      <Setter Property="MinHeight" Value="{StaticResource Size.RowHeight}" />
+      <Setter Property="Padding" Value="8,3" />
+      <Setter Property="Cursor" Value="Hand" />
+    </Style>
+    <Style Selector="TextBlock.notification-title">
+      <Setter Property="FontSize" Value="{StaticResource FontSize.Small}" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style Selector="Border.notification-row.expanded TextBlock.notification-title">
+      <Setter Property="TextTrimming" Value="None" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style Selector="Border.notification-row.unread">
+      <Setter Property="Background" Value="{DynamicResource Brush.UnreadTint}" />
+    </Style>
+  </UserControl.Styles>
+
+  <UserControl.Resources>
+    <DataTemplate x:Key="Row" x:DataType="notifications:NotificationRowViewModel">
+      <Border Classes="notification-row" Classes.unread="{Binding IsUnread}" Classes.expanded="{Binding IsExpanded}">
+        <StackPanel>
+          <Button Classes="list-row notification" Command="{Binding ToggleCommand}">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6">
+              <lucide:LucideIcon Kind="{Binding Severity, Converter={x:Static common:Converters.SeverityIcon}}"
+                                 Foreground="{Binding Severity, Converter={x:Static common:Converters.SeverityBrush}}"
+                                 Size="{StaticResource Size.ChevronIcon}" VerticalAlignment="Top" Margin="0,2,0,0" />
+              <TextBlock Grid.Column="1" Classes="notification-title" Text="{Binding Title}" VerticalAlignment="Top" />
+              <TextBlock Grid.Column="2" Classes="caption mono" Text="{Binding Time}" VerticalAlignment="Top" Margin="0,1,0,0" />
+            </Grid>
+          </Button>
+          <StackPanel x:Name="Details" Spacing="2" Margin="26,0,8,5" IsVisible="{Binding IsExpanded}">
+            <SelectableTextBlock Text="{Binding Detail}" IsVisible="{Binding HasDetail}" TextWrapping="Wrap"
+                                 FontSize="{StaticResource FontSize.Small}" Foreground="{DynamicResource Brush.Muted}" />
+            <TextBlock Classes="caption" Text="{Binding Source}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <StackPanel Orientation="Horizontal">
+    <Button x:Name="ConditionsItem"
+            Classes="status-item"
+            IsVisible="{Binding HasConditions}"
+            Background="{Binding ConditionSeverity, Converter={x:Static common:Converters.SeverityFill}}"
+            ToolTip.Tip="{x:Static r:Strings.ConditionsTip}">
+      <StackPanel Orientation="Horizontal" Spacing="4">
+        <lucide:LucideIcon Kind="{Binding ConditionSeverity, Converter={x:Static common:Converters.SeverityIcon}}"
+                           Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.TextStrong}" />
+        <TextBlock x:Name="ConditionCount" Classes="mono" Text="{Binding Conditions.Count}" VerticalAlignment="Center"
+                   Foreground="{DynamicResource Brush.TextStrong}" />
+      </StackPanel>
+      <Button.Flyout>
+        <Flyout Placement="TopEdgeAlignedRight" FlyoutPresenterClasses="notifications">
+          <DockPanel Width="340" MaxHeight="300">
+            <Border DockPanel.Dock="Top" Classes="notifications-header">
+              <TextBlock Classes="panel-title" Text="{x:Static r:Strings.ConditionsTitle}" VerticalAlignment="Center" />
+            </Border>
+            <ScrollViewer x:Name="ConditionList" HorizontalScrollBarVisibility="Disabled" Padding="0,1">
+              <ItemsControl ItemsSource="{Binding Conditions}" ItemTemplate="{StaticResource Row}" />
+            </ScrollViewer>
+          </DockPanel>
+        </Flyout>
+      </Button.Flyout>
+    </Button>
+
+    <!-- The fill is a full-size layer under the content, so it covers the whole item like the conditions' fill. -->
+    <Button x:Name="Bell" Classes="status-item" Padding="0"
+            HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+            ToolTip.Tip="{x:Static r:Strings.NotificationsTip}">
+      <Panel>
+        <Border x:Name="BellFill" Background="{Binding UnreadSeverity, Converter={x:Static common:Converters.SeverityFill}}"
+                IsVisible="{Binding HasUnread}" />
+        <StackPanel Orientation="Horizontal" Spacing="4" Margin="8,0" VerticalAlignment="Center">
+          <lucide:LucideIcon Kind="Bell" Size="{StaticResource Size.RowIcon}" IsVisible="{Binding !HasUnread}"
+                             Foreground="{DynamicResource Brush.Text}" />
+          <lucide:LucideIcon Kind="BellDot" Size="{StaticResource Size.RowIcon}" IsVisible="{Binding HasUnread}"
+                             Foreground="{DynamicResource Brush.TextStrong}" />
+          <TextBlock x:Name="UnreadCount" Classes="mono" Text="{Binding UnreadCount}" IsVisible="{Binding HasUnread}"
+                     VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextStrong}" />
+        </StackPanel>
+      </Panel>
+      <Button.Flyout>
+        <Flyout Placement="TopEdgeAlignedRight" FlyoutPresenterClasses="notifications" Opened="OnHistoryOpened" Closed="OnHistoryClosed">
+          <DockPanel Width="340" MaxHeight="400">
+            <Border DockPanel.Dock="Top" Classes="notifications-header">
+              <Grid ColumnDefinitions="*,Auto,Auto">
+                <TextBlock Classes="panel-title" Text="{x:Static r:Strings.NotificationsTitle}" VerticalAlignment="Center" />
+                <ToggleButton Grid.Column="1" Classes="row-action" Width="22" Height="22" Padding="0" Background="Transparent" BorderThickness="0"
+                              IsChecked="{Binding OnlyProblems}" ToolTip.Tip="{x:Static r:Strings.NotificationsOnlyProblems}">
+                  <lucide:LucideIcon Kind="ListFilter" Size="{StaticResource Size.RowIcon}" />
+                </ToggleButton>
+                <Button Grid.Column="2" Classes="row-action" Command="{Binding ClearAllCommand}" ToolTip.Tip="{x:Static r:Strings.NotificationsClearAll}">
+                  <lucide:LucideIcon Kind="ListX" Size="{StaticResource Size.RowIcon}" />
+                </Button>
+              </Grid>
+            </Border>
+            <Panel>
+              <TextBlock Classes="small" Text="{x:Static r:Strings.NotificationsEmpty}" IsVisible="{Binding IsHistoryEmpty}" Margin="8,6" />
+              <ScrollViewer x:Name="HistoryList" HorizontalScrollBarVisibility="Disabled" Padding="0,1">
+                <ItemsControl ItemsSource="{Binding History}" ItemTemplate="{StaticResource Row}" />
+              </ScrollViewer>
+            </Panel>
+          </DockPanel>
+        </Flyout>
+      </Button.Flyout>
+    </Button>
+  </StackPanel>
+</UserControl>

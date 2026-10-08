@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Ketras.Simulation.Px4Sitl\Ketras.Simulation.Px4Sitl.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Ketras.Terrain.Tests\SyntheticGeoTiff.cs" Link="SyntheticGeoTiff.cs" />
+  </ItemGroup>
+</Project>

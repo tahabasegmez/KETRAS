@@ -1,0 +1,9 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:theme="using:Ketras.Theme"
+             x:Class="Ketras.App.App"
+             RequestedThemeVariant="Dark">
+  <Application.Styles>
+    <theme:KetrasTheme />
+  </Application.Styles>
+</Application>

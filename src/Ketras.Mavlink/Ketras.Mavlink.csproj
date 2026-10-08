@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>MAVLink ground-station link for .NET: UDP, TCP and serial transports, vehicle sessions, commands, parameters, mission/fence/rally transfer, MAVLink FTP, component metadata and .tlog recording.</Description>
+    <PackageTags>mavlink;px4;gcs;uav;drone</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" />
+    <PackageReference Include="SharpCompress" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Ketras.Mavlink.Testing" />
+    <InternalsVisibleTo Include="Ketras.Mavlink.Tests" />
+  </ItemGroup>
+</Project>

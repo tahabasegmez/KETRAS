@@ -1,0 +1,61 @@
+<!-- The 3D view activity: the scene fills the work area; a floating tool bar at the top left (fit everything from above,
+     follow the vehicle, the data credits on hover), the traffic list (260 wide, only while there is traffic) at the top
+     right and the telemetry panel at the bottom right. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:scene="using:Ketras.App.Scene3D"
+             xmlns:scene3d="using:Ketras.Controls.Scene3D"
+             xmlns:telemetry="using:Ketras.App.Telemetry"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Scene3D.Scene3DView"
+             x:DataType="scene:Scene3DViewModel">
+  <Panel Background="{DynamicResource Brush.MapGround}">
+    <scene3d:AirspaceView x:Name="Scene" />
+
+    <Border Classes="floating" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16" Padding="2">
+      <StackPanel Orientation="Horizontal" Spacing="2">
+        <Button x:Name="FitAll" Classes="tool" Command="{Binding FitCommand}" ToolTip.Tip="{x:Static r:Strings.SceneFit}">
+          <lucide:LucideIcon Kind="Scan" Size="{StaticResource Size.ToolIcon}" />
+        </Button>
+        <Button Classes="tool" Classes.active="{Binding Followed, Converter={x:Static ObjectConverters.IsNotNull}}" Command="{Binding FollowOwnshipCommand}"
+                ToolTip.Tip="{x:Static r:Strings.SceneFollowVehicle}">
+          <lucide:LucideIcon Kind="Crosshair" Size="{StaticResource Size.ToolIcon}" />
+        </Button>
+        <Border x:Name="Credits" Background="Transparent" Width="{StaticResource Size.ToolButton}" Height="{StaticResource Size.ToolButton}"
+                ToolTip.Tip="{Binding Credits}" ToolTip.Placement="Bottom">
+          <lucide:LucideIcon Kind="Info" Size="{StaticResource Size.ToolIcon}" Foreground="{DynamicResource Brush.Faint}" />
+        </Border>
+      </StackPanel>
+    </Border>
+
+    <Border Classes="floating" Width="260" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="16" IsVisible="{Binding HasTraffic}">
+      <StackPanel>
+        <Grid ColumnDefinitions="*,Auto" Height="30" Margin="12,0,8,0">
+          <TextBlock Classes="panel-title" Text="{x:Static r:Strings.SceneTraffic}" VerticalAlignment="Center" />
+          <Border Grid.Column="1" Classes="badge neutral" VerticalAlignment="Center"><TextBlock Text="{Binding TrafficCount}" /></Border>
+        </Grid>
+        <ItemsControl ItemsSource="{Binding TrafficRows}" Margin="0,0,0,4">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="scene:TrafficRow">
+              <Button Classes="ghost" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Height="{StaticResource Size.RowHeight}"
+                      MinHeight="0" CornerRadius="0"
+                      Command="{Binding $parent[UserControl].((scene:Scene3DViewModel)DataContext).FollowTrafficCommand}" CommandParameter="{Binding}">
+                <Grid ColumnDefinitions="2,*,Auto">
+                  <Border Background="{DynamicResource Brush.Landing}" />
+                  <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" Margin="8,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Classes="small" Text="{Binding Detail}" />
+                  </StackPanel>
+                  <TextBlock Grid.Column="2" Classes="small mono" Text="{Binding Altitude}" Margin="0,0,8,0" VerticalAlignment="Center" />
+                </Grid>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+    </Border>
+
+    <telemetry:TelemetryPanelView x:Name="Telemetry" DataContext="{Binding Telemetry}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="16" />
+  </Panel>
+</UserControl>

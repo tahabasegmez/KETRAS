@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>The smallest working Ketras station plugin, to copy for a new vehicle-side system.</Description>
+    <PackageTags>gcs;plugin;ros2</PackageTags>
+    <!-- Loadable from the plugins folder: a deps.json for its own dependencies, none of the station's copied. -->
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Ketras.Station\Ketras.Station.csproj" Private="false" ExcludeAssets="runtime" />
+  </ItemGroup>
+</Project>

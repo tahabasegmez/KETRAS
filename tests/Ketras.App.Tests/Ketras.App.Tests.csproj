@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Ketras.App\Ketras.App.csproj" />
+    <ProjectReference Include="..\..\src\Ketras.Mavlink.Testing\Ketras.Mavlink.Testing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Headless.XUnit" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Ketras.Station.Tests\Fixtures\px4-sitl-actuators.json" Link="Fixtures\px4-sitl-actuators.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\Ketras.Station.Tests\Fixtures\px4-v1.17.0-events.json" Link="Fixtures\px4-v1.17.0-events.json" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Include="..\Ketras.Station.Tests\Px4Events.cs" Link="Px4Events.cs" />
+  </ItemGroup>
+</Project>

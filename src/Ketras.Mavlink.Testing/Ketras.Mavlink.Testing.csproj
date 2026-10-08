@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>A fake MAVLink vehicle (PX4-like) over an in-memory transport, for testing code built on Ketras.Mavlink without an autopilot.</Description>
+    <PackageTags>mavlink;px4;testing</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ketras.Mavlink\Ketras.Mavlink.csproj" />
+  </ItemGroup>
+</Project>

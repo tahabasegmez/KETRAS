@@ -1,0 +1,110 @@
+<!-- The Parameters page: the filter bar (search, group, modified) and the file and vehicle actions; a confirmation slot;
+     the virtualised list (favourite star, Mono name, field row; section titles and warnings in a curated group); a loaded
+     file's review replaces the list until it is staged or closed. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:setup="using:Ketras.App.Setup"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Setup.ParametersPageView"
+             x:DataType="setup:ParametersPageViewModel">
+  <Grid RowDefinitions="Auto,Auto,Auto,*" RowSpacing="8" Margin="0,0,10,12">
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBlock Classes="page-title" Text="{Binding Title}" />
+      <TextBlock Grid.Column="1" x:Name="Count" Classes="caption mono" Text="{Binding CountText}" VerticalAlignment="Center" />
+    </Grid>
+
+    <Grid Grid.Row="1" ColumnDefinitions="240,200,Auto,*,Auto" ColumnSpacing="8">
+      <TextBox x:Name="Search" Text="{Binding Search}" Watermark="{x:Static r:Strings.ParamsSearch}" />
+      <ComboBox x:Name="Group" Grid.Column="1" ItemsSource="{Binding Groups}" SelectedItem="{Binding SelectedGroup}" HorizontalAlignment="Stretch"
+                DisplayMemberBinding="{ReflectionBinding Title}" />
+      <CheckBox x:Name="ModifiedOnly" Grid.Column="2" Content="{x:Static r:Strings.ParamsModified}" IsChecked="{Binding ModifiedOnly}"
+                ToolTip.Tip="{x:Static r:Strings.ParamsModifiedTip}" VerticalAlignment="Center" />
+      <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+        <Button x:Name="SaveFile" Classes="row-action" Command="{Binding SaveFileCommand}" IsEnabled="{Binding CanSave}" ToolTip.Tip="{x:Static r:Strings.ParamsSave}">
+          <lucide:LucideIcon Kind="FileDown" Size="{StaticResource Size.RowIcon}" />
+        </Button>
+        <Button x:Name="LoadFile" Classes="row-action" Command="{Binding LoadFileCommand}" IsEnabled="{Binding CanEdit}" ToolTip.Tip="{x:Static r:Strings.ParamsLoad}">
+          <lucide:LucideIcon Kind="FileUp" Size="{StaticResource Size.RowIcon}" />
+        </Button>
+        <Button x:Name="Reboot" Classes="row-action" Command="{Binding RebootCommand}" IsEnabled="{Binding CanEdit}" ToolTip.Tip="{x:Static r:Strings.ParamsReboot}">
+          <lucide:LucideIcon Kind="Power" Size="{StaticResource Size.RowIcon}" />
+        </Button>
+        <Button x:Name="ResetAll" Classes="row-action" Command="{Binding ResetAllCommand}" IsEnabled="{Binding CanEdit}" ToolTip.Tip="{x:Static r:Strings.ParamsResetAll}">
+          <lucide:LucideIcon Kind="RotateCcw" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Error}" />
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <Border x:Name="Confirm" Grid.Row="2" Classes="card" IsVisible="{Binding IsConfirming}">
+      <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+        <TextBlock Classes="wrap" Text="{Binding ConfirmText}" VerticalAlignment="Center" />
+        <Button Grid.Column="1" Classes="danger" Content="{Binding ConfirmAction}" Command="{Binding ConfirmCommand}" />
+        <Button Grid.Column="2" Content="{x:Static r:Strings.Cancel}" Command="{Binding CancelConfirmCommand}" />
+      </Grid>
+    </Border>
+
+    <!-- The list -->
+    <Panel Grid.Row="3" IsVisible="{Binding !IsReviewing}">
+      <TextBlock Classes="small" Text="{x:Static r:Strings.ParamsEmpty}" IsVisible="{Binding IsEmpty}" Margin="8,4" />
+      <ListBox x:Name="List" ItemsSource="{Binding Items}" Background="Transparent" SelectionMode="Single">
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+          </Style>
+          <Style Selector="ListBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource Brush.Selected}" />
+          </Style>
+        </ListBox.Styles>
+        <ListBox.DataTemplates>
+          <DataTemplate x:DataType="setup:ParameterSectionItem">
+            <Border Classes="section" Margin="0,6,0,0"><TextBlock Text="{Binding Title}" /></Border>
+          </DataTemplate>
+          <DataTemplate x:DataType="setup:ParameterWarningItem">
+            <Border Classes="error-box" Margin="20,2,12,2"><TextBlock Text="{Binding Text}" /></Border>
+          </DataTemplate>
+          <DataTemplate x:DataType="setup:ParameterRowViewModel">
+            <Grid ColumnDefinitions="22,170,*">
+              <Button Classes="row-action" Command="{Binding ToggleFavouriteCommand}" ToolTip.Tip="{x:Static r:Strings.ParamsFavouriteTip}" VerticalAlignment="Center">
+                <Panel>
+                  <lucide:LucideIcon Kind="Star" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Warning}" IsVisible="{Binding IsFavourite}" />
+                  <lucide:LucideIcon Kind="Star" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Faint}" IsVisible="{Binding !IsFavourite}" />
+                </Panel>
+              </Button>
+              <TextBlock Grid.Column="1" Classes="mono small" Text="{Binding Field.Name}" VerticalAlignment="Center" Margin="4,0" TextTrimming="CharacterEllipsis" />
+              <setup:ParameterFieldView Grid.Column="2" DataContext="{Binding Field}" Margin="-20,0,0,0" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.DataTemplates>
+      </ListBox>
+    </Panel>
+
+    <!-- A loaded file's review -->
+    <Border x:Name="Review" Grid.Row="3" Classes="card" IsVisible="{Binding IsReviewing}" VerticalAlignment="Top">
+      <Grid RowDefinitions="Auto,Auto,*,Auto" RowSpacing="8">
+        <TextBlock Classes="title" Text="{x:Static r:Strings.ParamsReviewTitle}" />
+        <TextBlock Grid.Row="1" Classes="small wrap" Text="{Binding ReviewText}" />
+        <ScrollViewer Grid.Row="2" MaxHeight="420">
+          <ItemsControl ItemsSource="{Binding Review}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="setup:ParamsDiffRowViewModel">
+                <Grid ColumnDefinitions="28,170,*,*,140" Height="{StaticResource Size.RowHeight}">
+                  <CheckBox IsChecked="{Binding IsSelected}" IsEnabled="{Binding CanSelect}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Classes="mono small" Text="{Binding Name}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="2" Classes="small" Text="{Binding VehicleText}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="3" Classes="small" Text="{Binding FileText}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="4" Classes="caption" Text="{Binding KindText}" VerticalAlignment="Center" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="6">
+          <Button x:Name="StageReview" Classes="primary" Content="{x:Static r:Strings.ParamsReviewStage}" Command="{Binding StageReviewCommand}" />
+          <Button Content="{x:Static r:Strings.Cancel}" Command="{Binding CloseReviewCommand}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

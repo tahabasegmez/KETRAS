@@ -1,0 +1,166 @@
+<!-- The SITL page, per simulator in three parts:
+     - status: the state, Start / Stop (Cancel while preparing) and Open <window>, enabled once the window can open;
+     - Environment: what this computer needs, each item with its fix or the action the simulator takes itself (e.g.
+       Build environment), and Check again;
+     - Run options: world, home and the simulator's own options, disabled while it runs.
+     Every option has a "?" whose tooltip says what it does. Rows have fixed heights so nothing moves as states change. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:connection="using:Ketras.App.Connection"
+             xmlns:common="using:Ketras.App.Common"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Connection.SimulatorsPageView"
+             x:DataType="connection:SimulatorsPageViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.dot">
+      <Setter Property="Width" Value="8" />
+      <Setter Property="Height" Value="8" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Background" Value="{DynamicResource Brush.Faint}" />
+    </Style>
+    <Style Selector="Border.dot.busy">
+      <Setter Property="Background" Value="{DynamicResource Brush.Accent}" />
+    </Style>
+    <Style Selector="Border.dot.running">
+      <Setter Property="Background" Value="{DynamicResource Brush.Success}" />
+    </Style>
+    <Style Selector="Border.dot.failed">
+      <Setter Property="Background" Value="{DynamicResource Brush.Error}" />
+    </Style>
+    <Style Selector="Grid.option">
+      <Setter Property="MinHeight" Value="{StaticResource Size.ControlHeight}" />
+      <Setter Property="Margin" Value="20,2,12,2" />
+    </Style>
+    <Style Selector="Grid.option > TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,12">
+    <StackPanel Spacing="8">
+      <TextBlock Classes="page-title" Text="{Binding Title}" />
+      <TextBlock Classes="small" Text="{x:Static r:Strings.SimulatorNone}" IsVisible="{Binding IsEmpty}" Margin="8,4" />
+      <ItemsControl ItemsSource="{Binding Simulators}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="connection:SimulatorViewModel">
+            <StackPanel MaxWidth="900" HorizontalAlignment="Left">
+              <!-- Status -->
+              <Border Classes="section"><TextBlock Text="{Binding Name}" /></Border>
+              <TextBlock Classes="small wrap" Text="{Binding Summary}" Margin="20,0,12,0" />
+              <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="8" Height="40" Margin="20,0,12,0">
+                <Border Classes="dot" Classes.busy="{Binding IsBusy}" Classes.running="{Binding IsRunning}" Classes.failed="{Binding HasError}"
+                        VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Classes="title" Text="{Binding StateText}" VerticalAlignment="Center" />
+                <TextBlock x:Name="Detail" Grid.Column="2" Classes="small" Text="{Binding Detail}" ToolTip.Tip="{Binding Detail}" VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" Classes.error="{Binding HasError}" />
+                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Button x:Name="OpenWindow" Command="{Binding OpenWindowCommand}" IsVisible="{Binding HasWindow}"
+                          ToolTip.Tip="{Binding WindowHint}" ToolTip.ShowOnDisabled="True">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <lucide:LucideIcon Kind="AppWindow" Size="{StaticResource Size.RowIcon}" />
+                      <TextBlock Text="{Binding OpenWindowText}" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button x:Name="Start" Classes="primary" Command="{Binding StartCommand}" IsVisible="{Binding IsStopped}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <lucide:LucideIcon Kind="Play" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.TextStrong}" />
+                      <TextBlock Text="{x:Static r:Strings.SimulatorStart}" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                  <Button x:Name="Stop" Classes="danger" Command="{Binding StopCommand}" IsVisible="{Binding CanStop}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <lucide:LucideIcon Kind="Square" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.TextStrong}" />
+                      <TextBlock Text="{Binding StopText}" VerticalAlignment="Center" />
+                    </StackPanel>
+                  </Button>
+                </StackPanel>
+              </Grid>
+
+              <!-- Environment -->
+              <Border Classes="section">
+                <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="6">
+                  <TextBlock Text="{x:Static r:Strings.SimulatorEnvironment}" VerticalAlignment="Center" />
+                  <common:HelpMark Grid.Column="1" Text="{x:Static r:Strings.SimulatorHelpEnvironment}" />
+                  <TextBlock Grid.Column="2" Classes="small" Text="{x:Static r:Strings.SimulatorChecking}" IsVisible="{Binding IsChecking}" VerticalAlignment="Center" />
+                  <Button x:Name="CheckAgain" Grid.Column="3" Classes="row-action" Command="{Binding CheckAgainCommand}"
+                          ToolTip.Tip="{x:Static r:Strings.SimulatorCheckAgainTip}">
+                    <lucide:LucideIcon Kind="RefreshCw" Size="{StaticResource Size.RowIcon}" />
+                  </Button>
+                </Grid>
+              </Border>
+              <TextBlock Classes="small error wrap" Text="{Binding CheckError}" Margin="20,0,12,4"
+                         IsVisible="{Binding CheckError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+              <ItemsControl x:Name="Checks" ItemsSource="{Binding Checks}" Margin="20,0,12,4">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="connection:SimulatorCheckViewModel">
+                    <Grid ColumnDefinitions="22,150,*,Auto" ColumnSpacing="4" MinHeight="{StaticResource Size.ControlHeight}" Margin="0,2">
+                      <Panel VerticalAlignment="Top" Margin="0,5,0,0" ToolTip.Tip="{Binding StateText}" Background="Transparent">
+                        <lucide:LucideIcon Kind="CircleCheck" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Success}" IsVisible="{Binding IsReady}" />
+                        <lucide:LucideIcon Kind="CircleX" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Error}" IsVisible="{Binding IsMissing}" />
+                        <lucide:LucideIcon Kind="TriangleAlert" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Warning}" IsVisible="{Binding IsWarning}" />
+                        <lucide:LucideIcon Kind="CircleDashed" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Faint}" IsVisible="{Binding IsNotChecked}" />
+                      </Panel>
+                      <TextBlock Grid.Column="1" Text="{Binding Title}" TextTrimming="CharacterEllipsis" Margin="0,4,0,0" />
+                      <StackPanel Grid.Column="2" Spacing="2" Margin="0,5,8,0">
+                        <TextBlock Classes="small wrap" Text="{Binding Detail}" />
+                        <SelectableTextBlock Text="{Binding Fix}" IsVisible="{Binding HasFix}" TextWrapping="Wrap" FontFamily="{StaticResource Font.Mono}"
+                                             FontSize="{StaticResource FontSize.Small}" Foreground="{DynamicResource Brush.Text}" />
+                      </StackPanel>
+                      <Button x:Name="Action" Grid.Column="3" VerticalAlignment="Top" IsVisible="{Binding HasAction}"
+                              Classes.primary="{Binding !IsActionDestructive}" Classes.ghost="{Binding IsActionDestructive}"
+                              Command="{Binding ActionCommand}" Content="{Binding ActionLabel}"
+                              IsEnabled="{Binding $parent[ItemsControl].((connection:SimulatorViewModel)DataContext).CanRunAction}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Run options -->
+              <Border Classes="section"><TextBlock Text="{x:Static r:Strings.SimulatorRunOptions}" /></Border>
+              <StackPanel x:Name="RunOptions" IsEnabled="{Binding IsStopped}">
+                <Grid Classes="option" ColumnDefinitions="160,26,*">
+                  <TextBlock Text="{x:Static r:Strings.SimulatorWorld}" />
+                  <common:HelpMark Grid.Column="1" Text="{x:Static r:Strings.SimulatorHelpWorld}" />
+                  <ComboBox Grid.Column="2" Width="260" HorizontalAlignment="Left" ItemsSource="{Binding Worlds}" SelectedItem="{Binding SelectedWorld}"
+                            DisplayMemberBinding="{ReflectionBinding Name}" />
+                </Grid>
+                <TextBlock Classes="small wrap" MaxLines="2" Height="32" Margin="206,0,12,0" Text="{Binding SelectedWorld.Description}" />
+                <Grid Classes="option" ColumnDefinitions="160,26,*">
+                  <TextBlock Text="{x:Static r:Strings.SimulatorHome}" />
+                  <common:HelpMark Grid.Column="1" Text="{x:Static r:Strings.SimulatorHelpHome}" />
+                  <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" IsEnabled="{Binding CanChooseHome}">
+                    <TextBox Width="127" Text="{Binding Latitude}" FontFamily="{StaticResource Font.Mono}" />
+                    <TextBox Width="127" Text="{Binding Longitude}" FontFamily="{StaticResource Font.Mono}" />
+                  </StackPanel>
+                </Grid>
+                <Panel Height="26" Margin="206,0,12,0">
+                  <TextBlock Classes="small error" Text="{Binding HomeError}" VerticalAlignment="Center"
+                             IsVisible="{Binding HomeError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                </Panel>
+                <ItemsControl x:Name="Options" ItemsSource="{Binding Options}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="connection:SimulatorOptionViewModel">
+                      <Grid Classes="option" ColumnDefinitions="160,26,*">
+                        <TextBlock Text="{Binding Label}" />
+                        <common:HelpMark Grid.Column="1" Text="{Binding Help}" />
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                          <ComboBox Width="260" IsVisible="{Binding IsChoice}" ItemsSource="{Binding Choices}" SelectedItem="{Binding SelectedChoice}"
+                                    DisplayMemberBinding="{ReflectionBinding Label}" />
+                          <TextBox Width="127" IsVisible="{Binding IsNumber}" Text="{Binding Text}" FontFamily="{StaticResource Font.Mono}" />
+                          <TextBlock Classes="small" Text="{Binding Unit}" IsVisible="{Binding IsNumber}" VerticalAlignment="Center" />
+                          <TextBlock Classes="small error" Text="{Binding Error}" VerticalAlignment="Center"
+                                     IsVisible="{Binding Error, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                        </StackPanel>
+                      </Grid>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

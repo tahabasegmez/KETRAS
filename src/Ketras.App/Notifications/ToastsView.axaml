@@ -1,0 +1,44 @@
+<!-- Toasts (docs/UI_RULES.md "Toast"): 380 wide floating cards stacked from the bottom; the severity icon, the title,
+     the detail and the source, and a close button. A click on the card dismisses it too. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:notifications="using:Ketras.App.Notifications"
+             xmlns:common="using:Ketras.App.Common"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Notifications.ToastsView"
+             x:DataType="notifications:ToastsViewModel"
+             Width="380">
+  <ItemsControl ItemsSource="{Binding Toasts}" VerticalAlignment="Bottom">
+    <ItemsControl.ItemsPanel>
+      <ItemsPanelTemplate>
+        <StackPanel Spacing="6" VerticalAlignment="Bottom" />
+      </ItemsPanelTemplate>
+    </ItemsControl.ItemsPanel>
+    <ItemsControl.ItemTemplate>
+      <DataTemplate x:DataType="notifications:ToastViewModel">
+        <Border Classes="floating toast" Padding="12,10,10,10" Cursor="Hand" Tapped="OnCardTapped">
+          <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+            <lucide:LucideIcon Kind="{Binding Row.Severity, Converter={x:Static common:Converters.SeverityIcon}}"
+                               Foreground="{Binding Row.Severity, Converter={x:Static common:Converters.SeverityBrush}}"
+                               Size="{StaticResource Size.ToolIcon}"
+                               VerticalAlignment="Top" Margin="0,1,0,0" />
+            <StackPanel Grid.Column="1" Spacing="2">
+              <TextBlock Text="{Binding Row.Title}" />
+              <TextBlock Classes="small" Text="{Binding Row.Detail}" IsVisible="{Binding Row.HasDetail}" />
+              <TextBlock Classes="caption" Text="{Binding Row.Source}" Margin="0,5,0,0" />
+            </StackPanel>
+            <Button Grid.Column="2"
+                    Classes="row-action"
+                    VerticalAlignment="Top"
+                    Margin="0,-3,-4,0"
+                    Command="{Binding DismissCommand}"
+                    ToolTip.Tip="{x:Static r:Strings.Close}">
+              <lucide:LucideIcon Kind="X" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Muted}" />
+            </Button>
+          </Grid>
+        </Border>
+      </DataTemplate>
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</UserControl>

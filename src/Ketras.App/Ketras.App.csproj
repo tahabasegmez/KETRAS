@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>Ketras</AssemblyName>
+    <RootNamespace>Ketras.App</RootNamespace>
+    <Description>Ketras ground control station: the desktop application.</Description>
+    <IsPackable>false</IsPackable>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Lucide.Avalonia" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ketras.Station\Ketras.Station.csproj" />
+    <ProjectReference Include="..\Ketras.Simulation.Px4Sitl\Ketras.Simulation.Px4Sitl.csproj" />
+    <ProjectReference Include="..\Ketras.Theme\Ketras.Theme.csproj" />
+    <ProjectReference Include="..\Ketras.Controls.Instruments\Ketras.Controls.Instruments.csproj" />
+    <ProjectReference Include="..\Ketras.Controls.Scene3D\Ketras.Controls.Scene3D.csproj" />
+    <ProjectReference Include="..\Ketras.Controls.Map\Ketras.Controls.Map.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Strings.resx">
+      <StronglyTypedFileName>$(IntermediateOutputPath)Strings.Designer.cs</StronglyTypedFileName>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+      <StronglyTypedNamespace>Ketras.App.Resources</StronglyTypedNamespace>
+      <StronglyTypedClassName>Strings</StronglyTypedClassName>
+      <PublicClass>true</PublicClass>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Ketras.App.Tests" />
+  </ItemGroup>
+</Project>

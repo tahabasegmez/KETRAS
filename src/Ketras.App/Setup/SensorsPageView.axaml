@@ -1,0 +1,99 @@
+<!-- The Sensors page: the calibration rows (icon, name, state, Calibrate), the calibration card (what to do, the autopilot
+     orientation before it starts, progress, side tiles, the vehicle's lines, actions) and the orientation fields. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:setup="using:Ketras.App.Setup"
+             xmlns:common="using:Ketras.App.Common"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Setup.SensorsPageView"
+             x:DataType="setup:SensorsPageViewModel">
+  <UserControl.Styles>
+    <Style Selector="Border.side">
+      <Setter Property="Width" Value="118" />
+      <Setter Property="Margin" Value="0,0,6,6" />
+      <Setter Property="Padding" Value="6,4" />
+      <Setter Property="CornerRadius" Value="{StaticResource Radius.Control}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Brush.Border}" />
+    </Style>
+    <Style Selector="Border.side.progress">
+      <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
+      <Setter Property="Background" Value="{DynamicResource Brush.Selected}" />
+    </Style>
+    <Style Selector="Border.side.completed">
+      <Setter Property="BorderBrush" Value="{DynamicResource Brush.Success}" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer Padding="0,0,10,12">
+    <StackPanel Spacing="8" MaxWidth="720" HorizontalAlignment="Left">
+      <TextBlock Classes="page-title" Text="{Binding Title}" />
+      <Border Classes="section"><TextBlock Text="{x:Static r:Strings.SensorsCalibration}" /></Border>
+      <ItemsControl x:Name="Sensors" ItemsSource="{Binding Sensors}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="setup:SensorRowViewModel">
+            <Grid ColumnDefinitions="Auto,200,*,Auto" MinHeight="{StaticResource Size.ControlHeight}" Margin="20,1,12,1" IsVisible="{Binding IsVisible}">
+              <lucide:LucideIcon Kind="{Binding Icon, Converter={x:Static common:Converters.Icon}}" Size="{StaticResource Size.RowIcon}" VerticalAlignment="Center" Margin="0,0,8,0" />
+              <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" />
+              <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                <lucide:LucideIcon Kind="CircleCheck" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Success}" IsVisible="{Binding IsReady}" />
+                <lucide:LucideIcon Kind="TriangleAlert" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Warning}" IsVisible="{Binding IsRequired}" />
+                <TextBlock Classes="small" Text="{Binding StateText}" VerticalAlignment="Center" />
+              </StackPanel>
+              <Button Grid.Column="3" Content="{x:Static r:Strings.SensorsCalibrate}" Command="{Binding CalibrateCommand}" IsEnabled="{Binding CanCalibrate}" VerticalAlignment="Center" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <!-- The calibration card -->
+      <Border x:Name="Session" Classes="card" BorderBrush="{DynamicResource Brush.Accent}" IsVisible="{Binding IsSessionVisible}" Margin="20,0,12,0">
+        <StackPanel Spacing="8">
+          <TextBlock Classes="title" Text="{Binding SessionTitle}" />
+          <TextBlock x:Name="SessionText" Classes="wrap" Text="{Binding SessionText}"
+                     Classes.success="{Binding IsSucceeded}" Classes.error="{Binding IsFailed}" />
+          <Panel IsVisible="{Binding ShowsOrientation}">
+            <setup:ParameterFieldView DataContext="{Binding BoardOrientation}" Margin="-20,0,-12,0" />
+          </Panel>
+          <ProgressBar Minimum="0" Maximum="100" Value="{Binding Percent}" IsVisible="{Binding ShowsProgress}" />
+          <ItemsControl ItemsSource="{Binding Sides}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="setup:SideTileViewModel">
+                <Border Classes="side" Classes.progress="{Binding IsInProgress}" Classes.completed="{Binding IsCompleted}">
+                  <StackPanel>
+                    <TextBlock Text="{Binding Label}" />
+                    <TextBlock Classes="small" Text="{Binding StateText}" />
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+          <TextBlock Classes="small mono wrap" Text="{Binding Lines}" IsVisible="{Binding Lines, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+          <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Right">
+            <Button x:Name="Start" Classes="primary" Content="{x:Static r:Strings.SensorsStart}" Command="{Binding StartCommand}" IsVisible="{Binding IsAsking}" />
+            <Button Content="{x:Static r:Strings.Cancel}" Command="{Binding CancelAskCommand}" IsVisible="{Binding IsAsking}" />
+            <Button Content="{x:Static r:Strings.ParamsReboot}" Command="{Binding RebootCommand}" IsVisible="{Binding CanReboot}" />
+            <Button x:Name="CancelCalibration" Classes="danger" Content="{x:Static r:Strings.Cancel}" Command="{Binding CancelCalibrationCommand}" IsVisible="{Binding CanCancel}" />
+            <Button x:Name="Close" Content="{x:Static r:Strings.SensorsClose}" Command="{Binding CloseSessionCommand}" IsVisible="{Binding CanClose}" />
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <StackPanel IsVisible="{Binding Orientation.IsVisible}">
+        <Border Classes="section" Margin="0,6,0,0"><TextBlock Text="{Binding Orientation.Title}" /></Border>
+        <TextBlock Classes="small wrap" Text="{x:Static r:Strings.SensorsOrientationNote}" Margin="20,2,12,4" />
+        <ItemsControl ItemsSource="{Binding Orientation.Shown}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="setup:ParameterFieldViewModel">
+              <setup:ParameterFieldView />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

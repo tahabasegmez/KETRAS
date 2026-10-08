@@ -1,0 +1,119 @@
+<!-- The mission editor, as the KetrasPlanner panel: two collapsible sections. MISSION SETTINGS holds the settings fields
+     (open / save as its actions); MISSION ITEMS (clear as its action) holds the three phase buttons (press and hold for the strip of item
+     types) over one phase-ordered list whose selected row opens into its fields. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:planning="using:Ketras.App.Planning"
+             xmlns:common="using:Ketras.App.Common"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Planning.MissionPanelView"
+             x:DataType="planning:MissionPanelViewModel">
+  <UserControl.Styles>
+    <StyleInclude Source="avares://Ketras/Planning/PlanningStyles.axaml" />
+  </UserControl.Styles>
+
+  <StackPanel>
+    <common:CollapsibleSection Title="{x:Static r:Strings.PlanningMissionSettings}">
+      <common:CollapsibleSection.Actions>
+        <StackPanel Orientation="Horizontal">
+          <Button x:Name="OpenPlan" Classes="row-action" Command="{Binding $parent[planning:PlanningView].((planning:PlanningViewModel)DataContext).OpenPlanCommand}"
+                  ToolTip.Tip="{x:Static r:Strings.PlanningOpenPlan}" ToolTip.Placement="Pointer">
+            <lucide:LucideIcon Kind="FolderOpen" Size="{StaticResource Size.RowIcon}" />
+          </Button>
+          <Button x:Name="SavePlan" Classes="row-action" Command="{Binding $parent[planning:PlanningView].((planning:PlanningViewModel)DataContext).SavePlanCommand}"
+                  ToolTip.Tip="{x:Static r:Strings.PlanningSavePlan}" ToolTip.Placement="Pointer">
+            <lucide:LucideIcon Kind="Save" Size="{StaticResource Size.RowIcon}" />
+          </Button>
+        </StackPanel>
+      </common:CollapsibleSection.Actions>
+      <StackPanel Margin="20,4,12,8">
+        <TextBlock x:Name="Estimate" Classes="small mono" Classes.warning="{Binding IsEstimateWarning}" Classes.error="{Binding IsEstimateError}"
+                   Text="{Binding Estimate}" ToolTip.Tip="{Binding EstimateDetail}" Margin="0,0,0,4"
+                   IsVisible="{Binding Estimate, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+        <planning:FieldRowView DataContext="{Binding CruiseSpeed}" />
+        <planning:FieldRowView DataContext="{Binding DefaultAltitude}" />
+        <planning:FieldRowView DataContext="{Binding AltitudeReference}" />
+        <planning:FieldRowView DataContext="{Binding EndAction}" />
+        <TextBlock Classes="section-header" Text="{x:Static r:Strings.PlanningLanding}" Margin="0,10,0,2" />
+        <planning:FieldRowView DataContext="{Binding LandingTerrain}" />
+        <planning:FieldRowView DataContext="{Binding AbortIfNotFound}" />
+        <planning:FieldRowView DataContext="{Binding AbortIfLost}" />
+      </StackPanel>
+    </common:CollapsibleSection>
+
+    <common:CollapsibleSection Title="{x:Static r:Strings.PlanningMissionItems}">
+      <common:CollapsibleSection.Actions>
+        <Button x:Name="ClearMission" Classes="row-action" Command="{Binding ClearMissionCommand}" ToolTip.Tip="{x:Static r:Strings.PlanningClearMission}" ToolTip.Placement="Pointer">
+          <lucide:LucideIcon Kind="Trash" Size="{StaticResource Size.RowIcon}" />
+        </Button>
+      </common:CollapsibleSection.Actions>
+      <StackPanel Margin="0,0,0,6">
+        <!-- Phase picker: press and hold a phase, slide along its item types, release on one. -->
+        <planning:PhasePicker x:Name="Picker" Groups="{Binding Groups}" PickCommand="{Binding AddItemCommand}" CanAdd="{Binding CanAddChoice}" Margin="10,4,10,6" />
+
+        <ScrollViewer x:Name="Scroller" MaxHeight="420" HorizontalScrollBarVisibility="Disabled">
+          <ItemsControl x:Name="Items" ItemsSource="{Binding Rows}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="planning:MissionItemRowViewModel">
+                <StackPanel>
+                  <Button Classes="item-row" Classes.selected="{Binding IsSelected}" Classes.executing="{Binding IsExecuting}" Command="{Binding SelectCommand}">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6">
+                      <Border Classes="row-bar" Background="{Binding Phase, Converter={x:Static common:Converters.PhaseBrush}}" />
+                      <Border Classes="row-bar" Background="{DynamicResource Brush.Executing}" IsVisible="{Binding IsExecuting}" />
+                      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                        <TextBlock Classes="row-number" Text="{Binding Number}" />
+                        <lucide:LucideIcon Kind="{Binding Icon, Converter={x:Static common:Converters.Icon}}" Size="{StaticResource Size.RowIcon}"
+                                           Foreground="{Binding Phase, Converter={x:Static common:Converters.PhaseBrush}}" VerticalAlignment="Center" />
+                        <TextBlock Classes="row-name" Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                      </StackPanel>
+                      <TextBlock Grid.Column="2" Classes="row-value" Text="{Binding Value}" MaxWidth="120" />
+                      <StackPanel Grid.Column="3" Classes="row-actions" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Classes="row-action" Command="{Binding MoveUpCommand}" IsEnabled="{Binding CanMoveUp}" ToolTip.Tip="{x:Static r:Strings.PlanningMoveUp}" ToolTip.Placement="Pointer">
+                          <lucide:LucideIcon Kind="ChevronUp" Size="{StaticResource Size.RowIcon}" />
+                        </Button>
+                        <Button Classes="row-action" Command="{Binding MoveDownCommand}" IsEnabled="{Binding CanMoveDown}" ToolTip.Tip="{x:Static r:Strings.PlanningMoveDown}" ToolTip.Placement="Pointer">
+                          <lucide:LucideIcon Kind="ChevronDown" Size="{StaticResource Size.RowIcon}" />
+                        </Button>
+                        <Button Classes="row-action" Command="{Binding DeleteCommand}" ToolTip.Tip="{x:Static r:Strings.PlanningDelete}" ToolTip.Placement="Pointer">
+                          <lucide:LucideIcon Kind="X" Size="{StaticResource Size.RowIcon}" />
+                        </Button>
+                      </StackPanel>
+                    </Grid>
+                  </Button>
+
+                  <!-- Row details -->
+                  <Border Classes="row-details" IsVisible="{Binding IsSelected}">
+                    <StackPanel Spacing="1">
+                      <TextBlock Classes="small wrap" Text="{Binding Help}" Foreground="{DynamicResource Brush.Muted}" Margin="0,0,0,3" />
+                      <Panel IsVisible="{Binding IsJump}">
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,2,0,0">
+                          <TextBlock Text="{x:Static r:Strings.PlanningJumpTarget}" VerticalAlignment="Center" />
+                          <ComboBox Grid.Column="1" Width="{StaticResource Size.FieldWidth}" ItemsSource="{Binding JumpTargets}" SelectedItem="{Binding JumpTarget}"
+                                    DisplayMemberBinding="{ReflectionBinding Label}" />
+                        </Grid>
+                      </Panel>
+                      <ItemsControl ItemsSource="{Binding Fields}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate x:DataType="planning:FieldViewModel">
+                            <planning:FieldRowView />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                      <Panel IsVisible="{Binding HasLocation}">
+                        <StackPanel>
+                          <planning:FieldRowView DataContext="{Binding Latitude}" />
+                          <planning:FieldRowView DataContext="{Binding Longitude}" />
+                        </StackPanel>
+                      </Panel>
+                    </StackPanel>
+                  </Border>
+                </StackPanel>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </StackPanel>
+    </common:CollapsibleSection>
+  </StackPanel>
+</UserControl>

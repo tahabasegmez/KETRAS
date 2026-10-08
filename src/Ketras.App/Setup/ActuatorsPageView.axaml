@@ -1,0 +1,161 @@
+<!-- The Actuators page: the geometry tables, the test card (propellers-removed switch, Test all, a slider per actuator),
+     and the output drivers (a tab per driver, its fields, its channel tables). Tables are fixed-width columns: a 180 px
+     label, then one FieldWidth column per field; a table header carries the column labels. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:setup="using:Ketras.App.Setup"
+             xmlns:common="using:Ketras.App.Common"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Setup.ActuatorsPageView"
+             x:DataType="setup:ActuatorsPageViewModel">
+  <UserControl.Resources>
+    <DataTemplate x:Key="Table" x:DataType="setup:ActuatorTableViewModel">
+      <StackPanel Spacing="2" Margin="0,0,0,8">
+        <TextBlock Classes="caption" Text="{Binding Label}" Margin="20,4,12,0" IsVisible="{Binding HasCaption}" />
+        <Panel IsVisible="{Binding Count, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <setup:ParameterFieldView DataContext="{Binding Count}" />
+        </Panel>
+        <ItemsControl ItemsSource="{Binding Parameters}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="setup:ParameterFieldViewModel"><setup:ParameterFieldView /></DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" IsVisible="{Binding HasRows}" Margin="20,2,12,0" Padding="0,0,0,12">
+          <StackPanel>
+            <StackPanel Orientation="Horizontal" Height="{StaticResource Size.RowHeight}">
+              <Border Width="180" />
+              <ItemsControl ItemsSource="{Binding Columns}">
+                <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="setup:ActuatorColumnViewModel">
+                    <TextBlock Classes="caption" Width="{StaticResource Size.FieldWidth}" Text="{Binding Label}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" ToolTip.Tip="{Binding Label}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+            <ItemsControl ItemsSource="{Binding Rows}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="setup:ActuatorRowViewModel">
+                  <StackPanel Orientation="Horizontal" MinHeight="{StaticResource Size.ControlHeight}" Margin="0,1">
+                    <TextBlock Width="180" Text="{Binding Label}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" ToolTip.Tip="{Binding Label}" />
+                    <ItemsControl ItemsSource="{Binding Cells}">
+                      <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="4" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="setup:ActuatorCellViewModel">
+                          <Panel Width="{StaticResource Size.FieldWidth}">
+                            <Panel IsVisible="{Binding IsVisible}" IsEnabled="{Binding IsEnabled}">
+                              <Panel IsVisible="{Binding IsField}">
+                                <Panel DataContext="{Binding Field}" x:DataType="setup:ParameterFieldViewModel" IsEnabled="{Binding IsEditable}" ToolTip.Tip="{Binding Tooltip}">
+                                  <TextBox IsVisible="{Binding IsNumber}" Text="{Binding Text}" FontFamily="{StaticResource Font.Mono}"
+                                           common:Commit.Command="{Binding CommitCommand}" common:Commit.CancelCommand="{Binding CancelCommand}" />
+                                  <ComboBox IsVisible="{Binding IsChoice}" ItemsSource="{Binding Choices}" SelectedItem="{Binding SelectedChoice}" HorizontalAlignment="Stretch"
+                                            DisplayMemberBinding="{ReflectionBinding Label}" />
+                                </Panel>
+                              </Panel>
+                              <CheckBox IsVisible="{Binding IsCheck}" IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" />
+                            </Panel>
+                          </Panel>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </StackPanel>
+    </DataTemplate>
+  </UserControl.Resources>
+
+  <ScrollViewer Padding="0,0,10,12">
+    <StackPanel Spacing="8">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Classes="page-title" Text="{Binding Title}" />
+        <CheckBox x:Name="Advanced" Grid.Column="1" Content="{x:Static r:Strings.ActuatorsAdvanced}" IsChecked="{Binding ShowAdvanced}" VerticalAlignment="Center" IsVisible="{Binding HasMetadata}" />
+      </Grid>
+      <TextBlock x:Name="Empty" Classes="small wrap" Text="{Binding EmptyText}" IsVisible="{Binding !HasMetadata}" MaxWidth="720" HorizontalAlignment="Left" />
+
+      <StackPanel IsVisible="{Binding HasMetadata}" Spacing="8">
+        <Border Classes="error-box" IsVisible="{Binding HasUnsetFunctions}" MaxWidth="720" HorizontalAlignment="Left">
+          <TextBlock Text="{x:Static r:Strings.ActuatorsUnset}" />
+        </Border>
+        <ItemsControl ItemsSource="{Binding Notes}" MaxWidth="720" HorizontalAlignment="Left">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="x:String"><TextBlock Classes="small wrap warning" Text="{Binding}" Margin="0,2" /></DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Geometry -->
+        <Border Classes="section"><TextBlock Text="{Binding GeometryTitle}" /></Border>
+        <ItemsControl x:Name="Geometry" ItemsSource="{Binding Geometry}" ItemTemplate="{StaticResource Table}" />
+
+        <!-- Testing -->
+        <Border Classes="section"><TextBlock Text="{x:Static r:Strings.ActuatorsTesting}" /></Border>
+        <Border x:Name="Testing" Classes="card" Margin="20,0,12,0" MaxWidth="720" HorizontalAlignment="Left">
+          <StackPanel Spacing="8">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+              <ToggleSwitch x:Name="PropellersRemoved" IsChecked="{Binding PropellersRemoved}" IsEnabled="{Binding CanEnableTesting}" OnContent="" OffContent="" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Classes="wrap" VerticalAlignment="Center"
+                         Text="{x:Static r:Strings.ActuatorsPropellersRemoved}" Classes.warning="{Binding PropellersRemoved}" />
+              <Button x:Name="TestAll" Grid.Column="2" Command="{Binding TestAllCommand}" IsEnabled="{Binding PropellersRemoved}">
+                <Panel>
+                  <TextBlock Text="{x:Static r:Strings.ActuatorsTestAll}" IsVisible="{Binding !IsSequenceRunning}" />
+                  <TextBlock Text="{x:Static r:Strings.ActuatorsStopAll}" IsVisible="{Binding IsSequenceRunning}" />
+                </Panel>
+              </Button>
+            </Grid>
+            <TextBlock Classes="small mono" Text="{Binding SequenceText}" IsVisible="{Binding IsSequenceRunning}" />
+            <TextBlock Classes="small error wrap" Text="{Binding StopReason}" IsVisible="{Binding StopReason, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            <TextBlock Classes="small" Text="{x:Static r:Strings.ActuatorsNoTests}" IsVisible="{Binding HasNoTests}" />
+            <ItemsControl x:Name="Tests" ItemsSource="{Binding Tests}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="setup:TestRowViewModel">
+                  <Grid ColumnDefinitions="180,*,52,22" ColumnSpacing="8" Height="30">
+                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                    <Slider Grid.Column="1" Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Value="{Binding Value}"
+                            IsEnabled="{Binding #PropellersRemoved.IsChecked}" VerticalAlignment="Center" Margin="0,-8" />
+                    <TextBlock Grid.Column="2" Classes="small mono" Text="{Binding ValueText}" Classes.warning="{Binding IsActive}" TextAlignment="Right" VerticalAlignment="Center" />
+                    <Button Grid.Column="3" Classes="row-action" Command="{Binding StopCommand}" IsVisible="{Binding IsActive}" ToolTip.Tip="{x:Static r:Strings.ActuatorsStop}">
+                      <lucide:LucideIcon Kind="Square" Size="{StaticResource Size.RowIcon}" />
+                    </Button>
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <!-- Outputs -->
+        <Border Classes="section"><TextBlock Text="{x:Static r:Strings.ActuatorsOutputs}" /></Border>
+        <!-- Output tabs as buttons: a ListBox would scroll its selection into view and drag the page with it. -->
+        <ItemsControl x:Name="OutputTabs" ItemsSource="{Binding Outputs}" Margin="20,0,12,0">
+          <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="2" /></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="setup:OutputGroupViewModel">
+              <Button Classes="tool" Padding="10,0" Width="NaN" Content="{Binding Label}" CommandParameter="{Binding}"
+                      Classes.active="{Binding IsSelected}"
+                      Command="{Binding $parent[UserControl].((setup:ActuatorsPageViewModel)DataContext).SelectOutputCommand}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ContentControl Content="{Binding SelectedOutput}">
+          <ContentControl.ContentTemplate>
+            <DataTemplate x:DataType="setup:OutputGroupViewModel">
+              <StackPanel>
+                <ItemsControl ItemsSource="{Binding Parameters}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="setup:ParameterFieldViewModel"><setup:ParameterFieldView MaxWidth="720" HorizontalAlignment="Left" /></DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <TextBlock Classes="small" Text="{x:Static r:Strings.ActuatorsEnableGroup}" IsVisible="{Binding ShowsEnableHint}" Margin="20,4,12,0" />
+                <ItemsControl ItemsSource="{Binding Subgroups}" IsVisible="{Binding SubgroupsVisible}" ItemTemplate="{StaticResource Table}" />
+              </StackPanel>
+            </DataTemplate>
+          </ContentControl.ContentTemplate>
+        </ContentControl>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

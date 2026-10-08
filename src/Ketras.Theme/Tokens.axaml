@@ -1,0 +1,171 @@
+<!-- The tokens of docs/UI_RULES.md. Colours are per theme variant (only Dark exists; a Light dictionary makes the
+     theme switchable); sizes and fonts are the same in every variant. Use colours through DynamicResource. -->
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Dark">
+      <!-- Surfaces -->
+      <Color x:Key="Color.Chrome">#181818</Color>
+      <Color x:Key="Color.Surface">#1F1F1F</Color>
+      <Color x:Key="Color.Raised">#252526</Color>
+      <Color x:Key="Color.Overlay">#202020</Color>
+      <Color x:Key="Color.Input">#313131</Color>
+      <Color x:Key="Color.Hover">#2A2D2E</Color>
+      <Color x:Key="Color.Selected">#04395E</Color>
+      <Color x:Key="Color.SelectedInactive">#37373D</Color>
+      <!-- Lines -->
+      <Color x:Key="Color.Border">#2B2B2B</Color>
+      <Color x:Key="Color.BorderStrong">#3C3C3C</Color>
+      <Color x:Key="Color.HoverBorder">#454545</Color>
+      <Color x:Key="Color.Focus">#0078D4</Color>
+      <!-- Text -->
+      <Color x:Key="Color.Text">#CCCCCC</Color>
+      <Color x:Key="Color.TextStrong">#FFFFFF</Color>
+      <Color x:Key="Color.Muted">#9D9D9D</Color>
+      <Color x:Key="Color.Faint">#6E7681</Color>
+      <!-- Accent and status -->
+      <Color x:Key="Color.Accent">#0078D4</Color>
+      <Color x:Key="Color.AccentHover">#026EC1</Color>
+      <Color x:Key="Color.Link">#4DAAFC</Color>
+      <Color x:Key="Color.Info">#3794FF</Color>
+      <Color x:Key="Color.Success">#89D185</Color>
+      <Color x:Key="Color.Warning">#CCA700</Color>
+      <Color x:Key="Color.Error">#F14C4C</Color>
+      <Color x:Key="Color.ErrorSurface">#5A1D1D</Color>
+      <!-- Domain -->
+      <Color x:Key="Color.Takeoff">#89D185</Color>
+      <Color x:Key="Color.Cruise">#3794FF</Color>
+      <Color x:Key="Color.Landing">#D18616</Color>
+      <Color x:Key="Color.Executing">#B180D7</Color>
+      <Color x:Key="Color.KeepOut">#F14C4C</Color>
+      <Color x:Key="Color.StayIn">#3794FF</Color>
+      <Color x:Key="Color.MapGround">#1B1D1F</Color>
+      <Color x:Key="Color.MapGrid">#24272A</Color>
+      <Color x:Key="Color.MapGridMajor">#2C3034</Color>
+      <Color x:Key="Color.Sky">#1E4A6E</Color>
+      <Color x:Key="Color.Ground">#5A4126</Color>
+
+      <SolidColorBrush x:Key="Brush.Chrome" Color="{StaticResource Color.Chrome}" />
+      <SolidColorBrush x:Key="Brush.Surface" Color="{StaticResource Color.Surface}" />
+      <SolidColorBrush x:Key="Brush.Raised" Color="{StaticResource Color.Raised}" />
+      <SolidColorBrush x:Key="Brush.Overlay" Color="{StaticResource Color.Overlay}" />
+      <SolidColorBrush x:Key="Brush.Input" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="Brush.Hover" Color="{StaticResource Color.Hover}" />
+      <SolidColorBrush x:Key="Brush.Selected" Color="{StaticResource Color.Selected}" />
+      <SolidColorBrush x:Key="Brush.SelectedInactive" Color="{StaticResource Color.SelectedInactive}" />
+      <SolidColorBrush x:Key="Brush.Border" Color="{StaticResource Color.Border}" />
+      <SolidColorBrush x:Key="Brush.BorderStrong" Color="{StaticResource Color.BorderStrong}" />
+      <SolidColorBrush x:Key="Brush.HoverBorder" Color="{StaticResource Color.HoverBorder}" />
+      <SolidColorBrush x:Key="Brush.Focus" Color="{StaticResource Color.Focus}" />
+      <SolidColorBrush x:Key="Brush.Text" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="Brush.TextStrong" Color="{StaticResource Color.TextStrong}" />
+      <SolidColorBrush x:Key="Brush.Muted" Color="{StaticResource Color.Muted}" />
+      <SolidColorBrush x:Key="Brush.Faint" Color="{StaticResource Color.Faint}" />
+      <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent}" />
+      <SolidColorBrush x:Key="Brush.AccentHover" Color="{StaticResource Color.AccentHover}" />
+      <SolidColorBrush x:Key="Brush.Link" Color="{StaticResource Color.Link}" />
+      <SolidColorBrush x:Key="Brush.Info" Color="{StaticResource Color.Info}" />
+      <SolidColorBrush x:Key="Brush.Success" Color="{StaticResource Color.Success}" />
+      <SolidColorBrush x:Key="Brush.Warning" Color="{StaticResource Color.Warning}" />
+      <SolidColorBrush x:Key="Brush.Error" Color="{StaticResource Color.Error}" />
+      <SolidColorBrush x:Key="Brush.ErrorSurface" Color="{StaticResource Color.ErrorSurface}" />
+      <SolidColorBrush x:Key="Brush.Takeoff" Color="{StaticResource Color.Takeoff}" />
+      <SolidColorBrush x:Key="Brush.Cruise" Color="{StaticResource Color.Cruise}" />
+      <SolidColorBrush x:Key="Brush.Landing" Color="{StaticResource Color.Landing}" />
+      <SolidColorBrush x:Key="Brush.Executing" Color="{StaticResource Color.Executing}" />
+      <SolidColorBrush x:Key="Brush.KeepOut" Color="{StaticResource Color.KeepOut}" />
+      <SolidColorBrush x:Key="Brush.StayIn" Color="{StaticResource Color.StayIn}" />
+      <SolidColorBrush x:Key="Brush.MapGround" Color="{StaticResource Color.MapGround}" />
+      <SolidColorBrush x:Key="Brush.MapGrid" Color="{StaticResource Color.MapGrid}" />
+      <SolidColorBrush x:Key="Brush.MapGridMajor" Color="{StaticResource Color.MapGridMajor}" />
+      <SolidColorBrush x:Key="Brush.Sky" Color="{StaticResource Color.Sky}" />
+      <SolidColorBrush x:Key="Brush.Ground" Color="{StaticResource Color.Ground}" />
+
+      <!-- Status fills: the status colour at 25 % with TextStrong text. -->
+      <SolidColorBrush x:Key="Brush.AccentFill" Color="{StaticResource Color.Accent}" Opacity="0.25" />
+      <SolidColorBrush x:Key="Brush.InfoFill" Color="{StaticResource Color.Info}" Opacity="0.25" />
+      <SolidColorBrush x:Key="Brush.SuccessFill" Color="{StaticResource Color.Success}" Opacity="0.25" />
+      <SolidColorBrush x:Key="Brush.WarningFill" Color="{StaticResource Color.Warning}" Opacity="0.25" />
+      <SolidColorBrush x:Key="Brush.ErrorFill" Color="{StaticResource Color.Error}" Opacity="0.25" />
+      <!-- Notifications unread before the history opened, while it is open. -->
+      <SolidColorBrush x:Key="Brush.UnreadTint" Color="{StaticResource Color.Selected}" Opacity="0.45" />
+      <!-- The 1 px frame of every text button: white at 7 %. -->
+      <SolidColorBrush x:Key="Brush.ButtonFrame" Color="#FFFFFF" Opacity="0.07" />
+      <SolidColorBrush x:Key="Brush.Danger" Color="{StaticResource Color.Error}" Opacity="0.75" />
+      <SolidColorBrush x:Key="Brush.NeutralBadge" Color="#616161" />
+      <BoxShadows x:Key="Shadow.Floating">0 4 16 0 #80000000</BoxShadows>
+
+      <!-- Fluent's control resources, mapped to the tokens (kept here: a resource can only reference colours of its own
+           theme dictionary). The default Button is the Secondary kind. -->
+      <SolidColorBrush x:Key="ButtonBackground" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{StaticResource Color.BorderStrong}" />
+      <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{StaticResource Color.HoverBorder}" />
+      <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="ButtonForeground" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="ButtonForegroundPressed" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="ButtonForegroundDisabled" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="ButtonBorderBrush" Color="#FFFFFF" Opacity="0.07" />
+      <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#FFFFFF" Opacity="0.07" />
+      <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#FFFFFF" Opacity="0.07" />
+      <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="#FFFFFF" Opacity="0.07" />
+
+      <SolidColorBrush x:Key="TextControlBackground" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="TextControlBackgroundDisabled" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="TextControlBorderBrush" Color="{StaticResource Color.BorderStrong}" />
+      <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{StaticResource Color.BorderStrong}" />
+      <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{StaticResource Color.Focus}" />
+      <SolidColorBrush x:Key="TextControlBorderBrushDisabled" Color="{StaticResource Color.BorderStrong}" />
+      <SolidColorBrush x:Key="TextControlForeground" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="TextControlForegroundFocused" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="TextControlForegroundDisabled" Color="{StaticResource Color.Faint}" />
+      <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="{StaticResource Color.Faint}" />
+      <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="{StaticResource Color.Faint}" />
+      <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="{StaticResource Color.Faint}" />
+
+      <SolidColorBrush x:Key="ComboBoxBackground" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="ComboBoxBackgroundPressed" Color="{StaticResource Color.Input}" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="{StaticResource Color.BorderStrong}" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="{StaticResource Color.HoverBorder}" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="{StaticResource Color.Focus}" />
+      <SolidColorBrush x:Key="ComboBoxDropDownBackground" Color="{StaticResource Color.Overlay}" />
+      <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="{StaticResource Color.HoverBorder}" />
+
+      <SolidColorBrush x:Key="ToolTipBackground" Color="{StaticResource Color.Overlay}" />
+      <SolidColorBrush x:Key="ToolTipBorderBrush" Color="{StaticResource Color.HoverBorder}" />
+      <SolidColorBrush x:Key="ToolTipForeground" Color="{StaticResource Color.Text}" />
+      <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="{StaticResource Color.Overlay}" />
+      <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="{StaticResource Color.HoverBorder}" />
+      <SolidColorBrush x:Key="MenuFlyoutPresenterBackground" Color="{StaticResource Color.Overlay}" />
+      <SolidColorBrush x:Key="MenuFlyoutPresenterBorderBrush" Color="{StaticResource Color.HoverBorder}" />
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+
+  <!-- Typography -->
+  <FontFamily x:Key="Font.Ui">Segoe UI, Inter, $Default</FontFamily>
+  <FontFamily x:Key="Font.Mono">Cascadia Mono, Consolas, DejaVu Sans Mono, Liberation Mono, $Default</FontFamily>
+  <x:Double x:Key="FontSize.Body">13</x:Double>
+  <x:Double x:Key="FontSize.Small">12</x:Double>
+  <x:Double x:Key="FontSize.Caption">11</x:Double>
+  <x:Double x:Key="FontSize.PageTitle">20</x:Double>
+  <x:Double x:Key="FontSize.Display">26</x:Double>
+
+  <!-- Sizes -->
+  <x:Double x:Key="Size.RowHeight">22</x:Double>
+  <x:Double x:Key="Size.ControlHeight">26</x:Double>
+  <x:Double x:Key="Size.ToolButton">28</x:Double>
+  <x:Double x:Key="Size.RowAction">22</x:Double>
+  <x:Double x:Key="Size.RailButton">40</x:Double>
+  <x:Double x:Key="Size.ActivityButton">48</x:Double>
+  <x:Double x:Key="Size.ToolIcon">16</x:Double>
+  <x:Double x:Key="Size.RowIcon">14</x:Double>
+  <x:Double x:Key="Size.ChevronIcon">12</x:Double>
+  <x:Double x:Key="Size.ActivityIcon">22</x:Double>
+  <x:Double x:Key="Size.FieldWidth">110</x:Double>
+  <CornerRadius x:Key="Radius.Control">2</CornerRadius>
+  <CornerRadius x:Key="Radius.Panel">4</CornerRadius>
+</ResourceDictionary>

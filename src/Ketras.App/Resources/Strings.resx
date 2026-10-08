@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Every string the operator reads, in English. A translation is a Strings.<culture>.resx next to this file. -->
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="AppTitle" xml:space="preserve"><value>Ketras</value></data>
+
+  <data name="ActivityPlanning" xml:space="preserve"><value>Planning</value></data>
+  <data name="ActivityScene3D" xml:space="preserve"><value>3D view</value></data>
+  <data name="ActivitySetup" xml:space="preserve"><value>Vehicle setup</value></data>
+  <data name="ActivityLink" xml:space="preserve"><value>Vehicle link</value></data>
+  <data name="ActivitySettings" xml:space="preserve"><value>Settings</value></data>
+  <data name="PendingActivity" xml:space="preserve"><value>This screen is not built yet.</value></data>
+
+  <data name="LinkNotConnected" xml:space="preserve"><value>Not connected</value></data>
+  <data name="LinkConnecting" xml:space="preserve"><value>Connecting</value></data>
+  <data name="LinkConnected" xml:space="preserve"><value>Connected</value></data>
+  <data name="LinkLost" xml:space="preserve"><value>Link lost</value></data>
+  <data name="LinkItemTip" xml:space="preserve"><value>Vehicle link</value></data>
+  <data name="VehicleItemTip" xml:space="preserve"><value>Active vehicle</value></data>
+
+  <data name="NotificationsTitle" xml:space="preserve"><value>NOTIFICATIONS</value></data>
+  <data name="NotificationsTip" xml:space="preserve"><value>Notifications</value></data>
+  <data name="NotificationsEmpty" xml:space="preserve"><value>No notifications</value></data>
+  <data name="NotificationsClearAll" xml:space="preserve"><value>Clear all</value></data>
+  <data name="NotificationsOnlyProblems" xml:space="preserve"><value>Show only warnings and errors</value></data>
+  <data name="NotificationSource" xml:space="preserve"><value>Source: {0}</value></data>
+  <data name="ConditionsTitle" xml:space="preserve"><value>ACTIVE CONDITIONS</value></data>
+  <data name="ConditionsTip" xml:space="preserve"><value>Active conditions</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+
+  <data name="SettingsTitle" xml:space="preserve"><value>Settings</value></data>
+  <data name="SettingsAppearance" xml:space="preserve"><value>APPEARANCE</value></data>
+  <data name="SettingsTheme" xml:space="preserve"><value>Theme</value></data>
+  <data name="ThemeDark" xml:space="preserve"><value>Dark</value></data>
+  <data name="SettingsUnits" xml:space="preserve"><value>Units</value></data>
+  <data name="UnitsMetric" xml:space="preserve"><value>Metric</value></data>
+  <data name="SettingsFolders" xml:space="preserve"><value>FOLDERS</value></data>
+  <data name="SettingsConfigFolder" xml:space="preserve"><value>Settings</value></data>
+  <data name="SettingsDataFolder" xml:space="preserve"><value>Data and logs</value></data>
+  <data name="SettingsAbout" xml:space="preserve"><value>ABOUT</value></data>
+  <data name="SettingsVersion" xml:space="preserve"><value>Version</value></data>
+  <data name="SettingsLicense" xml:space="preserve"><value>License</value></data>
+
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Connect" xml:space="preserve"><value>Connect</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="LinkPageStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="LinkPageLinks" xml:space="preserve"><value>Links</value></data>
+  <data name="LinkPageSimulators" xml:space="preserve"><value>SITL</value></data>
+  <data name="LinkNavTitle" xml:space="preserve"><value>VEHICLE LINK</value></data>
+  <data name="LinkNoLinkOpen" xml:space="preserve"><value>No link is open</value></data>
+  <data name="LinkHintIdle" xml:space="preserve"><value>Pick a saved link on the Links page and press Connect.</value></data>
+  <data name="LinkHintIdleSimulator" xml:space="preserve"><value>Pick a saved link on the Links page and press Connect; a SITL link starts its simulator first.</value></data>
+  <data name="LinkHintConnecting" xml:space="preserve"><value>The steps below show how far it has got. Cancel stops waiting.</value></data>
+  <data name="LinkHintConnected" xml:space="preserve"><value>Telemetry, commands, parameters and missions go over this link.</value></data>
+  <data name="LinkHintLost" xml:space="preserve"><value>No heartbeat for a while. The link stays open and picks the vehicle up again when it returns.</value></data>
+  <data name="LinkSimulatorAddress" xml:space="preserve"><value>simulator link: its address is found when the simulator runs</value></data>
+  <data name="LinkHeadingConnecting" xml:space="preserve"><value>Connecting to {0}</value></data>
+  <data name="LinkHeadingConnected" xml:space="preserve"><value>Connected · {0}</value></data>
+  <data name="LinkHeadingLost" xml:space="preserve"><value>Link lost · {0}</value></data>
+  <data name="LinkStepsIdle" xml:space="preserve"><value>CONNECTION</value></data>
+  <data name="LinkStepsConnecting" xml:space="preserve"><value>CONNECTING</value></data>
+  <data name="LinkStepsConnected" xml:space="preserve"><value>CONNECTED</value></data>
+  <data name="LinkStepsLost" xml:space="preserve"><value>LINK LOST</value></data>
+  <data name="LinkStepsLastAttempt" xml:space="preserve"><value>LAST ATTEMPT</value></data>
+  <data name="LinkStepsNone" xml:space="preserve"><value>No link is open.</value></data>
+  <data name="LinkDisconnect" xml:space="preserve"><value>Disconnect</value></data>
+  <data name="LinkConfirmSwitch" xml:space="preserve"><value>The vehicle is armed. Switching to {0} closes the current link first.</value></data>
+  <data name="LinkConfirmSwitchAction" xml:space="preserve"><value>Switch anyway</value></data>
+  <data name="LinkConfirmDisconnect" xml:space="preserve"><value>The vehicle is armed. Disconnecting stops this station's telemetry and commands.</value></data>
+  <data name="LinkConfirmDisconnectAction" xml:space="preserve"><value>Disconnect anyway</value></data>
+  <data name="LinkLogTitle" xml:space="preserve"><value>LINK LOG</value></data>
+  <data name="LinkLogEmpty" xml:space="preserve"><value>Link events and simulator output appear here.</value></data>
+  <data name="LogClear" xml:space="preserve"><value>Clear the log</value></data>
+  <data name="LogHide" xml:space="preserve"><value>Hide the log</value></data>
+  <data name="LogShow" xml:space="preserve"><value>Show the log</value></data>
+  <data name="LinkLogConnecting" xml:space="preserve"><value>Connecting to {0}</value></data>
+  <data name="LinkLogConnected" xml:space="preserve"><value>Connected to {0}</value></data>
+  <data name="LinkLogLost" xml:space="preserve"><value>Link lost on {0}: {1}</value></data>
+  <data name="LinkLogFailed" xml:space="preserve"><value>Not connected: {0}</value></data>
+  <data name="LinkLogDisconnected" xml:space="preserve"><value>Disconnected</value></data>
+  <data name="LinkSectionVehicle" xml:space="preserve"><value>VEHICLE</value></data>
+  <data name="LinkSectionQuality" xml:space="preserve"><value>LINK QUALITY</value></data>
+  <data name="LinkSectionRadio" xml:space="preserve"><value>TELEMETRY RADIO</value></data>
+  <data name="LinkSectionSaved" xml:space="preserve"><value>SAVED LINKS</value></data>
+  <data name="KeyHeartbeat" xml:space="preserve"><value>Last heartbeat</value></data>
+  <data name="TipHeartbeat" xml:space="preserve"><value>Time since the vehicle's last HEARTBEAT. The autopilot sends one every second; yellow after 1.5 s, red after 3 s.</value></data>
+  <data name="KeyIdentity" xml:space="preserve"><value>System / component</value></data>
+  <data name="TipIdentity" xml:space="preserve"><value>MAVLink ids: the vehicle's system id and its autopilot's component id. PX4 is usually 1 / 1.</value></data>
+  <data name="KeyAutopilot" xml:space="preserve"><value>Autopilot</value></data>
+  <data name="TipAutopilot" xml:space="preserve"><value>Autopilot firmware family, as the heartbeat reports it.</value></data>
+  <data name="KeyVehicleType" xml:space="preserve"><value>Vehicle type</value></data>
+  <data name="TipVehicleType" xml:space="preserve"><value>Airframe class, as the heartbeat reports it.</value></data>
+  <data name="KeyFirmware" xml:space="preserve"><value>Firmware</value></data>
+  <data name="TipFirmware" xml:space="preserve"><value>Firmware version from AUTOPILOT_VERSION.</value></data>
+  <data name="KeyMessages" xml:space="preserve"><value>Messages</value></data>
+  <data name="TipMessages" xml:space="preserve"><value>MAVLink messages received per second.</value></data>
+  <data name="KeyDataRate" xml:space="preserve"><value>Data rate</value></data>
+  <data name="TipDataRate" xml:space="preserve"><value>Bytes received per second.</value></data>
+  <data name="KeyLoss" xml:space="preserve"><value>Packet loss</value></data>
+  <data name="TipLoss" xml:space="preserve"><value>Share of the vehicle's packets that never arrived, from gaps in their sequence numbers since the link opened. Yellow over 5 %, red over 20 %.</value></data>
+  <data name="KeyChecksum" xml:space="preserve"><value>Checksum errors</value></data>
+  <data name="TipChecksum" xml:space="preserve"><value>Frames dropped because their checksum did not match: noise on a radio link, or a wrong baud rate on a serial one.</value></data>
+  <data name="KeyRssi" xml:space="preserve"><value>RSSI local / remote</value></data>
+  <data name="TipRssi" xml:space="preserve"><value>Signal strength at this station's radio / at the vehicle's radio, from RADIO_STATUS, in the radio's own units (about 2 × dB on SiK radios). Higher is better.</value></data>
+  <data name="KeyNoise" xml:space="preserve"><value>Noise local / remote</value></data>
+  <data name="TipNoise" xml:space="preserve"><value>Background noise at each radio, in the same units. The further RSSI is above the noise, the more margin the link has.</value></data>
+  <data name="KeyTxBuffer" xml:space="preserve"><value>TX buffer free</value></data>
+  <data name="TipTxBuffer" xml:space="preserve"><value>Free space in the radio's send buffer. Low means more is sent than the radio can carry; yellow under 30 %.</value></data>
+  <data name="KeyRxErrors" xml:space="preserve"><value>RX errors / fixed</value></data>
+  <data name="TipRxErrors" xml:space="preserve"><value>Packets the radio received damaged / damaged packets its error correction repaired.</value></data>
+  <data name="LinkInUse" xml:space="preserve"><value>In use</value></data>
+  <data name="LinkNew" xml:space="preserve"><value>New link</value></data>
+  <data name="LinkNoneSaved" xml:space="preserve"><value>No saved links yet.</value></data>
+  <data name="LinkNoneSavedSimulator" xml:space="preserve"><value>No saved links yet. A SITL link starts its simulator and connects to it in one step.</value></data>
+  <data name="LinkEditorNew" xml:space="preserve"><value>New link</value></data>
+  <data name="LinkEditorEdit" xml:space="preserve"><value>Edit {0}</value></data>
+  <data name="LinkNewName" xml:space="preserve"><value>Link {0}</value></data>
+  <data name="LinkSaveAndConnect" xml:space="preserve"><value>Save and connect</value></data>
+  <data name="LinkKindSerial" xml:space="preserve"><value>Serial</value></data>
+  <data name="FieldName" xml:space="preserve"><value>Name</value></data>
+  <data name="FieldLinkType" xml:space="preserve"><value>Link type</value></data>
+  <data name="FieldHost" xml:space="preserve"><value>Host</value></data>
+  <data name="FieldPort" xml:space="preserve"><value>Port</value></data>
+  <data name="FieldBaudRate" xml:space="preserve"><value>Baud rate</value></data>
+  <data name="FieldSimulator" xml:space="preserve"><value>Simulator</value></data>
+  <data name="FieldAutopilot" xml:space="preserve"><value>Autopilot</value></data>
+  <data name="FieldHostUdpTip" xml:space="preserve"><value>Empty: listen on the port and answer whoever sends (PX4 sends its GCS link to port 14550). With a host: send to it first.</value></data>
+  <data name="LinkRescan" xml:space="preserve"><value>Rescan serial ports</value></data>
+  <data name="LinkHintUdp" xml:space="preserve"><value>Leave the host empty to listen for the vehicle on the port, or give a host to send to it first.</value></data>
+  <data name="LinkHintTcp" xml:space="preserve"><value>Connects to a MAVLink TCP server, such as a Wi-Fi telemetry bridge.</value></data>
+  <data name="LinkHintSerial" xml:space="preserve"><value>A telemetry radio or a USB cable on this computer. Rescan if the port is missing.</value></data>
+  <data name="LinkHintSimulator" xml:space="preserve"><value>Starts the simulator when it is not running, then connects to it. How it runs is set on the SITL page.</value></data>
+  <data name="LinkErrorName" xml:space="preserve"><value>Enter a name.</value></data>
+  <data name="LinkErrorNameTaken" xml:space="preserve"><value>A link named {0} exists already.</value></data>
+  <data name="LinkErrorPort" xml:space="preserve"><value>Enter a port from 1 to 65535.</value></data>
+  <data name="LinkErrorHost" xml:space="preserve"><value>Enter the TCP host.</value></data>
+  <data name="LinkErrorSerialPort" xml:space="preserve"><value>Pick a serial port; rescan after plugging it in.</value></data>
+  <data name="LinkErrorSimulator" xml:space="preserve"><value>Pick a simulator.</value></data>
+  <data name="SimulatorNone" xml:space="preserve"><value>This station offers no simulator.</value></data>
+  <data name="SimulatorWorld" xml:space="preserve"><value>World</value></data>
+  <data name="SimulatorHome" xml:space="preserve"><value>Home</value></data>
+  <data name="SimulatorStart" xml:space="preserve"><value>Start</value></data>
+  <data name="SimulatorStop" xml:space="preserve"><value>Stop</value></data>
+  <data name="SimulatorStarting" xml:space="preserve"><value>Starting</value></data>
+  <data name="SimulatorRunning" xml:space="preserve"><value>Running</value></data>
+  <data name="SimulatorStopping" xml:space="preserve"><value>Stopping</value></data>
+  <data name="SimulatorStopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="SimulatorErrorHome" xml:space="preserve"><value>Enter the home as latitude −90…90 and longitude −180…180, in degrees.</value></data>
+  <data name="SimulatorLogStarting" xml:space="preserve"><value>Starting {0} ({1} world)</value></data>
+  <data name="SimulatorCheckAgain" xml:space="preserve"><value>Check again</value></data>
+  <data name="SimulatorChecking" xml:space="preserve"><value>Checking…</value></data>
+  <data name="SimulatorBlocked" xml:space="preserve"><value>Start needs the items marked missing.</value></data>
+  <data name="SimulatorCheckFailed" xml:space="preserve"><value>The check failed: {0}</value></data>
+  <data name="SimulatorCheckReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="SimulatorCheckMissing" xml:space="preserve"><value>Missing</value></data>
+  <data name="SimulatorCheckWarning" xml:space="preserve"><value>Usable with a limitation</value></data>
+  <data name="SimulatorCheckNotChecked" xml:space="preserve"><value>Not checked</value></data>
+  <data name="SimulatorEnvironment" xml:space="preserve"><value>Environment</value></data>
+  <data name="SimulatorRunOptions" xml:space="preserve"><value>Run options</value></data>
+  <data name="SimulatorPreparing" xml:space="preserve"><value>Preparing</value></data>
+  <data name="SimulatorCancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="SimulatorOpenWindow" xml:space="preserve"><value>Open {0}</value></data>
+  <data name="SimulatorOpenWindowTip" xml:space="preserve"><value>Opens the simulator's 3D window. Closing it leaves the simulation running.</value></data>
+  <data name="SimulatorOptionRange" xml:space="preserve"><value>Enter {0}…{1} {2}</value></data>
+  <data name="SimulatorCheckAgainTip" xml:space="preserve"><value>Looks at what this computer has again, e.g. after starting Docker.</value></data>
+  <data name="SimulatorHelpWorld" xml:space="preserve"><value>The world the simulator starts in. The flat world starts wherever you put the home; a terrain world brings real ground around a fixed place, built from the terrain data the first time.</value></data>
+  <data name="SimulatorHelpHome" xml:space="preserve"><value>Where the vehicle starts: latitude and longitude in degrees. Its altitude comes from the terrain data. A terrain world fixes the home.</value></data>
+  <data name="SimulatorHelpEnvironment" xml:space="preserve"><value>What this computer needs to run the simulator. A missing item says how to fix it; the environment itself is built here, once per PX4 version.</value></data>
+  <data name="HelpMarkName" xml:space="preserve"><value>Help</value></data>
+  <data name="SummaryHealth" xml:space="preserve"><value>Health and arming checks</value></data>
+  <data name="SummaryHealthy" xml:space="preserve"><value>All checks pass</value></data>
+  <data name="SummaryHealthModes" xml:space="preserve"><value>stops {0}</value></data>
+  <data name="CommandTip" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="CommandWaiting" xml:space="preserve"><value>waiting for the answer</value></data>
+  <data name="CommandModeWaiting" xml:space="preserve"><value>accepted, waiting for the vehicle to report {0}</value></data>
+  <data name="CommandModeNotConfirmed" xml:space="preserve"><value>mode not confirmed, the vehicle reports {0}</value></data>
+  <data name="CommandConfirm" xml:space="preserve"><value>Confirm</value></data>
+  <data name="WeatherTitle" xml:space="preserve"><value>WEATHER</value></data>
+  <data name="WeatherNoData" xml:space="preserve"><value>no data</value></data>
+  <data name="WeatherWind" xml:space="preserve"><value>{0} · {1:F0}° {2}</value></data>
+  <data name="WeatherKeyWind" xml:space="preserve"><value>Wind, and where it comes from</value></data>
+  <data name="WeatherKeyVertical" xml:space="preserve"><value>Vertical wind</value></data>
+  <data name="WeatherKeyHumidity" xml:space="preserve"><value>Humidity</value></data>
+  <data name="WeatherKeyPressure" xml:space="preserve"><value>Pressure</value></data>
+  <data name="WeatherCollapse" xml:space="preserve"><value>Collapse / expand</value></data>
+  <data name="PlanningMapPending" xml:space="preserve"><value>The map and plan editing are not built yet.</value></data>
+  <data name="TelemetryAmsl" xml:space="preserve"><value>AMSL</value></data>
+  <data name="TelemetryAmslHelp" xml:space="preserve"><value>Altitude above mean sea level</value></data>
+  <data name="TelemetryRelative" xml:space="preserve"><value>REL</value></data>
+  <data name="TelemetryRelativeHelp" xml:space="preserve"><value>Altitude above the home</value></data>
+  <data name="TelemetryAgl" xml:space="preserve"><value>AGL</value></data>
+  <data name="TelemetryAglHelp" xml:space="preserve"><value>Height above the terrain below the vehicle</value></data>
+  <data name="TelemetryAirspeed" xml:space="preserve"><value>IAS</value></data>
+  <data name="TelemetryAirspeedHelp" xml:space="preserve"><value>Airspeed</value></data>
+  <data name="TelemetryGroundSpeed" xml:space="preserve"><value>GS</value></data>
+  <data name="TelemetryGroundSpeedHelp" xml:space="preserve"><value>Speed over the ground</value></data>
+  <data name="TelemetryClimb" xml:space="preserve"><value>VS</value></data>
+  <data name="TelemetryClimbHelp" xml:space="preserve"><value>Vertical speed, positive up</value></data>
+  <data name="TelemetryBattery" xml:space="preserve"><value>BAT</value></data>
+  <data name="TelemetryBatteryHelp" xml:space="preserve"><value>Remaining battery</value></data>
+  <data name="TelemetryHeading" xml:space="preserve"><value>HDG</value></data>
+  <data name="TelemetryWaypoint" xml:space="preserve"><value>WP</value></data>
+  <data name="TelemetryWaypointHelp" xml:space="preserve"><value>Distance to the active mission item</value></data>
+  <data name="TelemetryWaypointEta" xml:space="preserve"><value>ETA</value></data>
+  <data name="TelemetryWaypointEtaHelp" xml:space="preserve"><value>Time to the active mission item at the ground speed</value></data>
+  <data name="TelemetryEnd" xml:space="preserve"><value>END</value></data>
+  <data name="TelemetryEndHelp" xml:space="preserve"><value>Time to the end of the mission with the way home, or to the home outside a mission</value></data>
+  <data name="TelemetryHome" xml:space="preserve"><value>HOME</value></data>
+  <data name="TelemetryHomeHelp" xml:space="preserve"><value>Distance and bearing to the home</value></data>
+  <data name="TelemetryAltitudeError" xml:space="preserve"><value>ΔALT</value></data>
+  <data name="TelemetryAltitudeErrorHelp" xml:space="preserve"><value>Target altitude minus altitude: + while below the target</value></data>
+  <data name="TelemetryCrossTrack" xml:space="preserve"><value>XTRK</value></data>
+  <data name="TelemetryCrossTrackHelp" xml:space="preserve"><value>Distance off the planned line to the active item</value></data>
+  <data name="TelemetryThrottle" xml:space="preserve"><value>THR</value></data>
+  <data name="TelemetryThrottleHelp" xml:space="preserve"><value>Throttle</value></data>
+  <data name="TelemetryMargin" xml:space="preserve"><value>MRGN</value></data>
+  <data name="TelemetryMarginHelp" xml:space="preserve"><value>Battery left at the end of the flight above the low-battery threshold (BAT_LOW_THR)</value></data>
+  <data name="TelemetryMarginDetail" xml:space="preserve"><value>Battery left at the end above the low-battery threshold: needs {0:F0} mAh of {1:F0} mAh, at {2:F1} A ({3})</value></data>
+  <data name="TelemetryCurrentMeasured" xml:space="preserve"><value>measured since arming</value></data>
+  <data name="TelemetryCurrentEntered" xml:space="preserve"><value>the entered cruise current</value></data>
+  <data name="TelemetryVoltage" xml:space="preserve"><value>V</value></data>
+  <data name="TelemetryVoltageHelp" xml:space="preserve"><value>Battery voltage</value></data>
+  <data name="TelemetryVoltagePerCell" xml:space="preserve"><value>Battery voltage: {0:F2} V per cell over {1} cells</value></data>
+  <data name="TelemetryCurrent" xml:space="preserve"><value>A</value></data>
+  <data name="TelemetryCurrentHelp" xml:space="preserve"><value>Current draw</value></data>
+  <data name="TelemetryConsumed" xml:space="preserve"><value>USED</value></data>
+  <data name="TelemetryConsumedHelp" xml:space="preserve"><value>Charge used</value></data>
+  <data name="TelemetryTimeLeft" xml:space="preserve"><value>LEFT</value></data>
+  <data name="TelemetryTimeLeftHelp" xml:space="preserve"><value>Time the battery lasts: the autopilot's estimate, else at the present draw down to the low-battery threshold</value></data>
+  <data name="TelemetryToggle" xml:space="preserve"><value>More or less telemetry</value></data>
+  <data name="StatusGps" xml:space="preserve"><value>{0} sat · HDOP {1}</value></data>
+  <data name="StatusGpsNone" xml:space="preserve"><value>No GPS</value></data>
+  <data name="StatusGpsTip" xml:space="preserve"><value>GPS: {0}</value></data>
+  <data name="StatusLink" xml:space="preserve"><value>{0:F0} % loss</value></data>
+  <data name="StatusLinkTip" xml:space="preserve"><value>Link: {0}</value></data>
+  <data name="StatusFlightTime" xml:space="preserve"><value>Time since arming</value></data>
+  <data name="PlanningEstimate" xml:space="preserve"><value>≈ {0} · {1}</value></data>
+  <data name="PlanningEstimateMargin" xml:space="preserve"><value> · margin {0:F0} %</value></data>
+  <data name="PlanningEstimateOpen" xml:space="preserve"><value>ends in an unlimited loiter</value></data>
+  <data name="PlanningEstimateHelp" xml:space="preserve"><value>Flight time and distance at the cruise speed and speed changes, in the wind the vehicle reports, with the way home when the mission ends with RTL. The margin is the battery left at the end above the low-battery threshold, from the battery now and the cruise current entered on the Power page.</value></data>
+  <data name="PlanningEstimateNoEnergy" xml:space="preserve"><value>Enter the cruise current (and the capacity when the vehicle has none) on the Power page for an energy estimate.</value></data>
+  <data name="SummaryReady" xml:space="preserve"><value>READY TO FLY</value></data>
+  <data name="SummaryReadyArming" xml:space="preserve"><value>Arming checks</value></data>
+  <data name="SummaryReadyArmingPass" xml:space="preserve"><value>the vehicle can arm</value></data>
+  <data name="SummaryReadyArmingFail" xml:space="preserve"><value>{0} check(s) fail, listed above</value></data>
+  <data name="SummaryReadyArmingUnknown" xml:space="preserve"><value>no health report (events metadata not loaded)</value></data>
+  <data name="SummaryReadyMission" xml:space="preserve"><value>Mission</value></data>
+  <data name="SummaryReadyMissionUploaded" xml:space="preserve"><value>uploaded, {0} items</value></data>
+  <data name="SummaryReadyMissionNone" xml:space="preserve"><value>not uploaded</value></data>
+  <data name="SummaryReadyEnergy" xml:space="preserve"><value>Energy</value></data>
+  <data name="SummaryReadyEnergyDetail" xml:space="preserve"><value>{0:F0} % left at the end above the low-battery threshold ({1:F0} of {2:F0} mAh needed)</value></data>
+  <data name="SummaryReadyEnergyUnknown" xml:space="preserve"><value>enter the cruise current on the Power page</value></data>
+  <data name="SummaryReadyWind" xml:space="preserve"><value>Wind</value></data>
+  <data name="SummaryReadyWindCalm" xml:space="preserve"><value>no headwind on the route</value></data>
+  <data name="SummaryReadyWindDetail" xml:space="preserve"><value>strongest headwind {0:F0} % of the airspeed</value></data>
+  <data name="PowerEnergy" xml:space="preserve"><value>ENERGY ESTIMATE</value></data>
+  <data name="PowerCruiseCurrent" xml:space="preserve"><value>Cruise current</value></data>
+  <data name="PowerCruiseCurrentHelp" xml:space="preserve"><value>The current the aircraft draws in cruise. With the capacity it gives the mission energy estimate before flight; in flight the measured average replaces it after a minute.</value></data>
+  <data name="PowerCapacity" xml:space="preserve"><value>Capacity</value></data>
+  <data name="PowerCapacityHelp" xml:space="preserve"><value>The battery capacity, used only while the vehicle's BAT1_CAPACITY is not set.</value></data>
+  <data name="SceneFit" xml:space="preserve"><value>Fit the route and the aircraft, seen from above</value></data>
+  <data name="SceneFollowVehicle" xml:space="preserve"><value>Follow the vehicle</value></data>
+  <data name="SceneTraffic" xml:space="preserve"><value>TRAFFIC</value></data>
+  <data name="ItemTypeTakeoff" xml:space="preserve"><value>Takeoff</value></data>
+  <data name="ItemTypeWaypoint" xml:space="preserve"><value>Waypoint</value></data>
+  <data name="ItemTypeLoiterUnlimited" xml:space="preserve"><value>Loiter</value></data>
+  <data name="ItemTypeLoiterTime" xml:space="preserve"><value>Loiter for a time</value></data>
+  <data name="ItemTypeLoiterToAltitude" xml:space="preserve"><value>Loiter to altitude</value></data>
+  <data name="ItemTypeRegionOfInterest" xml:space="preserve"><value>Region of interest</value></data>
+  <data name="ItemTypeChangeSpeed" xml:space="preserve"><value>Change speed</value></data>
+  <data name="ItemTypeTakePhoto" xml:space="preserve"><value>Take photo</value></data>
+  <data name="ItemTypeStartVideo" xml:space="preserve"><value>Start video</value></data>
+  <data name="ItemTypeStopVideo" xml:space="preserve"><value>Stop video</value></data>
+  <data name="ItemTypeCameraTriggerDistance" xml:space="preserve"><value>Camera trigger distance</value></data>
+  <data name="ItemTypeDelaySeconds" xml:space="preserve"><value>Delay</value></data>
+  <data name="ItemTypeDoJump" xml:space="preserve"><value>Jump</value></data>
+  <data name="ItemTypeLandingPattern" xml:space="preserve"><value>Landing pattern</value></data>
+  <data name="ItemTypeLand" xml:space="preserve"><value>Land</value></data>
+  <data name="ItemTypeReturnToLaunch" xml:space="preserve"><value>RTL</value></data>
+  <data name="Param_altitude" xml:space="preserve"><value>Altitude</value></data>
+  <data name="Param_radius" xml:space="preserve"><value>Radius</value></data>
+  <data name="Param_loiter_time" xml:space="preserve"><value>Time</value></data>
+  <data name="Param_airspeed" xml:space="preserve"><value>Airspeed</value></data>
+  <data name="Param_trigger_distance" xml:space="preserve"><value>Distance</value></data>
+  <data name="Param_delay" xml:space="preserve"><value>Delay</value></data>
+  <data name="Param_repeats" xml:space="preserve"><value>Repeats</value></data>
+  <data name="Param_approach_altitude" xml:space="preserve"><value>Approach altitude</value></data>
+  <data name="Param_touchdown_altitude" xml:space="preserve"><value>Touchdown altitude</value></data>
+  <data name="Param_orbit_radius" xml:space="preserve"><value>Orbit radius</value></data>
+  <data name="Param_orbit_direction" xml:space="preserve"><value>Orbit direction</value></data>
+  <data name="Param_approach_length" xml:space="preserve"><value>Approach length</value></data>
+  <data name="Param_approach_heading" xml:space="preserve"><value>Approach heading</value></data>
+  <data name="Choice_cw" xml:space="preserve"><value>Clockwise</value></data>
+  <data name="Choice_ccw" xml:space="preserve"><value>Counter-clockwise</value></data>
+  <data name="PhaseTakeoff" xml:space="preserve"><value>TAKEOFF</value></data>
+  <data name="PhaseCruise" xml:space="preserve"><value>CRUISE</value></data>
+  <data name="PhaseLanding" xml:space="preserve"><value>LANDING</value></data>
+  <data name="EndActionHold" xml:space="preserve"><value>Hold</value></data>
+  <data name="EndActionReturnToLaunch" xml:space="preserve"><value>RTL</value></data>
+  <data name="PlanningMission" xml:space="preserve"><value>Mission</value></data>
+  <data name="PlanningGeofence" xml:space="preserve"><value>Geofence</value></data>
+  <data name="PlanningMissionSettings" xml:space="preserve"><value>MISSION SETTINGS</value></data>
+  <data name="PlanningMissionItems" xml:space="preserve"><value>MISSION ITEMS</value></data>
+  <data name="PlanningCruiseSpeed" xml:space="preserve"><value>Cruise speed</value></data>
+  <data name="PlanningDefaultAltitude" xml:space="preserve"><value>Default altitude</value></data>
+  <data name="PlanningAltitudeReference" xml:space="preserve"><value>Altitude reference</value></data>
+  <data name="PlanningAltitudeReferenceHelp" xml:space="preserve"><value>What item altitudes are measured from. Rel. home: above the planned home. AMSL: above mean sea level. AGL: above the ground under each item, sent as above sea level from the terrain data. Changing it converts every item so the plan flies the same heights.</value></data>
+  <data name="PlanningReferenceRelative" xml:space="preserve"><value>Rel. home</value></data>
+  <data name="PlanningReferenceAmsl" xml:space="preserve"><value>AMSL</value></data>
+  <data name="PlanningReferenceTerrain" xml:space="preserve"><value>AGL</value></data>
+  <data name="PlanningReferenceRefused" xml:space="preserve"><value>The altitude reference was not changed</value></data>
+  <data name="PlanningReferenceNoTerrain" xml:space="preserve"><value>Item {0} has no terrain data under it.</value></data>
+  <data name="PlanningLanding" xml:space="preserve"><value>LANDING</value></data>
+  <data name="PlanningRangefinderUse" xml:space="preserve"><value>Rangefinder use</value></data>
+  <data name="PlanningRangefinderUseHelp" xml:space="preserve"><value>How the landing uses the rangefinder's height above ground (FW_LND_USETER). Written to the vehicle with a mission that lands.</value></data>
+  <data name="PlanningRangefinderOff" xml:space="preserve"><value>Off</value></data>
+  <data name="PlanningRangefinderFlare" xml:space="preserve"><value>Flare</value></data>
+  <data name="PlanningRangefinderGlideSlope" xml:space="preserve"><value>Flare+slope</value></data>
+  <data name="PlanningAbortNotFound" xml:space="preserve"><value>Abort if no ground found</value></data>
+  <data name="PlanningAbortNotFoundHelp" xml:space="preserve"><value>Abandon the landing and loiter when the rangefinder never finds the ground (FW_LND_ABORT bit 0). Off: the land point's altitude is the ground.</value></data>
+  <data name="PlanningAbortLost" xml:space="preserve"><value>Abort if ground lost</value></data>
+  <data name="PlanningAbortLostHelp" xml:space="preserve"><value>Abandon the landing and loiter when the rangefinder loses the ground for more than a second (FW_LND_ABORT bit 1). Off: the last good height is used.</value></data>
+  <data name="PlanningYes" xml:space="preserve"><value>Yes</value></data>
+  <data name="PlanningNo" xml:space="preserve"><value>No</value></data>
+  <data name="PlanningEndAction" xml:space="preserve"><value>On finish</value></data>
+  <data name="PlanningEndActionHelp" xml:space="preserve"><value>What the vehicle does after the last item. RTL: return to launch and land there. Hold: loiter at the last item.</value></data>
+  <data name="PlanningClearMission" xml:space="preserve"><value>Remove every mission item</value></data>
+  <data name="PlanningNoItems" xml:space="preserve"><value>No mission items yet. Pick a type below, then click the map.</value></data>
+  <data name="PlanningLatitude" xml:space="preserve"><value>Latitude</value></data>
+  <data name="PlanningLongitude" xml:space="preserve"><value>Longitude</value></data>
+  <data name="PlanningJumpTarget" xml:space="preserve"><value>Target item</value></data>
+  <data name="PlanningMoveUp" xml:space="preserve"><value>Move earlier</value></data>
+  <data name="PlanningMoveDown" xml:space="preserve"><value>Move later</value></data>
+  <data name="PlanningDelete" xml:space="preserve"><value>Delete</value></data>
+  <data name="PlanningAddHint" xml:space="preserve"><value>Pick a type, then click the map</value></data>
+  <data name="PlanningFences" xml:space="preserve"><value>GEOFENCES</value></data>
+  <data name="PlanningNoFences" xml:space="preserve"><value>No fences yet. Draw a polygon or drop a circle on the map.</value></data>
+  <data name="PlanningDrawPolygon" xml:space="preserve"><value>Polygon fence: click the corners, right-click to finish</value></data>
+  <data name="PlanningDrawCircle" xml:space="preserve"><value>Circle fence: click its centre</value></data>
+  <data name="PlanningClearFences" xml:space="preserve"><value>Remove every fence</value></data>
+  <data name="PlanningStayIn" xml:space="preserve"><value>Stay in</value></data>
+  <data name="PlanningToggleKind" xml:space="preserve"><value>Switch between stay in and keep out</value></data>
+  <data name="PlanningKeepOut" xml:space="preserve"><value>Keep out</value></data>
+  <data name="PlanningCircle" xml:space="preserve"><value>Circle</value></data>
+  <data name="PlanningPolygon" xml:space="preserve"><value>Polygon</value></data>
+  <data name="PlanningCorners" xml:space="preserve"><value>{0} corners</value></data>
+  <data name="PlanningOpenPlan" xml:space="preserve"><value>Open a .plan file</value></data>
+  <data name="PlanningSavePlan" xml:space="preserve"><value>Save as a .plan file</value></data>
+  <data name="PlanFileKind" xml:space="preserve"><value>QGroundControl plan</value></data>
+  <data name="PlanOpened" xml:space="preserve"><value>Plan opened</value></data>
+  <data name="PlanSaved" xml:space="preserve"><value>Plan saved</value></data>
+  <data name="PlanNotOpened" xml:space="preserve"><value>Plan not opened</value></data>
+  <data name="PlanNotSaved" xml:space="preserve"><value>Plan not saved</value></data>
+  <data name="PlanSkipped" xml:space="preserve"><value>{0} part(s) not supported: {1}</value></data>
+  <data name="PlanningPolygonDiscarded" xml:space="preserve"><value>Polygon discarded</value></data>
+  <data name="PlanningPolygonNeedsCorners" xml:space="preserve"><value>A polygon fence needs at least three corners.</value></data>
+  <data name="MapBaseMap" xml:space="preserve"><value>Base map (off shows a grid)</value></data>
+  <data name="MapSatellite" xml:space="preserve"><value>Satellite (switch to street)</value></data>
+  <data name="MapStreet" xml:space="preserve"><value>Street (switch to satellite)</value></data>
+  <data name="MapMission" xml:space="preserve"><value>Mission</value></data>
+  <data name="MapFences" xml:space="preserve"><value>Fences and zones</value></data>
+  <data name="MapVehicle" xml:space="preserve"><value>Vehicle</value></data>
+  <data name="MapTraffic" xml:space="preserve"><value>Traffic</value></data>
+  <data name="MapFollow" xml:space="preserve"><value>Follow the vehicle</value></data>
+  <data name="MapFit" xml:space="preserve"><value>Fit the plan</value></data>
+  <data name="PlanningTogglePanel" xml:space="preserve"><value>Show or hide the editor</value></data>
+  <data name="TerrainAhead" xml:space="preserve"><value>Terrain ahead</value></data>
+  <data name="FieldRejected" xml:space="preserve"><value>Not stored: {0}</value></data>
+  <data name="FieldOutOfRange" xml:space="preserve"><value>between {0} and {1}</value></data>
+  <data name="FieldNotNumber" xml:space="preserve"><value>not a number</value></data>
+  <data name="ParamAnyValue" xml:space="preserve"><value>any value</value></data>
+  <data name="ParamCount" xml:space="preserve"><value>{0} of {1}</value></data>
+  <data name="ParamDefault" xml:space="preserve"><value>Default: {0}</value></data>
+  <data name="ParamGroupAll" xml:space="preserve"><value>All parameters</value></data>
+  <data name="ParamGroupFavourites" xml:space="preserve"><value>Favourites</value></data>
+  <data name="ParamGroupOther" xml:space="preserve"><value>Other</value></data>
+  <data name="ParamNoMetadata" xml:space="preserve"><value>The firmware describes nothing about this parameter.</value></data>
+  <data name="ParamNotWhole" xml:space="preserve"><value>Enter a whole number.</value></data>
+  <data name="ParamOutOfRange" xml:space="preserve"><value>Allowed: {0}.</value></data>
+  <data name="ParamRange" xml:space="preserve"><value>Range: {0}</value></data>
+  <data name="ParamRebootRequired" xml:space="preserve"><value>Takes effect after a reboot.</value></data>
+  <data name="ParamsConfirmReboot" xml:space="preserve"><value>Reboot the autopilot? The link drops while it starts again.</value></data>
+  <data name="ParamsConfirmReset" xml:space="preserve"><value>Reset every parameter to its firmware default? Calibrations and setup are lost; reboot afterwards.</value></data>
+  <data name="ParamsDiffChanged" xml:space="preserve"><value>changed</value></data>
+  <data name="ParamsDiffInvalid" xml:space="preserve"><value>not valid</value></data>
+  <data name="ParamsDiffMissing" xml:space="preserve"><value>not on this vehicle</value></data>
+  <data name="ParamsFileKind" xml:space="preserve"><value>Parameter file</value></data>
+  <data name="ParamsLoad" xml:space="preserve"><value>Load a parameter file</value></data>
+  <data name="ParamsNotRead" xml:space="preserve"><value>Could not read the file: {0}</value></data>
+  <data name="ParamsNotSaved" xml:space="preserve"><value>Could not save the file: {0}</value></data>
+  <data name="ParamsReboot" xml:space="preserve"><value>Reboot</value></data>
+  <data name="ParamsResetAll" xml:space="preserve"><value>Reset all</value></data>
+  <data name="ParamsReviewOtherVehicle" xml:space="preserve"><value>It was saved from another vehicle.</value></data>
+  <data name="ParamsReviewSummary" xml:space="preserve"><value>{0}: {1} difference(s), {2} unchanged.</value></data>
+  <data name="ParamsSave" xml:space="preserve"><value>Save the parameters</value></data>
+  <data name="ParamsSaved" xml:space="preserve"><value>Saved {0} parameters to {1}.</value></data>
+  <data name="ParamsStaged" xml:space="preserve"><value>{0} change(s) from the file are pending; Apply writes them.</value></data>
+  <data name="ParamsReviewTitle" xml:space="preserve"><value>Load parameter file</value></data>
+  <data name="ParamsReviewStage" xml:space="preserve"><value>Stage selected</value></data>
+  <data name="ParamsSearch" xml:space="preserve"><value>Search name or description</value></data>
+  <data name="ParamsModified" xml:space="preserve"><value>Modified</value></data>
+  <data name="ParamsModifiedTip" xml:space="preserve"><value>Only parameters that differ from the firmware default</value></data>
+  <data name="ParamsFavouriteTip" xml:space="preserve"><value>Pin to favourites</value></data>
+  <data name="ParamsRevertTip" xml:space="preserve"><value>Drop this pending change</value></data>
+  <data name="ParamsPendingTip" xml:space="preserve"><value>Pending: written on Apply</value></data>
+  <data name="ParamsModifiedMark" xml:space="preserve"><value>Differs from the firmware default</value></data>
+  <data name="ParamsEmpty" xml:space="preserve"><value>No parameter matches.</value></data>
+  <data name="ParamsColumnVehicle" xml:space="preserve"><value>Vehicle</value></data>
+  <data name="ParamsColumnFile" xml:space="preserve"><value>File</value></data>
+  <data name="PowerBattery" xml:space="preserve"><value>BATTERY {0}</value></data>
+  <data name="PowerFailsafe" xml:space="preserve"><value>LOW BATTERY FAILSAFE</value></data>
+  <data name="SetupActionDone" xml:space="preserve"><value>{0}: done.</value></data>
+  <data name="SetupActionRefused" xml:space="preserve"><value>{0}: refused ({1}).</value></data>
+  <data name="SetupArmed" xml:space="preserve"><value>Vehicle armed: editing is off.</value></data>
+  <data name="SetupLinkLost" xml:space="preserve"><value>Link lost: values are from the last read; editing is off.</value></data>
+  <data name="SetupLoadingMetadata" xml:space="preserve"><value>Loading parameter descriptions...</value></data>
+  <data name="SetupLogEmpty" xml:space="preserve"><value>Parameter writes, setup actions and the vehicle&apos;s messages appear here.</value></data>
+  <data name="SetupLogRefused" xml:space="preserve"><value>{0} not written: {1}</value></data>
+  <data name="SetupLogTitle" xml:space="preserve"><value>SETUP LOG</value></data>
+  <data name="SetupLogWritten" xml:space="preserve"><value>{0} = {1}</value></data>
+  <data name="SetupNavTitle" xml:space="preserve"><value>VEHICLE SETUP</value></data>
+  <data name="SetupNoVehicle" xml:space="preserve"><value>No vehicle connected: values appear once a vehicle is connected.</value></data>
+  <data name="SetupPageParameters" xml:space="preserve"><value>Parameters</value></data>
+  <data name="SetupPagePower" xml:space="preserve"><value>Power</value></data>
+  <data name="SetupPageSummary" xml:space="preserve"><value>Summary</value></data>
+  <data name="SetupPending" xml:space="preserve"><value>{0} change(s) not written</value></data>
+  <data name="SetupReading" xml:space="preserve"><value>Reading parameters {0} / {1}</value></data>
+  <data name="SetupReadingStart" xml:space="preserve"><value>Reading parameters...</value></data>
+  <data name="SetupApply" xml:space="preserve"><value>Apply</value></data>
+  <data name="SetupDiscard" xml:space="preserve"><value>Discard</value></data>
+  <data name="SetupRefreshTip" xml:space="preserve"><value>Read all parameters again</value></data>
+  <data name="SetupStateNone" xml:space="preserve"><value>Not applicable</value></data>
+  <data name="SetupStateReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="SetupStateRequired" xml:space="preserve"><value>Setup required</value></data>
+  <data name="SummaryAirframe" xml:space="preserve"><value>Airframe</value></data>
+  <data name="SummaryDescriptions" xml:space="preserve"><value>Descriptions</value></data>
+  <data name="SummaryDescriptionsDownload" xml:space="preserve"><value>downloaded from the firmware&apos;s address</value></data>
+  <data name="SummaryDescriptionsNone" xml:space="preserve"><value>none</value></data>
+  <data name="SummaryDescriptionsVehicle" xml:space="preserve"><value>from the vehicle</value></data>
+  <data name="SummaryFirmware" xml:space="preserve"><value>Firmware</value></data>
+  <data name="SummaryMotors" xml:space="preserve"><value>Motors</value></data>
+  <data name="SummaryNoAirframe" xml:space="preserve"><value>No airframe is selected (SYS_AUTOSTART is 0).</value></data>
+  <data name="SummaryNotFixedWing" xml:space="preserve"><value>This vehicle is not configured as a fixed-wing (CA_AIRFRAME).</value></data>
+  <data name="SummaryParameters" xml:space="preserve"><value>Parameters</value></data>
+  <data name="SummarySurfaces" xml:space="preserve"><value>Control surfaces</value></data>
+  <data name="SummarySystemId" xml:space="preserve"><value>System id</value></data>
+  <data name="SummaryVehicleType" xml:space="preserve"><value>Vehicle type</value></data>
+  <data name="SummaryVehicle" xml:space="preserve"><value>VEHICLE</value></data>
+  <data name="SummaryChecklist" xml:space="preserve"><value>SETUP</value></data>
+  <data name="SummaryOpen" xml:space="preserve"><value>Open</value></data>
+  <data name="ParamGroup_failsafes" xml:space="preserve"><value>Failsafes</value></data>
+  <data name="ParamGroup_envelope" xml:space="preserve"><value>Flight envelope</value></data>
+  <data name="ParamGroup_tuning" xml:space="preserve"><value>Tuning</value></data>
+  <data name="ParamSection_low_battery" xml:space="preserve"><value>LOW BATTERY</value></data>
+  <data name="ParamSection_manual_control_loss" xml:space="preserve"><value>MANUAL CONTROL LOSS</value></data>
+  <data name="ParamSection_data_link_loss" xml:space="preserve"><value>DATA LINK LOSS</value></data>
+  <data name="ParamSection_geofence" xml:space="preserve"><value>GEOFENCE</value></data>
+  <data name="ParamSection_return" xml:space="preserve"><value>RETURN TO LAUNCH</value></data>
+  <data name="ParamSection_landing_disarm" xml:space="preserve"><value>LANDING AND DISARM</value></data>
+  <data name="ParamSection_attitude_failure" xml:space="preserve"><value>ATTITUDE FAILURE DETECTION</value></data>
+  <data name="ParamSection_airspeed" xml:space="preserve"><value>AIRSPEED</value></data>
+  <data name="ParamSection_geometry" xml:space="preserve"><value>AIRFRAME GEOMETRY</value></data>
+  <data name="ParamSection_mission_checks" xml:space="preserve"><value>MISSION CHECKS</value></data>
+  <data name="ParamSection_throttle" xml:space="preserve"><value>THROTTLE</value></data>
+  <data name="ParamSection_climb_sink" xml:space="preserve"><value>CLIMB AND SINK</value></data>
+  <data name="ParamSection_attitude_limits" xml:space="preserve"><value>ATTITUDE LIMITS</value></data>
+  <data name="ParamSection_path_following" xml:space="preserve"><value>PATH FOLLOWING AND LOITER</value></data>
+  <data name="ParamSection_takeoff" xml:space="preserve"><value>TAKEOFF</value></data>
+  <data name="ParamSection_landing" xml:space="preserve"><value>LANDING</value></data>
+  <data name="ParamSection_roll_rate" xml:space="preserve"><value>ROLL RATE</value></data>
+  <data name="ParamSection_pitch_rate" xml:space="preserve"><value>PITCH RATE</value></data>
+  <data name="ParamSection_yaw_rate" xml:space="preserve"><value>YAW RATE</value></data>
+  <data name="ParamSection_attitude" xml:space="preserve"><value>ATTITUDE</value></data>
+  <data name="ParamSection_tecs" xml:space="preserve"><value>TOTAL ENERGY CONTROL (TECS)</value></data>
+  <data name="ParamSection_gain_scaling" xml:space="preserve"><value>GAIN SCALING</value></data>
+  <data name="ParamCheck_stall_above_min" xml:space="preserve"><value>Invalid: the stall airspeed is above the minimum airspeed.</value></data>
+  <data name="ParamCheck_max_below_min" xml:space="preserve"><value>Invalid: the maximum airspeed is below the minimum airspeed.</value></data>
+  <data name="ParamCheck_trim_outside" xml:space="preserve"><value>Invalid: the trim airspeed is outside the minimum to maximum range.</value></data>
+  <data name="ParamCheck_bank_infeasible" xml:space="preserve"><value>Invalid: the maximum airspeed is too low to hold the maximum bank angle (FW_R_LIM) at gross weight. Raise FW_AIRSPD_MAX or lower FW_R_LIM.</value></data>
+  <data name="PlanningBreachSettings" xml:space="preserve"><value>BREACH SETTINGS (VEHICLE)</value></data>
+  <data name="SetupPageSensors" xml:space="preserve"><value>Sensors</value></data>
+  <data name="SensorsCalibration" xml:space="preserve"><value>CALIBRATION</value></data>
+  <data name="SensorsCalibrated" xml:space="preserve"><value>Calibrated</value></data>
+  <data name="SensorsNotCalibrated" xml:space="preserve"><value>Not calibrated</value></data>
+  <data name="SensorsCalibrate" xml:space="preserve"><value>Calibrate</value></data>
+  <data name="SensorsCompass" xml:space="preserve"><value>Compass</value></data>
+  <data name="SensorsGyro" xml:space="preserve"><value>Gyroscope</value></data>
+  <data name="SensorsAccelerometer" xml:space="preserve"><value>Accelerometer</value></data>
+  <data name="SensorsLevel" xml:space="preserve"><value>Level horizon</value></data>
+  <data name="SensorsAirspeed" xml:space="preserve"><value>Airspeed</value></data>
+  <data name="SensorsCompassHelp" xml:space="preserve"><value>Rotate the vehicle through every orientation shown until each is marked complete. Stay away from metal, magnets and running motors.</value></data>
+  <data name="SensorsGyroHelp" xml:space="preserve"><value>Place the vehicle on a steady surface and do not move it.</value></data>
+  <data name="SensorsAccelerometerHelp" xml:space="preserve"><value>Hold the vehicle still in each orientation shown when asked. The vehicle detects each orientation by itself.</value></data>
+  <data name="SensorsLevelHelp" xml:space="preserve"><value>Place the vehicle in its level cruise attitude and keep it still.</value></data>
+  <data name="SensorsAirspeedHelp" xml:space="preserve"><value>Shield the pitot tube from wind. When asked, blow gently into the pitot tube until the vehicle confirms.</value></data>
+  <data name="SensorsBoardOrientation" xml:space="preserve"><value>Autopilot orientation</value></data>
+  <data name="SensorsOrientation" xml:space="preserve"><value>ORIENTATION</value></data>
+  <data name="SensorsExternalCompass" xml:space="preserve"><value>External compass {0}</value></data>
+  <data name="SensorsOrientationNote" xml:space="preserve"><value>&quot;No rotation&quot; means the component points in the direction of flight. Only external compasses can be rotated.</value></data>
+  <data name="SensorsSideDown" xml:space="preserve"><value>Level</value></data>
+  <data name="SensorsSideUp" xml:space="preserve"><value>Upside down</value></data>
+  <data name="SensorsSideLeft" xml:space="preserve"><value>Left side down</value></data>
+  <data name="SensorsSideRight" xml:space="preserve"><value>Right side down</value></data>
+  <data name="SensorsSideFront" xml:space="preserve"><value>Nose down</value></data>
+  <data name="SensorsSideBack" xml:space="preserve"><value>Tail down</value></data>
+  <data name="SensorsSideCompleted" xml:space="preserve"><value>completed</value></data>
+  <data name="SensorsSideHold" xml:space="preserve"><value>hold still</value></data>
+  <data name="SensorsSideIncomplete" xml:space="preserve"><value>incomplete</value></data>
+  <data name="SensorsNotStarted" xml:space="preserve"><value>{0} calibration not started: {1}</value></data>
+  <data name="SensorsLogDone" xml:space="preserve"><value>{0} calibrated.</value></data>
+  <data name="SensorsLogFailed" xml:space="preserve"><value>{0} calibration failed: {1}</value></data>
+  <data name="SensorsLogCancelled" xml:space="preserve"><value>{0} calibration cancelled.</value></data>
+  <data name="SensorsCalibrateTitle" xml:space="preserve"><value>Calibrate: {0}</value></data>
+  <data name="SensorsStarting" xml:space="preserve"><value>Waiting for the vehicle to start the calibration...</value></data>
+  <data name="SensorsCancelling" xml:space="preserve"><value>Waiting for the vehicle to cancel...</value></data>
+  <data name="SensorsDone" xml:space="preserve"><value>Calibration complete.</value></data>
+  <data name="SensorsCancelled" xml:space="preserve"><value>Calibration cancelled. The previous calibration is kept.</value></data>
+  <data name="SensorsFailed" xml:space="preserve"><value>Calibration failed: {0}</value></data>
+  <data name="SensorsStart" xml:space="preserve"><value>Start</value></data>
+  <data name="SensorsClose" xml:space="preserve"><value>Close</value></data>
+  <data name="SetupPageRadio" xml:space="preserve"><value>Radio</value></data>
+  <data name="RadioSwitchArm" xml:space="preserve"><value>Arm</value></data>
+  <data name="RadioSwitchKill" xml:space="preserve"><value>Kill</value></data>
+  <data name="RadioSwitchReturn" xml:space="preserve"><value>Return</value></data>
+  <data name="RadioSwitchLoiter" xml:space="preserve"><value>Loiter (hold)</value></data>
+  <data name="RadioSwitchOffboard" xml:space="preserve"><value>Offboard</value></data>
+  <data name="RadioSwitchGear" xml:space="preserve"><value>Landing gear</value></data>
+  <data name="RadioSwitchFlaps" xml:space="preserve"><value>Flaps</value></data>
+  <data name="RadioMapping" xml:space="preserve"><value>CHANNEL ASSIGNMENT</value></data>
+  <data name="RadioInputMode" xml:space="preserve"><value>Manual control source</value></data>
+  <data name="RadioRoll" xml:space="preserve"><value>Roll (aileron)</value></data>
+  <data name="RadioPitch" xml:space="preserve"><value>Pitch (elevator)</value></data>
+  <data name="RadioYaw" xml:space="preserve"><value>Yaw (rudder)</value></data>
+  <data name="RadioThrottle" xml:space="preserve"><value>Throttle</value></data>
+  <data name="RadioAux1" xml:space="preserve"><value>Aux 1 passthrough</value></data>
+  <data name="RadioAux2" xml:space="preserve"><value>Aux 2 passthrough</value></data>
+  <data name="RadioKnob1" xml:space="preserve"><value>Tuning knob 1</value></data>
+  <data name="RadioKnob2" xml:space="preserve"><value>Tuning knob 2</value></data>
+  <data name="RadioKnob3" xml:space="preserve"><value>Tuning knob 3</value></data>
+  <data name="RadioModes" xml:space="preserve"><value>FLIGHT MODES</value></data>
+  <data name="RadioModeChannel" xml:space="preserve"><value>Mode channel</value></data>
+  <data name="RadioSlot" xml:space="preserve"><value>Slot {0}</value></data>
+  <data name="RadioSwitches" xml:space="preserve"><value>SWITCHES</value></data>
+  <data name="RadioNotUsed" xml:space="preserve"><value>Manual control source is &quot;{0}&quot;, so RC calibration is not required. It can still be done when a receiver is connected.</value></data>
+  <data name="RadioWritten" xml:space="preserve"><value>RC calibration written ({0} parameter(s)).</value></data>
+  <data name="RadioNotWritten" xml:space="preserve"><value>RC calibration: not written: {0}</value></data>
+  <data name="RadioCancelled" xml:space="preserve"><value>RC calibration cancelled; nothing was written.</value></data>
+  <data name="RadioCopyTrims" xml:space="preserve"><value>Copy trims</value></data>
+  <data name="RadioCopyTrimsTip" xml:space="preserve"><value>Store the current stick positions as the trims</value></data>
+  <data name="RadioOn" xml:space="preserve"><value>ON</value></data>
+  <data name="RadioOff" xml:space="preserve"><value>off</value></data>
+  <data name="RadioStepNeutral" xml:space="preserve"><value>Lower the throttle stick all the way and centre the other sticks. Disconnect motor power or remove the propeller. Then press Next.</value></data>
+  <data name="RadioStepThrottleUp" xml:space="preserve"><value>Move the throttle stick all the way up and hold it there...</value></data>
+  <data name="RadioStepThrottleDown" xml:space="preserve"><value>Move the throttle stick all the way down and leave it there...</value></data>
+  <data name="RadioStepYawRight" xml:space="preserve"><value>Move the yaw (rudder) stick all the way right and hold it there...</value></data>
+  <data name="RadioStepYawLeft" xml:space="preserve"><value>Move the yaw (rudder) stick all the way left and hold it there...</value></data>
+  <data name="RadioStepRollRight" xml:space="preserve"><value>Move the roll (aileron) stick all the way right and hold it there...</value></data>
+  <data name="RadioStepRollLeft" xml:space="preserve"><value>Move the roll (aileron) stick all the way left and hold it there...</value></data>
+  <data name="RadioStepPitchUp" xml:space="preserve"><value>Move the pitch (elevator) stick all the way up and hold it there...</value></data>
+  <data name="RadioStepPitchDown" xml:space="preserve"><value>Move the pitch (elevator) stick all the way down and hold it there...</value></data>
+  <data name="RadioStepSwitches" xml:space="preserve"><value>Move every switch and dial to both of its ends, then press Next.</value></data>
+  <data name="RadioStepComplete" xml:space="preserve"><value>Everything is captured. Next writes it to the vehicle.</value></data>
+  <data name="RadioCalibration" xml:space="preserve"><value>TRANSMITTER CALIBRATION</value></data>
+  <data name="RadioIntro" xml:space="preserve"><value>Maps the sticks and records each channel&apos;s range. The result is written at the end; nothing is written if it is cancelled.</value></data>
+  <data name="RadioNext" xml:space="preserve"><value>Next</value></data>
+  <data name="RadioMonitor" xml:space="preserve"><value>CHANNEL MONITOR</value></data>
+  <data name="RadioNoInput" xml:space="preserve"><value>No RC input received.</value></data>
+  <data name="PowerVoltmeter" xml:space="preserve"><value>Battery 1, external voltmeter (V)</value></data>
+  <data name="PowerAmmeter" xml:space="preserve"><value>Battery 1, external ammeter (A)</value></data>
+  <data name="PowerReads" xml:space="preserve"><value>vehicle reads {0} {1}</value></data>
+  <data name="PowerNoReading" xml:space="preserve"><value>no battery reading from the vehicle</value></data>
+  <data name="PowerCalculate" xml:space="preserve"><value>Calculate</value></data>
+  <data name="SetupPageActuators" xml:space="preserve"><value>Actuators</value></data>
+  <data name="ActuatorsBadMetadata" xml:space="preserve"><value>Actuator metadata could not be read: {0}</value></data>
+  <data name="ActuatorsNoMetadata" xml:space="preserve"><value>The firmware does not describe its actuators (no actuator metadata from the vehicle or its download address), so this page cannot be built. The output parameters can still be set on the Parameters page.</value></data>
+  <data name="ActuatorsNotShown" xml:space="preserve"><value>The firmware hides actuator setup for this vehicle (its control allocation is off).</value></data>
+  <data name="ActuatorsGeometry" xml:space="preserve"><value>Geometry: {0}</value></data>
+  <data name="ActuatorsAdvanced" xml:space="preserve"><value>Advanced</value></data>
+  <data name="ActuatorsUnset" xml:space="preserve"><value>One or more actuators still need to be assigned to an output.</value></data>
+  <data name="ActuatorsTesting" xml:space="preserve"><value>ACTUATOR TESTING</value></data>
+  <data name="ActuatorsPropellersRemoved" xml:space="preserve"><value>The propellers are removed. Turning this on enables the sliders; motors run at most 25 %.</value></data>
+  <data name="ActuatorsTestAll" xml:space="preserve"><value>Test all</value></data>
+  <data name="ActuatorsStopAll" xml:space="preserve"><value>Stop</value></data>
+  <data name="ActuatorsNoTests" xml:space="preserve"><value>No actuator is assigned to an output yet.</value></data>
+  <data name="ActuatorsStop" xml:space="preserve"><value>Hand the output back to the vehicle</value></data>
+  <data name="ActuatorsOutputs" xml:space="preserve"><value>OUTPUTS</value></data>
+  <data name="ActuatorsEnableGroup" xml:space="preserve"><value>Enable this output group to configure its channels.</value></data>
+  <data name="ActuatorsTestStopped" xml:space="preserve"><value>Actuator test stopped: {0}</value></data>
+  <data name="TerrainCredit" xml:space="preserve"><value>Terrain: Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA</value></data>
+  <data name="SettingsMap" xml:space="preserve"><value>MAP</value></data>
+  <data name="SettingsTileUrl" xml:space="preserve"><value>Custom tile URL</value></data>
+  <data name="SettingsTileAttribution" xml:space="preserve"><value>Its credit</value></data>
+  <data name="SettingsTileUrlTip" xml:space="preserve"><value>An XYZ tile URL with {z}, {x} and {y}. It replaces the satellite and street maps; leave it empty to use them. Respect the source&apos;s terms.</value></data>
+  <data name="SettingsTileUrlInvalid" xml:space="preserve"><value>Not stored: use an http(s) URL with {z}, {x} and {y}.</value></data>
+  <data name="PlanningFenceType" xml:space="preserve"><value>Type</value></data>
+  <data name="PlanningCircleSummary" xml:space="preserve"><value>circle {0:F0} m</value></data>
+  <data name="PlanningPolygonTool" xml:space="preserve"><value>Polygon</value></data>
+  <data name="PlanningCircleTool" xml:space="preserve"><value>Circle</value></data>
+  <data name="PlanningDeleteFence" xml:space="preserve"><value>Delete this fence</value></data>
+  <data name="PlanningClearFencesTip" xml:space="preserve"><value>Remove every fence</value></data>
+  <data name="ItemHelpTakeoff" xml:space="preserve"><value>Climbs out to the given altitude.</value></data>
+  <data name="ItemHelpWaypoint" xml:space="preserve"><value>Flies to a point and continues.</value></data>
+  <data name="ItemHelpLoiterUnlimited" xml:space="preserve"><value>Orbits until the operator intervenes.</value></data>
+  <data name="ItemHelpLoiterTime" xml:space="preserve"><value>Orbits for a set time, then continues.</value></data>
+  <data name="ItemHelpLoiterToAltitude" xml:space="preserve"><value>Orbits while climbing or descending to the target altitude.</value></data>
+  <data name="ItemHelpRegionOfInterest" xml:space="preserve"><value>Points the camera at a fixed location.</value></data>
+  <data name="ItemHelpChangeSpeed" xml:space="preserve"><value>Sets the target airspeed for the rest of the plan.</value></data>
+  <data name="ItemHelpTakePhoto" xml:space="preserve"><value>Captures a single frame.</value></data>
+  <data name="ItemHelpStartVideo" xml:space="preserve"><value>Begins video recording.</value></data>
+  <data name="ItemHelpStopVideo" xml:space="preserve"><value>Ends video recording.</value></data>
+  <data name="ItemHelpCameraTriggerDistance" xml:space="preserve"><value>Fires the shutter every N metres of travel. Zero disables it.</value></data>
+  <data name="ItemHelpDelaySeconds" xml:space="preserve"><value>Holds the plan for a set time before continuing.</value></data>
+  <data name="ItemHelpDoJump" xml:space="preserve"><value>Repeats an earlier part of the plan.</value></data>
+  <data name="ItemHelpLandingPattern" xml:space="preserve"><value>Descends on an orbit, leaves it on the tangent and lands along the approach.</value></data>
+  <data name="ItemHelpLand" xml:space="preserve"><value>Descends and touches down at this point.</value></data>
+  <data name="ItemHelpReturnToLaunch" xml:space="preserve"><value>Flies home and finishes the plan.</value></data>
+  <data name="PhaseButtonTakeoff" xml:space="preserve"><value>Takeoff</value></data>
+  <data name="PhaseButtonCruise" xml:space="preserve"><value>Cruise</value></data>
+  <data name="PhaseButtonLanding" xml:space="preserve"><value>Landing</value></data>
+  <data name="PlanningMissionTab" xml:space="preserve"><value>MISSION</value></data>
+  <data name="PlanningGeofenceTab" xml:space="preserve"><value>GEOFENCE</value></data>
+  <data name="PlanningCannotAdd" xml:space="preserve"><value>Cannot add {0}</value></data>
+</root>

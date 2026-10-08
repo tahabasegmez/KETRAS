@@ -1,0 +1,15 @@
+bin/
+obj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+TestResults/
+artifacts/
+*.nupkg
+*.snupkg
+.DS_Store
+
+# Markdown stays local
+*.md

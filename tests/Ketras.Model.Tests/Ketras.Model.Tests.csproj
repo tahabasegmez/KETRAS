@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Ketras.Model\Ketras.Model.csproj" />
+  </ItemGroup>
+</Project>

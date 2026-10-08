@@ -1,0 +1,70 @@
+<!-- The weather panel (a floating panel, 200 wide): a 26 px header with the source and time and a collapse action; the
+     wind compass (48) beside the temperature and the wind; one line under them with the vertical wind, humidity and
+     pressure, each behind its icon (the key in its tooltip). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:weather="using:Ketras.App.Weather"
+             xmlns:gauges="using:Ketras.Controls.Instruments"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Weather.WeatherView"
+             x:DataType="weather:WeatherViewModel"
+             Width="200">
+  <UserControl.Styles>
+    <Style Selector="StackPanel.reading">
+      <Setter Property="Orientation" Value="Horizontal" />
+      <Setter Property="Spacing" Value="3" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="StackPanel.reading > lucide|LucideIcon">
+      <Setter Property="Size" Value="{StaticResource Size.ChevronIcon}" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Faint}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="StackPanel.reading > TextBlock">
+      <Setter Property="FontSize" Value="{StaticResource FontSize.Small}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+  </UserControl.Styles>
+
+  <Border Classes="floating">
+    <StackPanel>
+      <Grid ColumnDefinitions="*,Auto,Auto" Height="{StaticResource Size.ControlHeight}" Margin="10,0,2,0">
+        <TextBlock Classes="panel-title" Text="{x:Static r:Strings.WeatherTitle}" VerticalAlignment="Center" />
+        <TextBlock x:Name="Status" Grid.Column="1" Classes="caption mono" Text="{Binding Status}" VerticalAlignment="Center" Margin="0,0,4,0" />
+        <Button Grid.Column="2" Classes="row-action" Command="{Binding ToggleExpandedCommand}" ToolTip.Tip="{x:Static r:Strings.WeatherCollapse}">
+          <Panel>
+            <lucide:LucideIcon Kind="ChevronDown" Size="{StaticResource Size.RowIcon}" IsVisible="{Binding IsExpanded}" />
+            <lucide:LucideIcon Kind="ChevronUp" Size="{StaticResource Size.RowIcon}" IsVisible="{Binding !IsExpanded}" />
+          </Panel>
+        </Button>
+      </Grid>
+      <Border x:Name="Body" IsVisible="{Binding IsExpanded}" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,1,0,0" Padding="10,6,10,8">
+        <StackPanel Spacing="6">
+          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+            <gauges:WindIndicator Width="48" Height="48" FromDegrees="{Binding WindFrom}" SpeedMps="{Binding WindSpeed}" />
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
+              <TextBlock x:Name="Temperature" Classes="title mono" Text="{Binding Temperature}" />
+              <TextBlock x:Name="Wind" Classes="value" FontSize="{StaticResource FontSize.Small}" Text="{Binding Wind}" TextTrimming="CharacterEllipsis"
+                         ToolTip.Tip="{x:Static r:Strings.WeatherKeyWind}" />
+            </StackPanel>
+          </Grid>
+          <Grid ColumnDefinitions="Auto,*,Auto,*,Auto">
+            <StackPanel Classes="reading" ToolTip.Tip="{x:Static r:Strings.WeatherKeyVertical}">
+              <lucide:LucideIcon Kind="ArrowUpDown" />
+              <TextBlock Classes="value" Text="{Binding VerticalWind}" />
+            </StackPanel>
+            <StackPanel Grid.Column="2" Classes="reading" ToolTip.Tip="{x:Static r:Strings.WeatherKeyHumidity}">
+              <lucide:LucideIcon Kind="Droplets" />
+              <TextBlock Classes="value" Text="{Binding Humidity}" />
+            </StackPanel>
+            <StackPanel Grid.Column="4" Classes="reading" ToolTip.Tip="{x:Static r:Strings.WeatherKeyPressure}">
+              <lucide:LucideIcon Kind="Gauge" />
+              <TextBlock Classes="value" Text="{Binding Pressure}" />
+            </StackPanel>
+          </Grid>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </Border>
+</UserControl>

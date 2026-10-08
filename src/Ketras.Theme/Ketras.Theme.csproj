@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>The Ketras look (docs/UI_RULES.md) as Avalonia resources and styles: colour, size and font tokens, the Fluent dark palette mapped to them, and the shared control patterns.</Description>
+    <PackageTags>avalonia;theme;gcs</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+  </ItemGroup>
+</Project>

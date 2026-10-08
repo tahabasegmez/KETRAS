@@ -1,0 +1,39 @@
+<Solution>
+  <Folder Name="/plugins/">
+    <Project Path="plugins/Ketras.Plugins.Template/Ketras.Plugins.Template.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/Ketras.Samples.MapOnly/Ketras.Samples.MapOnly.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Ketras.App/Ketras.App.csproj" />
+    <Project Path="src/Ketras.Controls.Instruments/Ketras.Controls.Instruments.csproj" />
+    <Project Path="src/Ketras.Controls.Map/Ketras.Controls.Map.csproj" />
+    <Project Path="src/Ketras.Controls.Scene3D/Ketras.Controls.Scene3D.csproj" />
+
+    <Project Path="src/Ketras.Mavlink.Testing/Ketras.Mavlink.Testing.csproj" />
+    <Project Path="src/Ketras.Mavlink/Ketras.Mavlink.csproj" />
+    <Project Path="src/Ketras.Model/Ketras.Model.csproj" />
+    <Project Path="src/Ketras.Rosbridge/Ketras.Rosbridge.csproj" />
+    <Project Path="src/Ketras.Simulation.Px4Sitl/Ketras.Simulation.Px4Sitl.csproj" />
+    <Project Path="src/Ketras.Station/Ketras.Station.csproj" />
+    <Project Path="src/Ketras.Terrain/Ketras.Terrain.csproj" />
+    <Project Path="src/Ketras.Theme/Ketras.Theme.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ketras.App.Tests/Ketras.App.Tests.csproj" />
+    <Project Path="tests/Ketras.Architecture.Tests/Ketras.Architecture.Tests.csproj" />
+    <Project Path="tests/Ketras.Controls.Instruments.Tests/Ketras.Controls.Instruments.Tests.csproj" />
+    <Project Path="tests/Ketras.Controls.Scene3D.Tests/Ketras.Controls.Scene3D.Tests.csproj" />
+    <Project Path="tests/Ketras.Controls.Map.Tests/Ketras.Controls.Map.Tests.csproj" />
+    <Project Path="tests/Ketras.Mavlink.Tests/Ketras.Mavlink.Tests.csproj" />
+    <Project Path="tests/Ketras.Model.Tests/Ketras.Model.Tests.csproj" />
+    <Project Path="tests/Ketras.Rosbridge.Tests/Ketras.Rosbridge.Tests.csproj" />
+    <Project Path="tests/Ketras.Simulation.Px4Sitl.Tests/Ketras.Simulation.Px4Sitl.Tests.csproj" />
+    <Project Path="tests/Ketras.Station.Tests/Ketras.Station.Tests.csproj" />
+    <Project Path="tests/Ketras.Terrain.Tests/Ketras.Terrain.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/sitl/Ketras.SitlSmoke/Ketras.SitlSmoke.csproj" />
+  </Folder>
+</Solution>

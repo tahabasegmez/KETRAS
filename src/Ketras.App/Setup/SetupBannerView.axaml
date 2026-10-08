@@ -1,0 +1,27 @@
+<!-- The setup banner: the edit state (with read progress) and, while there are pending changes, the apply bar. It takes
+     space only while it has something to say. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:setup="using:Ketras.App.Setup"
+             xmlns:common="using:Ketras.App.Common"
+             xmlns:r="using:Ketras.App.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.App.Setup.SetupBannerView"
+             x:DataType="setup:SetupBannerViewModel">
+  <StackPanel Spacing="4" Margin="0,0,0,12" MaxWidth="900" HorizontalAlignment="Left" IsVisible="{Binding IsShown}">
+    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" Height="26" IsVisible="{Binding HasState}">
+      <lucide:LucideIcon Kind="{Binding StateLevel, Converter={x:Static common:Converters.SeverityIcon}}" Size="{StaticResource Size.RowIcon}"
+                         Foreground="{Binding StateLevel, Converter={x:Static common:Converters.SeverityBrush}}" IsVisible="{Binding HasState}" VerticalAlignment="Center" />
+      <TextBlock x:Name="StateText" Grid.Column="1" Classes="small" Text="{Binding StateText}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+      <ProgressBar Grid.Column="2" Width="160" Minimum="0" Maximum="100" Value="{Binding ReadPercent}" IsVisible="{Binding IsReading}" VerticalAlignment="Center" />
+    </Grid>
+    <Border x:Name="ApplyBar" Classes="card" Padding="10,4" IsVisible="{Binding HasPending}">
+      <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+        <lucide:LucideIcon Kind="PencilLine" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Warning}" VerticalAlignment="Center" />
+        <TextBlock x:Name="PendingText" Grid.Column="1" Text="{Binding PendingText}" VerticalAlignment="Center" />
+        <Button x:Name="Apply" Grid.Column="2" Classes="primary" Content="{x:Static r:Strings.SetupApply}" Command="{Binding ApplyCommand}" IsEnabled="{Binding CanApply}" VerticalAlignment="Center" />
+        <Button x:Name="Discard" Grid.Column="3" Content="{x:Static r:Strings.SetupDiscard}" Command="{Binding DiscardCommand}" VerticalAlignment="Center" />
+      </Grid>
+    </Border>
+  </StackPanel>
+</UserControl>

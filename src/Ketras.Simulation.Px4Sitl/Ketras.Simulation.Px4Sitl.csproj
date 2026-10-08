@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>PX4 SITL (fixed-wing, Gazebo) as a Ketras station simulator, in Docker on Windows and Linux.</Description>
+    <PackageTags>px4;sitl;gazebo;simulation</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="scripts\**" Link="sitl\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ketras.Station\Ketras.Station.csproj" />
+    <ProjectReference Include="..\Ketras.Terrain\Ketras.Terrain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Ketras.Simulation.Px4Sitl.Tests" />
+  </ItemGroup>
+</Project>
