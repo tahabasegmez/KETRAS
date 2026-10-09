@@ -13,3 +13,4 @@ artifacts/
 
 # Markdown stays local
 *.md
+!/README.md
