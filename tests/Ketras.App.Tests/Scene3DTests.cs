@@ -145,6 +145,8 @@ public sealed class Scene3DTests
         scene.ShowGreyCommand.Execute(null);
         Assert.Equal((SceneSurface.Grey, "Grey"), (scene.Surface, settings.Get(Scene3DViewModel.SurfaceSetting)));
         Assert.Equal(Resources.Strings.TerrainCredit, scene.Credits);
+        scene.RequestImageryDetail(new Model.Geo.TileRange(18, 1, 1, 1, 1));
+        Assert.Null(scene.ImageryDetail);
     }
 
     [AvaloniaFact]

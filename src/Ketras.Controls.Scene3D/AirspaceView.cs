@@ -32,12 +32,29 @@ public sealed class AirspaceView : Panel
     private string? _followed;
     private bool _queued;
 
+    // The camera's wish for finer imagery settles before it is passed on, so a moving camera asks once it rests.
+    private static readonly TimeSpan DetailSettle = TimeSpan.FromMilliseconds(400);
+    private readonly DispatcherTimer _detailTimer;
+    private TileRange? _detailWanted;
+
     /// <summary>An empty scene.</summary>
     public AirspaceView()
     {
         Children.Add(_terrain);
         Children.Add(_viewport);
         _viewport.Terrain = _terrain;
+        _detailTimer = new DispatcherTimer { Interval = DetailSettle };
+        _detailTimer.Tick += (_, _) =>
+        {
+            _detailTimer.Stop();
+            ImageryDetailRequested?.Invoke(_detailWanted);
+        };
+        _viewport.DetailWanted += range =>
+        {
+            _detailWanted = range;
+            _detailTimer.Stop();
+            _detailTimer.Start();
+        };
         _viewport.FollowReleased += () =>
         {
             lock (_lock)
@@ -52,6 +69,13 @@ public sealed class AirspaceView : Panel
 
     /// <summary>Raised on the UI thread when the operator moves the camera off the followed aircraft (right button).</summary>
     public event Action? FollowReleased;
+
+    /// <summary>
+    /// Raised on the UI thread, once the camera rests, with the block of tiles finer imagery should cover around where it
+    /// looks: the lower the camera, the finer the zoom. Null when the base imagery is fine enough. The host loads the
+    /// block and passes it to <see cref="SetImageryDetail"/>.
+    /// </summary>
+    public event Action<TileRange?>? ImageryDetailRequested;
 
     /// <summary>The followed aircraft's id; null in overview or free flight.</summary>
     public string? Followed
@@ -117,11 +141,22 @@ public sealed class AirspaceView : Panel
         _viewport.SetGround(ground);
     });
 
-    /// <summary>Sets the map tiles draped over the terrain in <see cref="SceneGround.Imagery"/>; null removes them.</summary>
+    /// <summary>
+    /// Sets the map tiles draped over the whole terrain in <see cref="SceneGround.Imagery"/>; null removes them. Finer
+    /// detail around the camera is asked for through <see cref="ImageryDetailRequested"/> from then on.
+    /// </summary>
     public void SetImagery(SceneImagery? imagery) => OnUiThread(() =>
     {
         Imagery = imagery;
         _terrain.SetImagery(imagery);
+        _viewport.SetImageryBase(imagery?.Range, imagery?.MaxZoom ?? 0);
+    });
+
+    /// <summary>Sets the finer tiles drawn over the base imagery where they cover it; null removes them.</summary>
+    public void SetImageryDetail(SceneImagery? detail) => OnUiThread(() =>
+    {
+        ImageryDetail = detail;
+        _terrain.SetImageryDetail(detail);
     });
 
     /// <summary>The ground style in use; for tests.</summary>
@@ -129,6 +164,9 @@ public sealed class AirspaceView : Panel
 
     /// <summary>The imagery last set; for tests.</summary>
     internal SceneImagery? Imagery { get; private set; }
+
+    /// <summary>The detail imagery last set; for tests.</summary>
+    internal SceneImagery? ImageryDetail { get; private set; }
 
     /// <summary>Follows an aircraft by id; null returns to the overview.</summary>
     public void Follow(string? id) => Update(() => _followed = string.IsNullOrWhiteSpace(id) ? null : id.Trim());

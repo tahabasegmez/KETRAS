@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
+using Ketras.Model.Geo;
 
 namespace Ketras.Controls.Scene3D.Rendering;
 
@@ -182,6 +183,93 @@ internal sealed class AirspaceViewport : Control
 
     private TerrainView? _terrain;
     private ScenePalette _palette = ScenePalette.Night;
+
+    // Imagery detail: a square block of tiles around where the camera looks, at the zoom its distance calls for.
+    private const int DetailTiles = 12;
+    private const int DetailMargin = 3;
+    private const double MinimumDetailDistance = 30;
+    private TileRange? _imageryBase;
+    private int _imageryMaxZoom;
+    private TileRange? _detailWanted;
+
+    /// <summary>
+    /// Raised on the UI thread when the camera wants a different block of finer imagery than the last one (null: the
+    /// base imagery is fine enough, or the camera looks beyond it).
+    /// </summary>
+    public event Action<TileRange?>? DetailWanted;
+
+    /// <summary>The block of the base imagery and the finest zoom its source has; null without imagery.</summary>
+    public void SetImageryBase(TileRange? range, int maxZoom)
+    {
+        _imageryBase = range;
+        _imageryMaxZoom = maxZoom;
+        _detailWanted = null;
+        InvalidateVisual();
+    }
+
+    /// <summary>
+    /// Works out the detail block: where the line of sight meets the ground (at most four times the camera's height
+    /// away, else straight below it), at the zoom whose pixels match the screen's from the camera's distance to that
+    /// point. A block already asked for is kept while the point stays clear of its outer tiles.
+    /// </summary>
+    private void UpdateImageryDetail((double Latitude, double Longitude, double AltitudeMeters) center, CameraState camera, bool onTerrain)
+    {
+        if (!onTerrain || _palette != ScenePalette.Day || _imageryBase is not { } baseRange || Bounds.Height < 1)
+        {
+            WantDetail(null);
+            return;
+        }
+
+        var scale = (float)Math.Clamp(_options.SceneScale, 0.2, 3.5);
+        var eye = WorldToGeo(center, camera.Eye);
+        var ground = _terrain?.Grid?.HeightAt(new GeoPoint(eye.Latitude, eye.Longitude)) ?? _options.HomeAltitudeMeters;
+        var height = Math.Max(eye.AltitudeMeters - ground, 1);
+        var sight = camera.Target - camera.Eye;
+        var focus = camera.Eye with { Y = (float)((ground - center.AltitudeMeters) * scale) };
+        if (sight.LengthSquared() > 1e-6f && Vector3.Normalize(sight) is var direction && direction.Y < -0.05f)
+        {
+            var reach = (float)Math.Min(height * scale / -direction.Y, 4 * height * scale);
+            focus = camera.Eye + (direction * reach);
+        }
+
+        var point = WorldToGeo(center, focus);
+        var distance = Math.Max(Vector3.Distance(camera.Eye, focus) / scale, MinimumDetailDistance);
+        var zoom = WebMercatorRules.ZoomForHeight(distance, point.Latitude, _options.FieldOfViewDegrees, Bounds.Height, _imageryMaxZoom);
+        var baseTiles = 1 << baseRange.Zoom;
+        var (x, y) = (WebMercatorRules.X(point.Longitude), WebMercatorRules.Y(point.Latitude));
+        var insideBase = x >= (double)baseRange.MinX / baseTiles && x < (double)(baseRange.MinX + baseRange.Columns) / baseTiles
+                         && y >= (double)baseRange.MinY / baseTiles && y < (double)(baseRange.MinY + baseRange.Rows) / baseTiles;
+        if (zoom <= baseRange.Zoom || !insideBase)
+        {
+            WantDetail(null);
+            return;
+        }
+
+        if (_detailWanted is { } wanted && wanted.Zoom == zoom)
+        {
+            var n = 1 << zoom;
+            var column = (int)Math.Floor(x * n);
+            var row = (int)Math.Floor(y * n);
+            if (column >= wanted.MinX + DetailMargin && column < wanted.MinX + wanted.Columns - DetailMargin
+                && row >= wanted.MinY + DetailMargin && row < wanted.MinY + wanted.Rows - DetailMargin)
+            {
+                return;
+            }
+        }
+
+        WantDetail(WebMercatorRules.Around(point.Latitude, point.Longitude, zoom, DetailTiles));
+    }
+
+    private void WantDetail(TileRange? range)
+    {
+        if (_detailWanted == range)
+        {
+            return;
+        }
+
+        _detailWanted = range;
+        DetailWanted?.Invoke(range);
+    }
 
     /// <summary>The sky, haze and flat ground to draw: <see cref="ScenePalette.Day"/> over imagery.</summary>
     public void SetGround(SceneGround ground)
@@ -408,6 +496,7 @@ internal sealed class AirspaceViewport : Control
         _terrain?.SetFrame(new TerrainView.Frame(camera.Eye, camera.Target, _options.FieldOfViewDegrees,
             center.Latitude, center.Longitude, center.AltitudeMeters, _options.SceneScale, _options.FogStartMeters, _options.FogEndMeters));
         var onTerrain = _terrain is { HasSurface: true };
+        UpdateImageryDetail(center, camera, onTerrain);
 
         // Scissor-clip everything to the control rect so nothing can spill outside the box.
         using (context.PushClip(bounds))
@@ -1461,6 +1550,21 @@ internal sealed class AirspaceViewport : Control
         return new Vector3((float)(east * scale), (float)(up * scale), (float)(north * scale));
     }
 
+    /// <summary>The inverse of <see cref="GeoToWorld"/>.</summary>
+    private (double Latitude, double Longitude, double AltitudeMeters) WorldToGeo(
+        (double Latitude, double Longitude, double AltitudeMeters) center,
+        Vector3 world)
+    {
+        const double earthRadius = 6378137;
+        var scale = Math.Clamp(_options.SceneScale, 0.2, 3.5);
+        var north = world.Z / scale;
+        var east = world.X / scale;
+        return (
+            center.Latitude + (north / earthRadius * (180d / Math.PI)),
+            center.Longitude + (east / (earthRadius * Math.Cos(DegreesToRadians(center.Latitude))) * (180d / Math.PI)),
+            center.AltitudeMeters + (world.Y / scale));
+    }
+
     /// <summary>Smoothstep haze factor: 0 at FogStartMeters, 1 at FogEndMeters.</summary>
     private float FogAt(float distance)
     {
@@ -1534,6 +1638,14 @@ internal sealed class AirspaceViewport : Control
     {
         var camera = BuildCameraState(SelectReferenceCenter());
         return (camera.Eye, camera.Target, _cameraMode == CameraMode.Free);
+    }
+
+    /// <summary>The detail block this frame's camera wants, as if terrain were drawn; for tests.</summary>
+    internal TileRange? DetailForTests()
+    {
+        var center = SelectReferenceCenter();
+        UpdateImageryDetail(center, BuildCameraState(center), onTerrain: true);
+        return _detailWanted;
     }
 
     /// <summary>An aircraft's position in this frame's world; for tests.</summary>

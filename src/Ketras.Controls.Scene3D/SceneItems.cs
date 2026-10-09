@@ -64,7 +64,8 @@ public enum SceneGround
 /// <param name="Encoded">The image file's bytes.</param>
 public sealed record SceneImageryTile(int X, int Y, byte[] Encoded);
 
-/// <summary>Map tiles to drape over the terrain; tiles missing from the block leave the grey relief showing.</summary>
+/// <summary>Map tiles to drape over the terrain; tiles missing from the block leave what is under them showing.</summary>
 /// <param name="Range">The XYZ tile block.</param>
 /// <param name="Tiles">The tiles of the block that are available.</param>
-public sealed record SceneImagery(TileRange Range, IReadOnlyList<SceneImageryTile> Tiles);
+/// <param name="MaxZoom">The finest zoom the source serves; finer detail is asked for up to it.</param>
+public sealed record SceneImagery(TileRange Range, IReadOnlyList<SceneImageryTile> Tiles, int MaxZoom = 19);

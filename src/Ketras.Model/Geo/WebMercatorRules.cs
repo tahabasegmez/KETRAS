@@ -20,6 +20,9 @@ public static class WebMercatorRules
     /// <summary>Edge length of one tile in pixels.</summary>
     public const int TilePixels = 256;
 
+    /// <summary>Ground size of one pixel at zoom 0 on the equator, metres (WGS84 equatorial circumference / 256).</summary>
+    public const double EquatorMetersPerPixel = 156543.03392804097;
+
     /// <summary>Latitude limit of the projection, degrees.</summary>
     public const double MaxLatitude = 85.05112878;
 
@@ -69,5 +72,27 @@ public static class WebMercatorRules
         }
 
         return best;
+    }
+
+    /// <summary>
+    /// The zoom whose pixels match what a camera at <paramref name="heightMeters"/> above the ground sees straight down:
+    /// one tile pixel per screen pixel, given the vertical field of view and the view's height in pixels. Lower cameras
+    /// get finer zooms; at most <paramref name="maxZoom"/>, at least 0.
+    /// </summary>
+    public static int ZoomForHeight(double heightMeters, double latitude, double fieldOfViewDegrees, double viewPixels, int maxZoom)
+    {
+        var groundPerPixel = 2 * Math.Max(heightMeters, 1) * Math.Tan(fieldOfViewDegrees * Math.PI / 360) / Math.Max(viewPixels, 1);
+        var zoom = Math.Floor(Math.Log2(EquatorMetersPerPixel * Math.Cos(latitude * Math.PI / 180) / groundPerPixel));
+        return (int)Math.Clamp(zoom, 0, maxZoom);
+    }
+
+    /// <summary>A square block of <paramref name="size"/> tiles at <paramref name="zoom"/> centred on a point, kept on the map.</summary>
+    public static TileRange Around(double latitude, double longitude, int zoom, int size)
+    {
+        var n = 1 << zoom;
+        var side = Math.Min(size, n);
+        var minX = Math.Clamp((int)Math.Floor(X(longitude) * n) - (side / 2), 0, n - side);
+        var minY = Math.Clamp((int)Math.Floor(Y(latitude) * n) - (side / 2), 0, n - side);
+        return new TileRange(zoom, minX, minY, side, side);
     }
 }

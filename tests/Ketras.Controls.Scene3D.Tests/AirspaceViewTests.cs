@@ -180,6 +180,48 @@ public sealed class ImageryTests
     }
 
     [AvaloniaFact]
+    public void The_camera_asks_for_finer_imagery_the_lower_it_is()
+    {
+        var home = new GeoPoint(47.397971, 8.546164);
+        var view = new AirspaceView();
+        var window = new Window { Content = view, Width = 1000, Height = 800 };
+        window.Show();
+        var baseRange = WebMercatorRules.PickTiles(47.37, 8.51, 47.42, 8.58, 15);
+        view.SetOptions(new SceneOptions { Origin = home, HomeAltitudeMeters = 488 });
+        view.SetGround(SceneGround.Imagery);
+        view.SetImagery(new SceneImagery(baseRange, [], 19));
+        Dispatcher.UIThread.RunJobs();
+        window.UpdateLayout();
+        // Headless rendering has no GPU terrain, so a frame drawn in between asks for nothing.
+        var requests = new List<TileRange?>();
+        view.Viewport.DetailWanted += requests.Add;
+
+        var high = view.Viewport.DetailForTests();
+        view.SetOptions(new SceneOptions { Origin = home, HomeAltitudeMeters = 488, OverviewRadiusMeters = 250 });
+        Dispatcher.UIThread.RunJobs();
+        var low = view.Viewport.DetailForTests();
+
+        // The overview camera looks at home from about 900 m, then from 250 m: finer than the base, and finer again.
+        Assert.True(high is { } h && h.Zoom > baseRange.Zoom, $"{high}");
+        Assert.True(low is { } l && l.Zoom > high!.Value.Zoom, $"{low}");
+        var homeTile = WebMercatorRules.Tiles(home.Latitude, home.Longitude, home.Latitude, home.Longitude, low!.Value.Zoom);
+        Assert.InRange(homeTile.MinX, low.Value.MinX, low.Value.MinX + low.Value.Columns - 1);
+        Assert.InRange(homeTile.MinY, low.Value.MinY, low.Value.MinY + low.Value.Rows - 1);
+        Assert.Equal([high, low], requests.Where(r => r is not null));
+        Assert.Equal(low, view.Viewport.DetailForTests());
+
+        // Grey relief, or a base already as fine as the camera needs, wants no detail.
+        view.SetImagery(new SceneImagery(baseRange with { Zoom = 19 }, [], 19));
+        Dispatcher.UIThread.RunJobs();
+        Assert.Null(view.Viewport.DetailForTests());
+        view.SetImagery(new SceneImagery(baseRange, [], 19));
+        view.SetGround(SceneGround.Relief);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Null(view.Viewport.DetailForTests());
+        window.Close();
+    }
+
+    [AvaloniaFact]
     public void The_ground_style_and_imagery_reach_the_view()
     {
         var view = new AirspaceView();
@@ -190,6 +232,9 @@ public sealed class ImageryTests
         Dispatcher.UIThread.RunJobs();
 
         Assert.Equal((SceneGround.Imagery, imagery), (view.Ground, view.Imagery));
+        view.SetImageryDetail(imagery);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Same(imagery, view.ImageryDetail);
         view.SetGround(SceneGround.Relief);
         view.SetImagery(null);
         Dispatcher.UIThread.RunJobs();

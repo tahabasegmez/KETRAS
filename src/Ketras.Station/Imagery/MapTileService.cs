@@ -15,10 +15,12 @@ public sealed record ImageryTile(int X, int Y, byte[] Encoded);
 /// <param name="Range">The block.</param>
 /// <param name="Tiles">The tiles that were had.</param>
 /// <param name="Attribution">The source's credit.</param>
-public sealed record ImageryMosaic(TileRange Range, IReadOnlyList<ImageryTile> Tiles, string Attribution);
+/// <param name="MaxZoom">The finest zoom the source serves, for finer blocks around the camera.</param>
+public sealed record ImageryMosaic(TileRange Range, IReadOnlyList<ImageryTile> Tiles, string Attribution, int MaxZoom);
 
 /// <summary>
-/// Fetches map tiles over an area for the 3D scene: one zoom fine enough for a texture of at most 4096 px a side, each
+/// Fetches map tiles for the 3D scene: over an area at one zoom fine enough for a texture of at most 4096 px a side, or
+/// a given block (the finer detail around the camera). Each
 /// tile read from the disk cache the planning map fills (<c>{tiles}/{source}/{z}/{x}/{y}.tile</c>, BruTile's
 /// <c>FileCache</c> layout) or downloaded into it. A tile that fails is left out. No bulk download beyond the one area
 /// (the OpenStreetMap tile usage policy). Thread-safe.
@@ -28,8 +30,11 @@ public sealed class MapTileService : IDisposable
     /// <summary>Tile servers ask clients to identify themselves; the same agent as the planning map.</summary>
     public const string UserAgent = "Ketras ground station (https://github.com/ketras)";
 
-    /// <summary>Finest zoom fetched for the scene.</summary>
+    /// <summary>Finest zoom fetched for a whole area.</summary>
     public const int MaxZoom = 17;
+
+    /// <summary>Most tiles one request may cover.</summary>
+    public const int MaxTiles = 256;
 
     private const int Parallel = 4;
     private static readonly TimeSpan TileTimeout = TimeSpan.FromSeconds(20);
@@ -64,7 +69,21 @@ public sealed class MapTileService : IDisposable
     /// </summary>
     public async Task<ImageryMosaic> LoadAsync(TileSource source, double south, double west, double north, double east, CancellationToken cancellation = default)
     {
-        var range = WebMercatorRules.PickTiles(south, west, north, east, Math.Min(MaxZoom, source.MaxZoom));
+        var range = WebMercatorRules.PickTiles(south, west, north, east, Math.Min(MaxZoom, source.MaxZoom), maxTiles: MaxTiles);
+        return await LoadAsync(source, range, cancellation);
+    }
+
+    /// <summary>
+    /// The tiles of <paramref name="source"/> in one block. Throws on cancellation, and on a block beyond the source's
+    /// zoom or larger than <see cref="MaxTiles"/>.
+    /// </summary>
+    public async Task<ImageryMosaic> LoadAsync(TileSource source, TileRange range, CancellationToken cancellation = default)
+    {
+        if (range.Zoom > source.MaxZoom || range.Count > MaxTiles)
+        {
+            throw new ArgumentOutOfRangeException(nameof(range), range, $"At most zoom {source.MaxZoom} and {MaxTiles} tiles.");
+        }
+
         var cells = new List<(int X, int Y)>(range.Count);
         for (var row = 0; row < range.Rows; row++)
         {
@@ -84,7 +103,7 @@ public sealed class MapTileService : IDisposable
                 tiles[index] = await TileAsync(source, range.Zoom, x, y, token);
             });
 
-        return new ImageryMosaic(range, [.. tiles.OfType<ImageryTile>()], source.Attribution);
+        return new ImageryMosaic(range, [.. tiles.OfType<ImageryTile>()], source.Attribution, source.MaxZoom);
     }
 
     /// <inheritdoc />

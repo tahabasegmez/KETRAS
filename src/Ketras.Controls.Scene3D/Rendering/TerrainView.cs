@@ -68,15 +68,39 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
     private WriteableBitmap? _image;
     private byte[] _pixels = [];
 
-    private ImageryTexture? _pendingImagery;
-    private bool _imageryChanged;
-    private int _imageryGeneration;
-    private ImageryTexture? _imagery;
-    private int _imageryTexture;
+    // The imagery over the whole terrain, and the finer block around the camera drawn over it where it has tiles.
+    private readonly ImageryLayer _base = new(0, "uBase");
+    private readonly ImageryLayer _detail = new(1, "uDetail");
     private int _maxTextureSize = 4096;
     private delegate* unmanaged[Stdcall]<int, void> _generateMipmap;
+    private delegate* unmanaged[Stdcall]<int, float, float, float, float, void> _uniform4f;
+    private delegate* unmanaged[Stdcall]<int, int, void> _uniform1i;
 
-    private int _uViewProj, _uOffset, _uScale, _uEye, _uFog, _uHaze, _uImageryU, _uImageryV, _uAnchorLatitude;
+    private int _uViewProj, _uOffset, _uScale, _uEye, _uFog, _uHaze;
+
+    /// <summary>One imagery texture: what waits to be uploaded, what is on the GPU, and its shader inputs.</summary>
+    private sealed class ImageryLayer(int unit, string name)
+    {
+        public int Unit { get; } = unit;
+
+        public string Name { get; } = name;
+
+        public ImageryTexture? Pending { get; set; }
+
+        public bool Changed { get; set; }
+
+        public int Generation { get; set; }
+
+        public ImageryTexture? Current { get; set; }
+
+        public int Texture { get; set; }
+
+        public int Sampler { get; set; }
+
+        public int U { get; set; }
+
+        public int V { get; set; }
+    }
     private int _uSkyHorizon, _uSkyTop, _uSkyMid, _uSkyHaze, _uSkyGround;
 
     /// <summary>What the viewport's camera sees this frame; world axes as in <see cref="AirspaceViewport"/>.</summary>
@@ -166,9 +190,14 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
     }
 
     /// <summary>Replaces the imagery draped in <see cref="SceneGround.Imagery"/>; decoded off the UI thread. Null removes it.</summary>
-    internal void SetImagery(SceneImagery? imagery)
+    internal void SetImagery(SceneImagery? imagery) => SetLayer(_base, imagery);
+
+    /// <summary>Replaces the finer imagery drawn over the base where it has tiles; null removes it.</summary>
+    internal void SetImageryDetail(SceneImagery? imagery) => SetLayer(_detail, imagery);
+
+    private void SetLayer(ImageryLayer layer, SceneImagery? imagery)
     {
-        var generation = ++_imageryGeneration;
+        var generation = ++layer.Generation;
         if (imagery is null)
         {
             Accept(null);
@@ -178,7 +207,7 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         var maxSize = _maxTextureSize;
         Task.Run(() => ImageryTexture.Build(imagery, maxSize)).ContinueWith(task => Dispatcher.UIThread.Post(() =>
         {
-            if (generation == _imageryGeneration && task.IsCompletedSuccessfully)
+            if (generation == layer.Generation && task.IsCompletedSuccessfully)
             {
                 Accept(task.Result);
             }
@@ -186,8 +215,8 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
 
         void Accept(ImageryTexture? texture)
         {
-            _pendingImagery = texture;
-            _imageryChanged = true;
+            layer.Pending = texture;
+            layer.Changed = true;
             RequestNextFrameRendering();
         }
     }
@@ -234,9 +263,15 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         _uEye = gl.GetUniformLocationString(_terrainProgram, "uEye");
         _uFog = gl.GetUniformLocationString(_terrainProgram, "uFog");
         _uHaze = gl.GetUniformLocationString(_terrainProgram, "uHaze");
-        _uImageryU = gl.GetUniformLocationString(_terrainProgram, "uImageryU");
-        _uImageryV = gl.GetUniformLocationString(_terrainProgram, "uImageryV");
-        _uAnchorLatitude = gl.GetUniformLocationString(_terrainProgram, "uAnchorLatitude");
+        foreach (var layer in new[] { _base, _detail })
+        {
+            layer.Sampler = gl.GetUniformLocationString(_terrainProgram, layer.Name);
+            layer.U = gl.GetUniformLocationString(_terrainProgram, layer.Name + "U");
+            layer.V = gl.GetUniformLocationString(_terrainProgram, layer.Name + "V");
+        }
+
+        _uniform4f = (delegate* unmanaged[Stdcall]<int, float, float, float, float, void>)gl.GetProcAddress("glUniform4f");
+        _uniform1i = (delegate* unmanaged[Stdcall]<int, int, void>)gl.GetProcAddress("glUniform1i");
         _generateMipmap = (delegate* unmanaged[Stdcall]<int, void>)gl.GetProcAddress("glGenerateMipmap");
         gl.GetIntegerv(GlMaxTextureSize, out var maxTextureSize);
         _maxTextureSize = maxTextureSize > 0 ? Math.Min(maxTextureSize, 8192) : 4096;
@@ -252,14 +287,18 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
     {
         ReleaseChunks(gl);
 
-        // Uploaded again if a new context comes.
-        if (!_imageryChanged && _imagery is not null)
+        foreach (var layer in new[] { _base, _detail })
         {
-            _pendingImagery = _imagery;
-            _imageryChanged = true;
+            // Uploaded again if a new context comes.
+            if (!layer.Changed && layer.Current is not null)
+            {
+                layer.Pending = layer.Current;
+                layer.Changed = true;
+            }
+
+            ReleaseLayer(gl, layer);
         }
 
-        ReleaseImagery(gl);
         if (_vertexArray != 0)
         {
             gl.DeleteVertexArray(_vertexArray);
@@ -288,11 +327,14 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
             _pendingMesh = null;
         }
 
-        if (_imageryChanged)
+        foreach (var layer in new[] { _base, _detail })
         {
-            _imageryChanged = false;
-            UploadImagery(gl, _pendingImagery);
-            _pendingImagery = null;
+            if (layer.Changed)
+            {
+                layer.Changed = false;
+                UploadLayer(gl, layer, layer.Pending);
+                layer.Pending = null;
+            }
         }
 
         var scaling = VisualRoot?.RenderScaling ?? 1;
@@ -461,7 +503,8 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         _uniform3f(_uEye, frame.Eye.X, frame.Eye.Y, frame.Eye.Z);
         _uniform3f(_uFog, (float)Math.Max(1, frame.FogStartMeters), (float)Math.Max(frame.FogStartMeters + 1, frame.FogEndMeters), (float)frame.DatumMeters);
         SetColor(_uHaze, Rgb(_palette.Haze));
-        SetImageryUniforms(gl, anchor);
+        SetLayerUniforms(gl, _base, anchor);
+        SetLayerUniforms(gl, _detail, anchor);
 
         const int stride = TerrainMesh.FloatsPerVertex * sizeof(float);
         gl.EnableVertexAttribArray(0);
@@ -524,41 +567,45 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
     }
 
     /// <summary>
-    /// Imagery lookup, in the shader's terms: u = (Δlon + uImageryU.x) · uImageryU.y, and
-    /// v = uImageryV.x + (uImageryV.z − ln tan(π/4 + φ/2)) · uImageryV.y with φ = uAnchorLatitude + Δlat (radians).
-    /// The anchor terms are worked out here in double precision. uImageryU.z is 1 while imagery is drawn.
+    /// A layer's lookup, in the shader's terms: u = (Δlon + U.x) · U.y, linear in longitude; v = V.y + (V.z + V.w·Δφ)·Δφ
+    /// with Δφ = radians(Δlat − V.x), the mercator y around the texture's middle latitude to second order (under 0.1 px
+    /// over the scene's few kilometres, where the exact logarithm in single precision is off by pixels at fine zooms).
+    /// U.z is 1 while the layer is drawn. The terms are worked out here in double precision.
     /// </summary>
-    private void SetImageryUniforms(GlInterface gl, (double Latitude, double Longitude) anchor)
+    private void SetLayerUniforms(GlInterface gl, ImageryLayer layer, (double Latitude, double Longitude) anchor)
     {
-        if (_ground != SceneGround.Imagery || _imagery is not { } imagery || _imageryTexture == 0)
+        if (_ground != SceneGround.Imagery || layer.Current is not { } imagery || layer.Texture == 0 || _uniform4f == null || _uniform1i == null)
         {
-            _uniform3f(_uImageryU, 0, 0, 0);
+            _uniform3f(layer.U, 0, 0, 0);
             return;
         }
 
         var spanX = imagery.MaxX - imagery.MinX;
         var spanY = imagery.MaxY - imagery.MinY;
-        var anchorPhi = anchor.Latitude * Math.PI / 180;
-        var anchorM = Math.Log(Math.Tan((Math.PI / 4) + (anchorPhi / 2)));
-        _uniform3f(_uImageryU, (float)(anchor.Longitude - WebMercatorRules.Longitude(imagery.MinX)), (float)(1 / (360 * spanX)), 1);
-        _uniform3f(_uImageryV, (float)((WebMercatorRules.Y(anchor.Latitude) - imagery.MinY) / spanY), (float)(1 / (2 * Math.PI * spanY)), (float)anchorM);
-        gl.Uniform1f(_uAnchorLatitude, (float)anchorPhi);
-        gl.ActiveTexture(GlTexture0);
-        gl.BindTexture(GlTexture2D, _imageryTexture);
+        var middle = WebMercatorRules.Latitude((imagery.MinY + imagery.MaxY) / 2);
+        var phi = middle * Math.PI / 180;
+        var secant = 1 / Math.Cos(phi);
+        var slope = -secant / (2 * Math.PI * spanY);
+        var curve = -0.5 * secant * Math.Tan(phi) / (2 * Math.PI * spanY);
+        _uniform3f(layer.U, (float)(anchor.Longitude - WebMercatorRules.Longitude(imagery.MinX)), (float)(1 / (360 * spanX)), 1);
+        _uniform4f(layer.V, (float)(middle - anchor.Latitude), (float)((WebMercatorRules.Y(middle) - imagery.MinY) / spanY), (float)slope, (float)curve);
+        _uniform1i(layer.Sampler, layer.Unit);
+        gl.ActiveTexture(GlTexture0 + layer.Unit);
+        gl.BindTexture(GlTexture2D, layer.Texture);
     }
 
-    private void UploadImagery(GlInterface gl, ImageryTexture? imagery)
+    private void UploadLayer(GlInterface gl, ImageryLayer layer, ImageryTexture? imagery)
     {
-        ReleaseImagery(gl);
-        _imagery = imagery;
+        ReleaseLayer(gl, layer);
+        layer.Current = imagery;
         if (imagery is null)
         {
             return;
         }
 
-        _imageryTexture = gl.GenTexture();
-        gl.ActiveTexture(GlTexture0);
-        gl.BindTexture(GlTexture2D, _imageryTexture);
+        layer.Texture = gl.GenTexture();
+        gl.ActiveTexture(GlTexture0 + layer.Unit);
+        gl.BindTexture(GlTexture2D, layer.Texture);
         fixed (byte* data = imagery.Pixels)
         {
             gl.TexImage2D(GlTexture2D, 0, GlRgba8, imagery.Width, imagery.Height, 0, GlRgba, GlUnsignedByte, (IntPtr)data);
@@ -575,17 +622,18 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         gl.TexParameteri(GlTexture2D, GlTextureWrapS, GlClampToEdge);
         gl.TexParameteri(GlTexture2D, GlTextureWrapT, GlClampToEdge);
         gl.BindTexture(GlTexture2D, 0);
+        gl.ActiveTexture(GlTexture0);
     }
 
-    private void ReleaseImagery(GlInterface gl)
+    private static void ReleaseLayer(GlInterface gl, ImageryLayer layer)
     {
-        if (_imageryTexture != 0)
+        if (layer.Texture != 0)
         {
-            gl.DeleteTexture(_imageryTexture);
-            _imageryTexture = 0;
+            gl.DeleteTexture(layer.Texture);
+            layer.Texture = 0;
         }
 
-        _imagery = null;
+        layer.Current = null;
     }
 
     private void ReleaseChunks(GlInterface gl)
@@ -721,7 +769,8 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         """;
 
     // Neutral greys lit from the north-west with faint 10 m / 50 m contour lines; or, where imagery is drawn, the
-    // imagery under a mild hillshade with very thin dark contours. Then the scene's distance haze.
+    // imagery (the detail block where it has tiles, else the base) under a mild hillshade with very thin dark contours.
+    // Then the scene's distance haze.
     private const string TerrainFragmentShader = """
         in vec3 vWorld;
         in vec3 vNormal;
@@ -730,10 +779,12 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         uniform vec3 uEye;
         uniform vec3 uFog;
         uniform vec3 uHaze;
-        uniform vec3 uImageryU;
-        uniform vec3 uImageryV;
-        uniform float uAnchorLatitude;
-        uniform sampler2D uImagery;
+        uniform vec3 uBaseU;
+        uniform vec4 uBaseV;
+        uniform sampler2D uBase;
+        uniform vec3 uDetailU;
+        uniform vec4 uDetailV;
+        uniform sampler2D uDetail;
         out vec4 fragColor;
         float contour(float height, float spacing, float thickness)
         {
@@ -742,21 +793,22 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
             float line = 1.0 - min(abs(fract(x - 0.5) - 0.5) / (width * thickness), 1.0);
             return line * clamp(1.5 - width * 4.0, 0.0, 1.0);
         }
+        // Sampled outside any non-uniform branch, so the mipmap derivatives stay defined.
+        vec4 layer(sampler2D tiles, vec3 u, vec4 v)
+        {
+            float dphi = radians(vDelta.y - v.x);
+            vec2 uv = vec2((vDelta.x + u.x) * u.y, v.y + (v.z + v.w * dphi) * dphi);
+            vec4 sampled = texture(tiles, clamp(uv, 0.0, 1.0));
+            return u.z > 0.5 && uv == clamp(uv, 0.0, 1.0) ? sampled : vec4(0.0);
+        }
         void main()
         {
             vec3 n = normalize(vNormal);
             vec3 sun = normalize(vec3(-0.55, 0.75, 0.40));
             float lambert = max(dot(n, sun), 0.0);
-            vec4 texel = vec4(0.0);
-            if (uImageryU.z > 0.5)
-            {
-                float phi = uAnchorLatitude + radians(vDelta.y);
-                vec2 uv = vec2((vDelta.x + uImageryU.x) * uImageryU.y, uImageryV.x + (uImageryV.z - log(tan(0.78539816 + phi * 0.5))) * uImageryV.y);
-                // Sampled outside any non-uniform branch, so the mipmap derivatives stay defined.
-                vec4 sampled = texture(uImagery, clamp(uv, 0.0, 1.0));
-                texel = uv == clamp(uv, 0.0, 1.0) ? sampled : vec4(0.0);
-            }
-
+            vec4 detail = layer(uDetail, uDetailU, uDetailV);
+            vec4 coarse = layer(uBase, uBaseU, uBaseV);
+            vec4 texel = detail.a > 0.5 ? detail : coarse;
             vec3 color;
             if (texel.a > 0.5)
             {

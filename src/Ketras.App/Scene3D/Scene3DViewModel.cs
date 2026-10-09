@@ -59,6 +59,8 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
     private readonly IUiDispatcher _ui;
     private Vehicle? _vehicle;
     private CancellationTokenSource? _imageryLoad;
+    private CancellationTokenSource? _detailLoad;
+    private TileSource? _source;
 
     /// <summary>The terrain surface, saved by name.</summary>
     public static SettingDefinition<string> SurfaceSetting { get; } = new("scene.surface", nameof(SceneSurface.Grey));
@@ -124,6 +126,43 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(Credits))]
     public partial ImageryMosaic? Imagery { get; private set; }
 
+    /// <summary>Finer tiles around where the camera looks (<see cref="RequestImageryDetail"/>); null without any.</summary>
+    [ObservableProperty] public partial ImageryMosaic? ImageryDetail { get; private set; }
+
+    /// <summary>
+    /// The scene asks for finer tiles in <paramref name="range"/> around where its camera looks, or for none (null).
+    /// A newer request cancels the one before; a block from another source than the one shown is not asked for.
+    /// </summary>
+    public void RequestImageryDetail(Ketras.Model.Geo.TileRange? range)
+    {
+        _detailLoad?.Cancel();
+        _detailLoad = null;
+        if (range is not { } block || _source is not { } source || Imagery is null || block.Zoom > source.MaxZoom)
+        {
+            ImageryDetail = null;
+            return;
+        }
+
+        var load = _detailLoad = new CancellationTokenSource();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                var mosaic = await _tiles.LoadAsync(source, block, load.Token);
+                _ui.Post(() =>
+                {
+                    if (_detailLoad == load && _source == source)
+                    {
+                        ImageryDetail = mosaic;
+                    }
+                });
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        });
+    }
+
     /// <summary>The plan: route, fences and the datum.</summary>
     [ObservableProperty] public partial Plan Plan { get; private set; }
 
@@ -170,6 +209,8 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
         _settings.Changed -= OnSetting;
         _imageryLoad?.Cancel();
         _imageryLoad?.Dispose();
+        _detailLoad?.Cancel();
+        _detailLoad?.Dispose();
         Follow(null);
     }
 
@@ -233,7 +274,10 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
     {
         _imageryLoad?.Cancel();
         _imageryLoad = null;
-        var source = Surface switch
+        _detailLoad?.Cancel();
+        _detailLoad = null;
+        ImageryDetail = null;
+        var source = _source = Surface switch
         {
             SceneSurface.Satellite => TileSource.Satellite,
             SceneSurface.Street => TileSource.Street,

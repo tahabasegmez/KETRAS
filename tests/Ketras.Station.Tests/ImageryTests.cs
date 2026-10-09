@@ -63,6 +63,21 @@ public sealed class ImageryTests : IDisposable
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => service.LoadAsync(TileSource.Satellite, South, West, North, East, cancelled.Token));
     }
 
+    [Fact]
+    public async Task A_given_block_loads_its_tiles_and_one_beyond_the_source_is_refused()
+    {
+        var http = new TileServer(new Dictionary<string, byte[]> { ["https://tiles.test/19/10/20.png"] = [7] });
+        using var service = new MapTileService(_directory, NullLogger<MapTileService>.Instance, http);
+        var source = TileSource.Custom("https://tiles.test/{z}/{x}/{y}.png", "Test tiles");
+
+        var mosaic = await service.LoadAsync(source, new TileRange(19, 10, 20, 2, 1));
+
+        Assert.Equal((10, 20, 19), (Assert.Single(mosaic.Tiles).X, mosaic.Tiles[0].Y, mosaic.MaxZoom));
+        Assert.Equal(2, http.Requested.Count);
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => service.LoadAsync(source with { MaxZoom = 18 }, new TileRange(19, 10, 20, 1, 1)));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => service.LoadAsync(source, new TileRange(19, 0, 0, 17, 17)));
+    }
+
     /// <summary>Serves fixed bodies by URL; records each request's URL and user agent.</summary>
     private sealed class TileServer(IReadOnlyDictionary<string, byte[]> bodies) : HttpMessageHandler
     {

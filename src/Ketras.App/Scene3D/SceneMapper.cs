@@ -73,7 +73,7 @@ public static class SceneMapper
 
     /// <summary>Map tiles to drape over the terrain; null without any.</summary>
     public static SceneImagery? Imagery(ImageryMosaic? mosaic) =>
-        mosaic is null ? null : new SceneImagery(mosaic.Range, [.. mosaic.Tiles.Select(t => new SceneImageryTile(t.X, t.Y, t.Encoded))]);
+        mosaic is null ? null : new SceneImagery(mosaic.Range, [.. mosaic.Tiles.Select(t => new SceneImageryTile(t.X, t.Y, t.Encoded))], mosaic.MaxZoom);
 
     /// <summary>Points of interest.</summary>
     public static IReadOnlyList<ScenePoint> Points(IReadOnlyList<PointOfInterest> points) =>

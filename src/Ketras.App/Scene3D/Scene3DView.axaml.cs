@@ -23,6 +23,7 @@ public sealed partial class Scene3DView : UserControl
             _model.PropertyChanged -= OnModelChanged;
             _model.FitRequested -= Scene.FitAll;
             Scene.FollowReleased -= _model.ReleaseFollow;
+            Scene.ImageryDetailRequested -= _model.RequestImageryDetail;
         }
 
         _model = DataContext as Scene3DViewModel;
@@ -34,7 +35,8 @@ public sealed partial class Scene3DView : UserControl
         _model.PropertyChanged += OnModelChanged;
         _model.FitRequested += Scene.FitAll;
         Scene.FollowReleased += _model.ReleaseFollow;
-        foreach (var property in new[] { nameof(_model.Plan), nameof(_model.Ownship), nameof(_model.Traffic), nameof(_model.Points), nameof(_model.Terrain), nameof(_model.Followed), nameof(_model.Surface), nameof(_model.Imagery) })
+        Scene.ImageryDetailRequested += _model.RequestImageryDetail;
+        foreach (var property in new[] { nameof(_model.Plan), nameof(_model.Ownship), nameof(_model.Traffic), nameof(_model.Points), nameof(_model.Terrain), nameof(_model.Followed), nameof(_model.Surface), nameof(_model.Imagery), nameof(_model.ImageryDetail) })
         {
             Apply(_model, property);
         }
@@ -77,6 +79,9 @@ public sealed partial class Scene3DView : UserControl
                 break;
             case nameof(Scene3DViewModel.Imagery):
                 Scene.SetImagery(SceneMapper.Imagery(model.Imagery));
+                break;
+            case nameof(Scene3DViewModel.ImageryDetail):
+                Scene.SetImageryDetail(SceneMapper.Imagery(model.ImageryDetail));
                 break;
             case nameof(Scene3DViewModel.Followed):
                 Scene.Follow(model.Followed);
