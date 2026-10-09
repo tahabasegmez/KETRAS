@@ -160,7 +160,7 @@ reused alone. Architecture tests enforce these boundaries.
 
 ## Contributing
 
-There are some issues with the architecture still, after solving these issues I will update this section.
+There are some issues with the architecture still, after solving these issues and complete docs I will update this section.
 
 ## License
 
