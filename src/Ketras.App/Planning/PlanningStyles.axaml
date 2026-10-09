@@ -1,5 +1,5 @@
 <!-- The planner's own look, as the KetrasPlanner control drew it: the floating panel's joined switch, labelled tool faces
-     (phase and fence tools) that light up while armed, the view column's square toggles, collapsible section headers,
+     (phase and fence tools) that light up while armed, collapsible section headers,
      list rows with a category bar whose fields open under them. The press-and-hold item strip draws itself
      (Planning/PhasePicker) because it lives in the window's overlay layer. -->
 <Styles xmlns="https://github.com/avaloniaui"
@@ -122,36 +122,6 @@
   </Style>
   <Style Selector="Border.phase-face TextBlock">
     <Setter Property="Foreground" Value="{DynamicResource Brush.Text}" />
-  </Style>
-
-  <!-- The view column's square toggles: 28 px, radius 4, no frame until lit. -->
-  <Style Selector="Button.view-toggle">
-    <Setter Property="Width" Value="{StaticResource Size.ToolButton}" />
-    <Setter Property="Height" Value="{StaticResource Size.ToolButton}" />
-    <Setter Property="MinHeight" Value="0" />
-    <Setter Property="Padding" Value="0" />
-    <Setter Property="CornerRadius" Value="{StaticResource Radius.Panel}" />
-    <Setter Property="BorderThickness" Value="1" />
-    <Setter Property="HorizontalContentAlignment" Value="Center" />
-    <Setter Property="VerticalContentAlignment" Value="Center" />
-  </Style>
-  <Style Selector="Button.view-toggle /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-  </Style>
-  <Style Selector="Button.view-toggle:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{StaticResource Planner.ArmedFill}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
-  </Style>
-  <Style Selector="Button.view-toggle lucide|LucideIcon">
-    <Setter Property="Foreground" Value="{DynamicResource Brush.Faint}" />
-  </Style>
-  <Style Selector="Button.view-toggle.on /template/ ContentPresenter#PART_ContentPresenter">
-    <Setter Property="Background" Value="{StaticResource Planner.ArmedFill}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
-  </Style>
-  <Style Selector="Button.view-toggle.on lucide|LucideIcon, Button.view-toggle:pointerover lucide|LucideIcon">
-    <Setter Property="Foreground" Value="{DynamicResource Brush.TextStrong}" />
   </Style>
 
   <!-- List row: 22 px, a 2 px category bar, number, icon, name, and the value that gives way to the actions while the

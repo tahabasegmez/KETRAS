@@ -1,6 +1,7 @@
 using Ketras.Station.Commands;
 using Ketras.Station.Environment;
 using Ketras.Station.Events;
+using Ketras.Station.Imagery;
 using Ketras.Station.Links;
 using Ketras.Station.Missions;
 using Ketras.Station.Notifications;
@@ -53,6 +54,7 @@ public static class StationServiceCollectionExtensions
         services.AddSingleton<ActuatorTestWorkflow>();
         services.AddSingleton<PlanStore>();
         services.AddSingleton<TerrainService>();
+        services.AddSingleton<MapTileService>();
         services.AddSingleton<EnvironmentStore>();
         services.AddSingleton<CommandService>();
         services.AddSingleton<MissionProgressTracker>();

@@ -276,6 +276,11 @@
   <data name="SceneFit" xml:space="preserve"><value>Fit the route and the aircraft, seen from above</value></data>
   <data name="SceneFollowVehicle" xml:space="preserve"><value>Follow the vehicle</value></data>
   <data name="SceneTraffic" xml:space="preserve"><value>TRAFFIC</value></data>
+  <data name="SceneSurfaceGrey" xml:space="preserve"><value>Terrain relief</value></data>
+  <data name="SceneSurfaceSatellite" xml:space="preserve"><value>Satellite imagery on the terrain</value></data>
+  <data name="SceneSurfaceStreet" xml:space="preserve"><value>Street map on the terrain</value></data>
+  <data name="SceneSurfaceCustom" xml:space="preserve"><value>Custom map on the terrain</value></data>
+  <data name="SceneImageryCredit" xml:space="preserve"><value>Imagery: {0}</value></data>
   <data name="ItemTypeTakeoff" xml:space="preserve"><value>Takeoff</value></data>
   <data name="ItemTypeWaypoint" xml:space="preserve"><value>Waypoint</value></data>
   <data name="ItemTypeLoiterUnlimited" xml:space="preserve"><value>Loiter</value></data>

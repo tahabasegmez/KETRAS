@@ -23,7 +23,6 @@ internal sealed class AirspaceViewport : Control
     // KeepOut / StayIn / Takeoff / Cruise / Landing tokens; the ownship matches the planner's vehicle.
     // ------------------------------------------------------------------
 
-    private static readonly Color HazeColor = Color.FromRgb(0x23, 0x25, 0x27);
     // Drawn at 27-65 % opacity over the ground, so the blend lands near MapGrid / MapGridMajor.
     private static readonly Color GridMinorColor = Color.FromRgb(0x3A, 0x3F, 0x44);
     private static readonly Color GridMajorColor = Color.FromRgb(0x4A, 0x50, 0x57);
@@ -42,32 +41,6 @@ internal sealed class AirspaceViewport : Control
     private static readonly Color SelectionColor = Color.FromRgb(0xFF, 0xFF, 0xFF);
     private static readonly Color SymbolOwnshipFill = Color.FromRgb(0xFF, 0xFF, 0xFF);
     private static readonly Color SymbolEdge = Color.FromRgb(0x10, 0x10, 0x10);
-
-    private static readonly IBrush SkyBrush = new LinearGradientBrush
-    {
-        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
-        EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
-        GradientStops = new GradientStops
-        {
-            new GradientStop(Color.FromRgb(0x16, 0x17, 0x18), 0),
-            new GradientStop(Color.FromRgb(0x1B, 0x1D, 0x1F), 0.55),
-            new GradientStop(Color.FromRgb(0x23, 0x25, 0x27), 1)
-        }
-    };
-
-    // Stops are bunched toward the top: a flat plane's distance falls off sharply near the horizon.
-    private static readonly IBrush GroundBrush = new LinearGradientBrush
-    {
-        StartPoint = new RelativePoint(0, 0, RelativeUnit.Relative),
-        EndPoint = new RelativePoint(0, 1, RelativeUnit.Relative),
-        GradientStops = new GradientStops
-        {
-            new GradientStop(Color.FromRgb(0x23, 0x25, 0x27), 0),
-            new GradientStop(Color.FromRgb(0x1F, 0x21, 0x23), 0.06),
-            new GradientStop(Color.FromRgb(0x1B, 0x1D, 0x1F), 0.20),
-            new GradientStop(Color.FromRgb(0x1B, 0x1D, 0x1F), 1)
-        }
-    };
 
     private static readonly IBrush HorizonGlowBrush = new LinearGradientBrush
     {
@@ -173,7 +146,7 @@ internal sealed class AirspaceViewport : Control
         Focusable = true;
         ClipToBounds = true;
 
-        _shades.FogColor = HazeColor;
+        _shades.FogColor = _palette.Haze;
 
         _inputTimer = new DispatcherTimer(DispatcherPriority.Input)
         {
@@ -208,6 +181,21 @@ internal sealed class AirspaceViewport : Control
     }
 
     private TerrainView? _terrain;
+    private ScenePalette _palette = ScenePalette.Night;
+
+    /// <summary>The sky, haze and flat ground to draw: <see cref="ScenePalette.Day"/> over imagery.</summary>
+    public void SetGround(SceneGround ground)
+    {
+        var palette = ScenePalette.For(ground);
+        if (palette == _palette)
+        {
+            return;
+        }
+
+        _palette = palette;
+        _shades.FogColor = palette.Haze;
+        InvalidateVisual();
+    }
 
     public void SetScene(AirspaceScene scene, SceneOptions options, string? trackingTargetVehicleId)
     {
@@ -502,7 +490,7 @@ internal sealed class AirspaceViewport : Control
         if (!_renderer.TryGetHorizonY(out var horizonY))
         {
             // Looking straight up/down: the horizon is off-screen, so one half-space fills the view.
-            context.FillRectangle(lookingUp ? SkyBrush : GroundBrush, bounds);
+            context.FillRectangle(lookingUp ? _palette.SkyBrush : _palette.GroundBrush, bounds);
             return;
         }
 
@@ -510,14 +498,14 @@ internal sealed class AirspaceViewport : Control
 
         if (clampedHorizon > bounds.Y)
         {
-            context.FillRectangle(SkyBrush, new Rect(bounds.X, bounds.Y, bounds.Width, clampedHorizon - bounds.Y));
+            context.FillRectangle(_palette.SkyBrush, new Rect(bounds.X, bounds.Y, bounds.Width, clampedHorizon - bounds.Y));
         }
 
         if (clampedHorizon < bounds.Bottom)
         {
             // Anchor to the true horizon even off-screen, so a steep pitch still ramps correctly.
             var groundTop = Math.Min(horizonY, clampedHorizon);
-            context.FillRectangle(GroundBrush, new Rect(bounds.X, groundTop, bounds.Width, bounds.Bottom - groundTop));
+            context.FillRectangle(_palette.GroundBrush, new Rect(bounds.X, groundTop, bounds.Width, bounds.Bottom - groundTop));
         }
 
         if (horizonY > bounds.Y - 40 && horizonY < bounds.Bottom + 40)

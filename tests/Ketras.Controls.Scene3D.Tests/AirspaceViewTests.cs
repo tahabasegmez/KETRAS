@@ -150,3 +150,49 @@ public sealed class AirspaceViewTests
         Assert.True(mesh.Chunks.Min(chunk => chunk.MinHeight) < 400);
     }
 }
+
+public sealed class ImageryTests
+{
+    [Fact]
+    public void Tiles_land_at_their_place_in_the_texture_and_missing_ones_stay_transparent()
+    {
+        var range = new TileRange(15, 17000, 11400, 2, 2);
+        var imagery = new SceneImagery(range,
+        [
+            new SceneImageryTile(17001, 11400, [10]),
+            new SceneImageryTile(17000, 11401, [20]),
+            new SceneImageryTile(17000, 11401 + 5, [30]),
+            new SceneImageryTile(17000, 11400, [])
+        ]);
+
+        // A decoder that fills the tile with its first byte as red, and cannot read an empty file.
+        var texture = ImageryTexture.Build(imagery, 8, (encoded, size) =>
+            encoded.Length == 0 ? null : [.. Enumerable.Range(0, size * size).SelectMany(_ => new byte[] { encoded[0], 0, 0, 255 })]);
+
+        byte Red(int x, int y) => texture.Pixels[((y * texture.Width) + x) * 4];
+        byte Alpha(int x, int y) => texture.Pixels[(((y * texture.Width) + x) * 4) + 3];
+        Assert.Equal((8, 8), (texture.Width, texture.Height));
+        Assert.Equal(((byte)10, (byte)255), (Red(7, 0), Alpha(4, 3)));
+        Assert.Equal((byte)20, Red(0, 7));
+        Assert.Equal((byte)0, Alpha(0, 0));
+        Assert.Equal((byte)0, Alpha(7, 7));
+        Assert.Equal((17000 / 32768.0, 11400 / 32768.0, 17002 / 32768.0, 11402 / 32768.0), (texture.MinX, texture.MinY, texture.MaxX, texture.MaxY));
+    }
+
+    [AvaloniaFact]
+    public void The_ground_style_and_imagery_reach_the_view()
+    {
+        var view = new AirspaceView();
+        var imagery = new SceneImagery(new TileRange(17, 68000, 45000, 1, 1), [new SceneImageryTile(68000, 45000, [1])]);
+
+        view.SetGround(SceneGround.Imagery);
+        view.SetImagery(imagery);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal((SceneGround.Imagery, imagery), (view.Ground, view.Imagery));
+        view.SetGround(SceneGround.Relief);
+        view.SetImagery(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal((SceneGround.Relief, (SceneImagery?)null), (view.Ground, view.Imagery));
+    }
+}

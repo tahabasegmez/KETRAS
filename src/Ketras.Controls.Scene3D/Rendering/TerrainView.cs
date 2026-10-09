@@ -6,12 +6,14 @@ using Avalonia.Media.Imaging;
 using Avalonia.OpenGL.Controls;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using Ketras.Model.Geo;
 using TerrainGrid = Ketras.Model.Terrain.TerrainGrid;
 
 namespace Ketras.Controls.Scene3D.Rendering;
 
 /// <summary>
-/// GPU layer under <see cref="AirspaceViewport"/>: draws the sky and the terrain mesh with a depth buffer, from the
+/// GPU layer under <see cref="AirspaceViewport"/>: draws the sky and the terrain mesh (grey relief, or draped with a map
+/// imagery texture, <see cref="SetGround"/>) with a depth buffer, from the
 /// camera the viewport publishes each frame. It renders only when the camera, the size or the mesh changes, and caps
 /// the triangles per frame (<see cref="TriangleBudget"/>) by coarsening the farthest chunks first. Without an OpenGL
 /// context it stays empty and the viewport keeps drawing its own flat backdrop.
@@ -33,11 +35,23 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
     private const int GlTrue = 1;
     private const int GlFalse = 0;
 
-    // Scene palette (AirspaceViewport): sky top, mid, horizon haze and the ground beyond the data.
-    private static readonly Vector3 SkyTop = Rgb(0x16, 0x17, 0x18);
-    private static readonly Vector3 SkyMid = Rgb(0x1B, 0x1D, 0x1F);
-    private static readonly Vector3 Haze = Rgb(0x23, 0x25, 0x27);
-    private static readonly Vector3 Ground = Rgb(0x1B, 0x1D, 0x1F);
+    private const int GlTexture2D = 0x0DE1;
+    private const int GlTexture0 = 0x84C0;
+    private const int GlTextureMinFilter = 0x2801;
+    private const int GlTextureMagFilter = 0x2800;
+    private const int GlTextureWrapS = 0x2802;
+    private const int GlTextureWrapT = 0x2803;
+    private const int GlLinear = 0x2601;
+    private const int GlLinearMipmapLinear = 0x2703;
+    private const int GlClampToEdge = 0x812F;
+    private const int GlRgba = 0x1908;
+    private const int GlRgba8 = 0x8058;
+    private const int GlUnsignedByte = 0x1401;
+    private const int GlMaxTextureSize = 0x0D33;
+
+    // Sky, haze and the ground beyond the data (ScenePalette, shared with AirspaceViewport).
+    private ScenePalette _palette = ScenePalette.Night;
+    private SceneGround _ground;
 
     private readonly List<GpuChunk> _chunks = [];
     private TerrainMesh? _pendingMesh;
@@ -54,7 +68,15 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
     private WriteableBitmap? _image;
     private byte[] _pixels = [];
 
-    private int _uViewProj, _uOffset, _uScale, _uEye, _uFog, _uHaze;
+    private ImageryTexture? _pendingImagery;
+    private bool _imageryChanged;
+    private int _imageryGeneration;
+    private ImageryTexture? _imagery;
+    private int _imageryTexture;
+    private int _maxTextureSize = 4096;
+    private delegate* unmanaged[Stdcall]<int, void> _generateMipmap;
+
+    private int _uViewProj, _uOffset, _uScale, _uEye, _uFog, _uHaze, _uImageryU, _uImageryV, _uAnchorLatitude;
     private int _uSkyHorizon, _uSkyTop, _uSkyMid, _uSkyHaze, _uSkyGround;
 
     /// <summary>What the viewport's camera sees this frame; world axes as in <see cref="AirspaceViewport"/>.</summary>
@@ -130,6 +152,46 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         }
     }
 
+    /// <summary>Paints the surface as grey relief or with the imagery; also picks the sky.</summary>
+    internal void SetGround(SceneGround ground)
+    {
+        if (_ground == ground)
+        {
+            return;
+        }
+
+        _ground = ground;
+        _palette = ScenePalette.For(ground);
+        RequestNextFrameRendering();
+    }
+
+    /// <summary>Replaces the imagery draped in <see cref="SceneGround.Imagery"/>; decoded off the UI thread. Null removes it.</summary>
+    internal void SetImagery(SceneImagery? imagery)
+    {
+        var generation = ++_imageryGeneration;
+        if (imagery is null)
+        {
+            Accept(null);
+            return;
+        }
+
+        var maxSize = _maxTextureSize;
+        Task.Run(() => ImageryTexture.Build(imagery, maxSize)).ContinueWith(task => Dispatcher.UIThread.Post(() =>
+        {
+            if (generation == _imageryGeneration && task.IsCompletedSuccessfully)
+            {
+                Accept(task.Result);
+            }
+        }), TaskScheduler.Default);
+
+        void Accept(ImageryTexture? texture)
+        {
+            _pendingImagery = texture;
+            _imageryChanged = true;
+            RequestNextFrameRendering();
+        }
+    }
+
     internal void SetFrame(Frame frame)
     {
         if (_frame == frame)
@@ -172,6 +234,12 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         _uEye = gl.GetUniformLocationString(_terrainProgram, "uEye");
         _uFog = gl.GetUniformLocationString(_terrainProgram, "uFog");
         _uHaze = gl.GetUniformLocationString(_terrainProgram, "uHaze");
+        _uImageryU = gl.GetUniformLocationString(_terrainProgram, "uImageryU");
+        _uImageryV = gl.GetUniformLocationString(_terrainProgram, "uImageryV");
+        _uAnchorLatitude = gl.GetUniformLocationString(_terrainProgram, "uAnchorLatitude");
+        _generateMipmap = (delegate* unmanaged[Stdcall]<int, void>)gl.GetProcAddress("glGenerateMipmap");
+        gl.GetIntegerv(GlMaxTextureSize, out var maxTextureSize);
+        _maxTextureSize = maxTextureSize > 0 ? Math.Min(maxTextureSize, 8192) : 4096;
         _uSkyHorizon = gl.GetUniformLocationString(_skyProgram, "uHorizon");
         _uSkyTop = gl.GetUniformLocationString(_skyProgram, "uTop");
         _uSkyMid = gl.GetUniformLocationString(_skyProgram, "uMid");
@@ -183,6 +251,15 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
     protected override void OnOpenGlDeinit(GlInterface gl)
     {
         ReleaseChunks(gl);
+
+        // Uploaded again if a new context comes.
+        if (!_imageryChanged && _imagery is not null)
+        {
+            _pendingImagery = _imagery;
+            _imageryChanged = true;
+        }
+
+        ReleaseImagery(gl);
         if (_vertexArray != 0)
         {
             gl.DeleteVertexArray(_vertexArray);
@@ -211,13 +288,21 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
             _pendingMesh = null;
         }
 
+        if (_imageryChanged)
+        {
+            _imageryChanged = false;
+            UploadImagery(gl, _pendingImagery);
+            _pendingImagery = null;
+        }
+
         var scaling = VisualRoot?.RenderScaling ?? 1;
         var width = Math.Max(1, (int)(Bounds.Width * scaling));
         var height = Math.Max(1, (int)(Bounds.Height * scaling));
 
         gl.BindFramebuffer(GlConsts.GL_FRAMEBUFFER, fb);
         gl.Viewport(0, 0, width, height);
-        gl.ClearColor(Haze.X, Haze.Y, Haze.Z, 1);
+        var haze = Rgb(_palette.Haze);
+        gl.ClearColor(haze.X, haze.Y, haze.Z, 1);
         gl.Clear(GlConsts.GL_COLOR_BUFFER_BIT | GlConsts.GL_DEPTH_BUFFER_BIT);
         if (_frame is not { } frame)
         {
@@ -303,10 +388,10 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         gl.DepthMask(GlFalse);
         gl.UseProgram(_skyProgram);
         _uniform3f(_uSkyHorizon, horizon.X, horizon.Y, horizon.Z);
-        SetColor(_uSkyTop, SkyTop);
-        SetColor(_uSkyMid, SkyMid);
-        SetColor(_uSkyHaze, Haze);
-        SetColor(_uSkyGround, Ground);
+        SetColor(_uSkyTop, Rgb(_palette.SkyTop));
+        SetColor(_uSkyMid, Rgb(_palette.SkyMid));
+        SetColor(_uSkyHaze, Rgb(_palette.Haze));
+        SetColor(_uSkyGround, Rgb(_palette.Ground));
         gl.DrawArrays(GlConsts.GL_TRIANGLES, 0, new IntPtr(3));
     }
 
@@ -375,7 +460,8 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         _uniform3f(_uScale, (float)kLon, (float)scale, (float)kLat);
         _uniform3f(_uEye, frame.Eye.X, frame.Eye.Y, frame.Eye.Z);
         _uniform3f(_uFog, (float)Math.Max(1, frame.FogStartMeters), (float)Math.Max(frame.FogStartMeters + 1, frame.FogEndMeters), (float)frame.DatumMeters);
-        SetColor(_uHaze, Haze);
+        SetColor(_uHaze, Rgb(_palette.Haze));
+        SetImageryUniforms(gl, anchor);
 
         const int stride = TerrainMesh.FloatsPerVertex * sizeof(float);
         gl.EnableVertexAttribArray(0);
@@ -435,6 +521,71 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
 
             _chunks.Add(new GpuChunk(chunk, vertexBuffer, indexBuffers));
         }
+    }
+
+    /// <summary>
+    /// Imagery lookup, in the shader's terms: u = (Δlon + uImageryU.x) · uImageryU.y, and
+    /// v = uImageryV.x + (uImageryV.z − ln tan(π/4 + φ/2)) · uImageryV.y with φ = uAnchorLatitude + Δlat (radians).
+    /// The anchor terms are worked out here in double precision. uImageryU.z is 1 while imagery is drawn.
+    /// </summary>
+    private void SetImageryUniforms(GlInterface gl, (double Latitude, double Longitude) anchor)
+    {
+        if (_ground != SceneGround.Imagery || _imagery is not { } imagery || _imageryTexture == 0)
+        {
+            _uniform3f(_uImageryU, 0, 0, 0);
+            return;
+        }
+
+        var spanX = imagery.MaxX - imagery.MinX;
+        var spanY = imagery.MaxY - imagery.MinY;
+        var anchorPhi = anchor.Latitude * Math.PI / 180;
+        var anchorM = Math.Log(Math.Tan((Math.PI / 4) + (anchorPhi / 2)));
+        _uniform3f(_uImageryU, (float)(anchor.Longitude - WebMercatorRules.Longitude(imagery.MinX)), (float)(1 / (360 * spanX)), 1);
+        _uniform3f(_uImageryV, (float)((WebMercatorRules.Y(anchor.Latitude) - imagery.MinY) / spanY), (float)(1 / (2 * Math.PI * spanY)), (float)anchorM);
+        gl.Uniform1f(_uAnchorLatitude, (float)anchorPhi);
+        gl.ActiveTexture(GlTexture0);
+        gl.BindTexture(GlTexture2D, _imageryTexture);
+    }
+
+    private void UploadImagery(GlInterface gl, ImageryTexture? imagery)
+    {
+        ReleaseImagery(gl);
+        _imagery = imagery;
+        if (imagery is null)
+        {
+            return;
+        }
+
+        _imageryTexture = gl.GenTexture();
+        gl.ActiveTexture(GlTexture0);
+        gl.BindTexture(GlTexture2D, _imageryTexture);
+        fixed (byte* data = imagery.Pixels)
+        {
+            gl.TexImage2D(GlTexture2D, 0, GlRgba8, imagery.Width, imagery.Height, 0, GlRgba, GlUnsignedByte, (IntPtr)data);
+        }
+
+        var mipmapped = _generateMipmap != null;
+        if (mipmapped)
+        {
+            _generateMipmap(GlTexture2D);
+        }
+
+        gl.TexParameteri(GlTexture2D, GlTextureMinFilter, mipmapped ? GlLinearMipmapLinear : GlLinear);
+        gl.TexParameteri(GlTexture2D, GlTextureMagFilter, GlLinear);
+        gl.TexParameteri(GlTexture2D, GlTextureWrapS, GlClampToEdge);
+        gl.TexParameteri(GlTexture2D, GlTextureWrapT, GlClampToEdge);
+        gl.BindTexture(GlTexture2D, 0);
+    }
+
+    private void ReleaseImagery(GlInterface gl)
+    {
+        if (_imageryTexture != 0)
+        {
+            gl.DeleteTexture(_imageryTexture);
+            _imageryTexture = 0;
+        }
+
+        _imagery = null;
     }
 
     private void ReleaseChunks(GlInterface gl)
@@ -545,7 +696,7 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
     private static void Trace(string stage, string error) =>
         System.Diagnostics.Trace.WriteLine($"Ketras 3D terrain {stage}: {error}");
 
-    private static Vector3 Rgb(byte r, byte g, byte b) => new(r / 255f, g / 255f, b / 255f);
+    private static Vector3 Rgb(Avalonia.Media.Color color) => new(color.R / 255f, color.G / 255f, color.B / 255f);
 
     // World = ((Δlon + offLon)·kLon, (h − datum)·scale, (Δlat + offLat)·kLat): AirspaceViewport.GeoToWorld on the GPU.
     private const string TerrainVertexShader = """
@@ -557,41 +708,69 @@ internal sealed unsafe class TerrainView : OpenGlControlBase
         out vec3 vWorld;
         out vec3 vNormal;
         out float vHeight;
+        out vec2 vDelta;
         void main()
         {
             vec3 world = vec3((aPosition.x + uOffset.x) * uScale.x, (aPosition.y - uOffset.y) * uScale.y, (aPosition.z + uOffset.z) * uScale.z);
             vWorld = world;
             vNormal = aNormal;
             vHeight = aPosition.y;
+            vDelta = aPosition.xz;
             gl_Position = uViewProj * vec4(world, 1.0);
         }
         """;
 
-    // Neutral greys lit from the north-west, faint 10 m / 50 m contour lines, and the scene's distance haze.
+    // Neutral greys lit from the north-west with faint 10 m / 50 m contour lines; or, where imagery is drawn, the
+    // imagery under a mild hillshade with very thin dark contours. Then the scene's distance haze.
     private const string TerrainFragmentShader = """
         in vec3 vWorld;
         in vec3 vNormal;
         in float vHeight;
+        in vec2 vDelta;
         uniform vec3 uEye;
         uniform vec3 uFog;
         uniform vec3 uHaze;
+        uniform vec3 uImageryU;
+        uniform vec3 uImageryV;
+        uniform float uAnchorLatitude;
+        uniform sampler2D uImagery;
         out vec4 fragColor;
-        float contour(float height, float spacing)
+        float contour(float height, float spacing, float thickness)
         {
             float x = height / spacing;
             float width = max(fwidth(x), 1e-4);
-            float line = 1.0 - min(abs(fract(x - 0.5) - 0.5) / width, 1.0);
+            float line = 1.0 - min(abs(fract(x - 0.5) - 0.5) / (width * thickness), 1.0);
             return line * clamp(1.5 - width * 4.0, 0.0, 1.0);
         }
         void main()
         {
             vec3 n = normalize(vNormal);
             vec3 sun = normalize(vec3(-0.55, 0.75, 0.40));
-            float light = 0.55 + 0.85 * max(dot(n, sun), 0.0);
-            float t = clamp((vHeight - uFog.z) / 900.0 + 0.35, 0.0, 1.0);
-            vec3 base = mix(vec3(0.145, 0.157, 0.169), vec3(0.235, 0.251, 0.267), t);
-            vec3 color = base * light;
-            color += vec3(0.030) * contour(vHeight, 10.0) + vec3(0.050) * contour(vHeight, 50.0);
+            float lambert = max(dot(n, sun), 0.0);
+            vec4 texel = vec4(0.0);
+            if (uImageryU.z > 0.5)
+            {
+                float phi = uAnchorLatitude + radians(vDelta.y);
+                vec2 uv = vec2((vDelta.x + uImageryU.x) * uImageryU.y, uImageryV.x + (uImageryV.z - log(tan(0.78539816 + phi * 0.5))) * uImageryV.y);
+                // Sampled outside any non-uniform branch, so the mipmap derivatives stay defined.
+                vec4 sampled = texture(uImagery, clamp(uv, 0.0, 1.0));
+                texel = uv == clamp(uv, 0.0, 1.0) ? sampled : vec4(0.0);
+            }
+
+            vec3 color;
+            if (texel.a > 0.5)
+            {
+                color = texel.rgb * (0.78 + 0.32 * lambert);
+                color = mix(color, vec3(0.08), 0.10 * contour(vHeight, 10.0, 0.6) + 0.18 * contour(vHeight, 50.0, 0.6));
+            }
+            else
+            {
+                float light = 0.55 + 0.85 * lambert;
+                float t = clamp((vHeight - uFog.z) / 900.0 + 0.35, 0.0, 1.0);
+                vec3 base = mix(vec3(0.145, 0.157, 0.169), vec3(0.235, 0.251, 0.267), t);
+                color = base * light;
+                color += vec3(0.030) * contour(vHeight, 10.0, 1.0) + vec3(0.050) * contour(vHeight, 50.0, 1.0);
+            }
             float d = distance(vWorld, uEye);
             float f = smoothstep(uFog.x, uFog.y, d);
             fragColor = vec4(mix(color, uHaze, f), 1.0);

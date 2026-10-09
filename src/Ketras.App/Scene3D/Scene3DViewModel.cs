@@ -10,7 +10,9 @@ using Ketras.Model.Planning;
 using Ketras.Model.Terrain;
 using Ketras.Model.Vehicles;
 using Ketras.Station.Environment;
+using Ketras.Station.Imagery;
 using Ketras.Station.Missions;
+using Ketras.Station.Settings;
 using Ketras.Station.Terrain;
 using Ketras.Station.Vehicles;
 
@@ -23,11 +25,27 @@ namespace Ketras.App.Scene3D;
 /// <param name="Altitude">Its altitude.</param>
 public sealed record TrafficRow(string Id, string Name, string Detail, string Altitude);
 
+/// <summary>How the 3D view paints the terrain.</summary>
+public enum SceneSurface
+{
+    /// <summary>Grey relief with contour lines.</summary>
+    Grey,
+
+    /// <summary>Satellite imagery.</summary>
+    Satellite,
+
+    /// <summary>The street map.</summary>
+    Street,
+
+    /// <summary>The operator's tile source (Settings), which replaces satellite and street while it is set.</summary>
+    Custom
+}
+
 /// <summary>
 /// The 3D view activity: what the scene shows (the plan with its planned home as the datum, the active vehicle, the
 /// environment's traffic, zones and points of interest, the plan's terrain), the traffic list, the camera choices
-/// (follow an aircraft, or fit everything seen from above) and the telemetry panel. It holds Station data only; the view
-/// turns it into the scene.
+/// (follow an aircraft, or fit everything seen from above), the terrain surface (grey relief or map imagery, saved in the
+/// settings) and the telemetry panel. It holds Station data only; the view turns it into the scene.
 /// </summary>
 public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
 {
@@ -35,23 +53,33 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
     private readonly VehicleRegistry _vehicles;
     private readonly EnvironmentStore _environment;
     private readonly TerrainService _terrain;
+    private readonly MapTileService _tiles;
+    private readonly SettingsStore _settings;
     private readonly UnitService _units;
     private readonly IUiDispatcher _ui;
     private Vehicle? _vehicle;
+    private CancellationTokenSource? _imageryLoad;
 
-    /// <summary>Follows the plan, the active vehicle, the environment and the terrain.</summary>
+    /// <summary>The terrain surface, saved by name.</summary>
+    public static SettingDefinition<string> SurfaceSetting { get; } = new("scene.surface", nameof(SceneSurface.Grey));
+
+    /// <summary>Follows the plan, the active vehicle, the environment, the terrain and the surface setting.</summary>
     public Scene3DViewModel(TelemetryPanelViewModel telemetry, PlanStore plans, VehicleRegistry vehicles, EnvironmentStore environment, TerrainService terrain,
-        UnitService units, IUiDispatcher ui)
+        MapTileService tiles, SettingsStore settings, UnitService units, IUiDispatcher ui)
     {
         Telemetry = telemetry;
         _plans = plans;
         _vehicles = vehicles;
         _environment = environment;
         _terrain = terrain;
+        _tiles = tiles;
+        _settings = settings;
         _units = units;
         _ui = ui;
         Plan = plans.Current;
         Terrain = terrain.Grid;
+        ReadSurface();
+        _settings.Changed += OnSetting;
         _plans.Changed += OnPlanChanged;
         _vehicles.ActiveChanged += OnActiveChanged;
         _environment.Changed += OnEnvironmentChanged;
@@ -66,8 +94,35 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
     /// <summary>The telemetry panel.</summary>
     public TelemetryPanelViewModel Telemetry { get; }
 
-    /// <summary>The credits the terrain data's licence requires.</summary>
-    public string Credits => Strings.TerrainCredit;
+    /// <summary>The credits the terrain data's licence requires, and the imagery's while it is shown.</summary>
+    public string Credits => Imagery is { } imagery && Surface != SceneSurface.Grey
+        ? Strings.TerrainCredit + System.Environment.NewLine + string.Format(CultureInfo.CurrentCulture, Strings.SceneImageryCredit, imagery.Attribution)
+        : Strings.TerrainCredit;
+
+    /// <summary>How the terrain is painted.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsGrey), nameof(IsSatellite), nameof(IsStreet), nameof(IsCustom), nameof(Credits))]
+    public partial SceneSurface Surface { get; private set; }
+
+    /// <summary>Grey relief is shown.</summary>
+    public bool IsGrey => Surface == SceneSurface.Grey;
+
+    /// <summary>Satellite imagery is shown.</summary>
+    public bool IsSatellite => Surface == SceneSurface.Satellite;
+
+    /// <summary>The street map is shown.</summary>
+    public bool IsStreet => Surface == SceneSurface.Street;
+
+    /// <summary>The custom map is shown.</summary>
+    public bool IsCustom => Surface == SceneSurface.Custom;
+
+    /// <summary>A custom tile source is set: it replaces satellite and street.</summary>
+    [ObservableProperty] public partial bool HasCustomTiles { get; private set; }
+
+    /// <summary>The map tiles over the terrain; null in grey or while none are loaded.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Credits))]
+    public partial ImageryMosaic? Imagery { get; private set; }
 
     /// <summary>The plan: route, fences and the datum.</summary>
     [ObservableProperty] public partial Plan Plan { get; private set; }
@@ -112,6 +167,9 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
         _vehicles.ActiveChanged -= OnActiveChanged;
         _environment.Changed -= OnEnvironmentChanged;
         _terrain.GridChanged -= OnGridChanged;
+        _settings.Changed -= OnSetting;
+        _imageryLoad?.Cancel();
+        _imageryLoad?.Dispose();
         Follow(null);
     }
 
@@ -123,6 +181,89 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
     {
         Followed = null;
         FitRequested?.Invoke();
+    }
+
+    [RelayCommand]
+    private void ShowGrey() => ChooseSurface(SceneSurface.Grey);
+
+    [RelayCommand]
+    private void ShowSatellite() => ChooseSurface(SceneSurface.Satellite);
+
+    [RelayCommand]
+    private void ShowStreet() => ChooseSurface(SceneSurface.Street);
+
+    [RelayCommand]
+    private void ShowCustom() => ChooseSurface(SceneSurface.Custom);
+
+    private void ChooseSurface(SceneSurface surface)
+    {
+        _settings.Set(SurfaceSetting, surface.ToString());
+        ReadSurface();
+    }
+
+    /// <summary>The saved surface; satellite or street become custom while a custom source is set, and back.</summary>
+    private void ReadSurface()
+    {
+        HasCustomTiles = _settings.Get(Settings.AppSettings.CustomTileUrl).Length > 0;
+        var saved = Enum.TryParse<SceneSurface>(_settings.Get(SurfaceSetting), out var surface) ? surface : SceneSurface.Grey;
+        Surface = saved == SceneSurface.Grey ? SceneSurface.Grey
+            : HasCustomTiles ? SceneSurface.Custom
+            : saved == SceneSurface.Custom ? SceneSurface.Satellite
+            : saved;
+    }
+
+    private void OnSetting(string key)
+    {
+        if (key == Settings.AppSettings.CustomTileUrl.Key || key == Settings.AppSettings.CustomTileAttribution.Key)
+        {
+            _ui.Post(() =>
+            {
+                ReadSurface();
+                LoadImagery();
+            });
+        }
+    }
+
+    partial void OnSurfaceChanged(SceneSurface value) => LoadImagery();
+
+    partial void OnTerrainChanged(TerrainGrid? value) => LoadImagery();
+
+    /// <summary>Fetches the tiles over the terrain for the surface; a newer request cancels the one before.</summary>
+    private void LoadImagery()
+    {
+        _imageryLoad?.Cancel();
+        _imageryLoad = null;
+        var source = Surface switch
+        {
+            SceneSurface.Satellite => TileSource.Satellite,
+            SceneSurface.Street => TileSource.Street,
+            SceneSurface.Custom => TileSource.Custom(_settings.Get(Settings.AppSettings.CustomTileUrl), _settings.Get(Settings.AppSettings.CustomTileAttribution)),
+            _ => null
+        };
+        if (source is null || Terrain is not { } grid)
+        {
+            Imagery = null;
+            return;
+        }
+
+        var load = _imageryLoad = new CancellationTokenSource();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                var mosaic = await _tiles.LoadAsync(source, grid.SouthLatitude, grid.WestLongitude, grid.NorthLatitude, grid.EastLongitude, load.Token);
+                _ui.Post(() =>
+                {
+                    if (_imageryLoad == load)
+                    {
+                        Imagery = mosaic;
+                    }
+                });
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        });
     }
 
     [RelayCommand]

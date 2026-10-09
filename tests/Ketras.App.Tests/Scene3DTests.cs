@@ -1,4 +1,7 @@
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
+using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Ketras.App.Scene3D;
@@ -12,6 +15,7 @@ using Ketras.Model.Vehicles;
 using Ketras.Station.Environment;
 using Ketras.Station.Links;
 using Ketras.Station.Missions;
+using Ketras.Station.Settings;
 using Ketras.Station.Vehicles;
 
 namespace Ketras.App.Tests;
@@ -115,6 +119,59 @@ public sealed class Scene3DTests
 
         var scene = window.GetVisualDescendants().OfType<AirspaceView>().Single();
         Assert.True(scene.Bounds.Width > 0);
+        window.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task The_surface_choice_is_saved_and_a_custom_source_replaces_satellite_and_street()
+    {
+        await using var app = AppFixture.Create();
+        var scene = app.Get<Scene3DViewModel>();
+        var settings = app.Get<SettingsStore>();
+        Assert.Equal((SceneSurface.Grey, false), (scene.Surface, scene.HasCustomTiles));
+
+        scene.ShowStreetCommand.Execute(null);
+        Assert.Equal((SceneSurface.Street, true, "Street"), (scene.Surface, scene.IsStreet, settings.Get(Scene3DViewModel.SurfaceSetting)));
+        Assert.Null(scene.Imagery);
+
+        settings.Set(Settings.AppSettings.CustomTileUrl, "https://tiles.test/{z}/{x}/{y}.png");
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal((SceneSurface.Custom, true), (scene.Surface, scene.HasCustomTiles));
+
+        settings.Set(Settings.AppSettings.CustomTileUrl, string.Empty);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal((SceneSurface.Street, false), (scene.Surface, scene.HasCustomTiles));
+
+        scene.ShowGreyCommand.Execute(null);
+        Assert.Equal((SceneSurface.Grey, "Grey"), (scene.Surface, settings.Get(Scene3DViewModel.SurfaceSetting)));
+        Assert.Equal(Resources.Strings.TerrainCredit, scene.Credits);
+    }
+
+    [AvaloniaFact]
+    public async Task The_3d_panels_sit_where_planning_puts_them()
+    {
+        await using var app = AppFixture.Create();
+        var shell = app.Get<ShellViewModel>();
+        var window = new MainWindow { DataContext = shell, Width = 1400, Height = 900 };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        window.UpdateLayout();
+        Rect Place(Control control) => new(control.TranslatePoint(default, window)!.Value, control.Bounds.Size);
+        T Named<T>(Control root, string name) where T : Control => root.GetVisualDescendants().OfType<T>().First(c => c.Name == name);
+
+        var planning = window.GetVisualDescendants().OfType<Planning.PlanningView>().Single();
+        var planningTelemetry = Place(Named<Telemetry.TelemetryPanelView>(planning, "Telemetry"));
+        var planningColumn = Place(Named<Border>(planning, "ViewColumn"));
+        shell.Show(ShellViewModel.Scene3D);
+        Dispatcher.UIThread.RunJobs();
+        window.UpdateLayout();
+        var view = window.GetVisualDescendants().OfType<Scene3DView>().Single();
+
+        Assert.Equal(planningTelemetry, Place(Named<Telemetry.TelemetryPanelView>(view, "Telemetry")));
+        Assert.Equal((planningColumn.Right, planningColumn.Top), (Place(Named<Border>(view, "ViewColumn")).Right, Place(Named<Border>(view, "ViewColumn")).Top));
+        Assert.Equal((HorizontalAlignment.Left, VerticalAlignment.Top), (Named<Border>(view, "TrafficPanel").HorizontalAlignment, Named<Border>(view, "TrafficPanel").VerticalAlignment));
+        Assert.True(Named<Button>(view, "SurfaceSatellite").IsVisible);
+        Assert.False(Named<Button>(view, "SurfaceCustom").IsVisible);
         window.Close();
     }
 }

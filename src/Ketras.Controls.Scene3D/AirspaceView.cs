@@ -12,7 +12,8 @@ namespace Ketras.Controls.Scene3D;
 /// planned route, points of interest and aircraft with trails, drop lines and shadows. Cameras: overview, follow an
 /// aircraft (<see cref="Follow"/>), everything from above (<see cref="FitAll"/>) and free flight (right mouse button,
 /// then W A S D / Q E, Shift, F, Esc); taking the camera with the right button ends following
-/// (<see cref="FollowReleased"/>). The host shows the terrain data's credit.
+/// (<see cref="FollowReleased"/>). The terrain is grey relief or draped with map imagery (<see cref="SetGround"/>). The host
+/// shows the terrain data's and the imagery's credits.
 /// Every Set and Follow method is safe from any thread; frequent updates are merged into one redraw. No panels: a
 /// host puts its own over it.
 /// </summary>
@@ -104,6 +105,30 @@ public sealed class AirspaceView : Panel
     /// null removes it. Drawn when OpenGL is available, otherwise the flat ground stays.
     /// </summary>
     public void SetTerrain(TerrainGrid? terrain) => OnUiThread(() => _terrain.SetGrid(terrain));
+
+    /// <summary>
+    /// Paints the terrain as grey relief under a dark sky, or with the imagery (<see cref="SetImagery"/>) under a blue sky
+    /// fading to the horizon. Where no imagery is available the relief shows.
+    /// </summary>
+    public void SetGround(SceneGround ground) => OnUiThread(() =>
+    {
+        Ground = ground;
+        _terrain.SetGround(ground);
+        _viewport.SetGround(ground);
+    });
+
+    /// <summary>Sets the map tiles draped over the terrain in <see cref="SceneGround.Imagery"/>; null removes them.</summary>
+    public void SetImagery(SceneImagery? imagery) => OnUiThread(() =>
+    {
+        Imagery = imagery;
+        _terrain.SetImagery(imagery);
+    });
+
+    /// <summary>The ground style in use; for tests.</summary>
+    internal SceneGround Ground { get; private set; }
+
+    /// <summary>The imagery last set; for tests.</summary>
+    internal SceneImagery? Imagery { get; private set; }
 
     /// <summary>Follows an aircraft by id; null returns to the overview.</summary>
     public void Follow(string? id) => Update(() => _followed = string.IsNullOrWhiteSpace(id) ? null : id.Trim());

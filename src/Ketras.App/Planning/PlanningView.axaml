@@ -13,6 +13,7 @@
              x:Class="Ketras.App.Planning.PlanningView"
              x:DataType="planning:PlanningViewModel">
   <UserControl.Styles>
+    <StyleInclude Source="avares://Ketras/Common/ViewColumnStyles.axaml" />
     <StyleInclude Source="avares://Ketras/Planning/PlanningStyles.axaml" />
   </UserControl.Styles>
 

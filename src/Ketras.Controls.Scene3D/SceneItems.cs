@@ -47,3 +47,24 @@ public sealed record ScenePathPoint(int Sequence, GeoPoint Position, double Alti
 /// <param name="Label">Name shown with it.</param>
 /// <param name="Position">Where it is.</param>
 public sealed record ScenePoint(string Label, GeoPoint Position);
+
+/// <summary>How the terrain surface is painted.</summary>
+public enum SceneGround
+{
+    /// <summary>Grey relief with contour lines under a dark sky.</summary>
+    Relief,
+
+    /// <summary>Map imagery (<see cref="AirspaceView.SetImagery"/>) with thin contour lines under a blue sky.</summary>
+    Imagery
+}
+
+/// <summary>One encoded map tile (PNG or JPEG).</summary>
+/// <param name="X">Column.</param>
+/// <param name="Y">Row, 0 at the north.</param>
+/// <param name="Encoded">The image file's bytes.</param>
+public sealed record SceneImageryTile(int X, int Y, byte[] Encoded);
+
+/// <summary>Map tiles to drape over the terrain; tiles missing from the block leave the grey relief showing.</summary>
+/// <param name="Range">The XYZ tile block.</param>
+/// <param name="Tiles">The tiles of the block that are available.</param>
+public sealed record SceneImagery(TileRange Range, IReadOnlyList<SceneImageryTile> Tiles);

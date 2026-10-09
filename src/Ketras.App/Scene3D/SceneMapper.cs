@@ -4,6 +4,7 @@ using Ketras.Model.Geo;
 using Ketras.Model.Missions;
 using Ketras.Model.Planning;
 using Ketras.Model.Vehicles;
+using Ketras.Station.Imagery;
 
 namespace Ketras.App.Scene3D;
 
@@ -66,6 +67,13 @@ public static class SceneMapper
     public static IReadOnlyList<SceneAircraft> Traffic(IReadOnlyList<TrafficTarget> traffic, double homeAltitude) =>
         [.. traffic.Select(t => new SceneAircraft(t.Id, t.Callsign ?? t.Id, t.Position, t.AltitudeMeters ?? homeAltitude, t.HeadingDegrees ?? 0,
             GroundSpeedMps: t.GroundSpeedMps ?? 0, VerticalSpeedMps: t.VerticalSpeedMps ?? 0, Mode: t.Category.ToString()))];
+
+    /// <summary>The scene's ground style for a surface.</summary>
+    public static SceneGround Ground(SceneSurface surface) => surface == SceneSurface.Grey ? SceneGround.Relief : SceneGround.Imagery;
+
+    /// <summary>Map tiles to drape over the terrain; null without any.</summary>
+    public static SceneImagery? Imagery(ImageryMosaic? mosaic) =>
+        mosaic is null ? null : new SceneImagery(mosaic.Range, [.. mosaic.Tiles.Select(t => new SceneImageryTile(t.X, t.Y, t.Encoded))]);
 
     /// <summary>Points of interest.</summary>
     public static IReadOnlyList<ScenePoint> Points(IReadOnlyList<PointOfInterest> points) =>
