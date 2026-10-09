@@ -46,6 +46,15 @@
       <TextBlock Classes="small error" Text="{Binding TileProblem}" Margin="20,0,12,4" IsVisible="{Binding TileProblem, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
 
       <Border Classes="section">
+        <TextBlock Text="{x:Static r:Strings.SettingsTerrain}"/>
+      </Border>
+      <Grid Classes="field" ColumnDefinitions="*,Auto" ToolTip.Tip="{x:Static r:Strings.SettingsTerrainDownloadTip}">
+        <TextBlock Text="{x:Static r:Strings.SettingsTerrainDownload}" VerticalAlignment="Center" />
+        <ComboBox x:Name="TerrainMode" Grid.Column="1" ItemsSource="{Binding TerrainModes}" SelectedItem="{Binding SelectedTerrainMode}"
+                  DisplayMemberBinding="{ReflectionBinding Label}" />
+      </Grid>
+
+      <Border Classes="section">
         <TextBlock Text="{x:Static r:Strings.SettingsFolders}"/>
       </Border>
       <Grid Classes="field" ColumnDefinitions="160,*">

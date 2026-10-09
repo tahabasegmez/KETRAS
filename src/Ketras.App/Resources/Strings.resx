@@ -608,6 +608,16 @@
   <data name="ActuatorsTestStopped" xml:space="preserve"><value>Actuator test stopped: {0}</value></data>
   <data name="TerrainCredit" xml:space="preserve"><value>Terrain: Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA</value></data>
   <data name="SettingsMap" xml:space="preserve"><value>MAP</value></data>
+  <data name="SettingsTerrain" xml:space="preserve"><value>TERRAIN</value></data>
+  <data name="SettingsTerrainDownload" xml:space="preserve"><value>Download</value></data>
+  <data name="SettingsTerrainDownloadTip" xml:space="preserve"><value>Automatic downloads the terrain cells (about 40 MB each) as the plan reaches them. Manual downloads them only from the button in Planning, or before an upload.</value></data>
+  <data name="TerrainDownloadAuto" xml:space="preserve"><value>Automatic</value></data>
+  <data name="TerrainDownloadManual" xml:space="preserve"><value>Manual</value></data>
+  <data name="PlanningDownloadTerrain" xml:space="preserve"><value>Download the terrain of the plan's area: {0}</value></data>
+  <data name="PlanningDownloadingTerrain" xml:space="preserve"><value>Downloading the terrain of the plan's area…</value></data>
+  <data name="TerrainDownloaded" xml:space="preserve"><value>Terrain downloaded</value></data>
+  <data name="TerrainDownloadIncomplete" xml:space="preserve"><value>Terrain download incomplete</value></data>
+  <data name="TerrainNotPublished" xml:space="preserve"><value>{0}: no data published (open water or outside the release)</value></data>
   <data name="SettingsTileUrl" xml:space="preserve"><value>Custom tile URL</value></data>
   <data name="SettingsTileAttribution" xml:space="preserve"><value>Its credit</value></data>
   <data name="SettingsTileUrlTip" xml:space="preserve"><value>An XYZ tile URL with {z}, {x} and {y}. It replaces the satellite and street maps; leave it empty to use them. Respect the source&apos;s terms.</value></data>

@@ -109,6 +109,12 @@ public sealed class TerrainTileStore
         return new TileFetchResult(present, downloaded, notPublished, failed);
     }
 
+    /// <summary>Labels of the cells of <paramref name="bounds"/> never fetched: no file and not known to be unpublished.</summary>
+    public IReadOnlyList<string> AbsentCells(GeoBounds bounds) =>
+        [.. CopernicusDem.CellsFor(bounds)
+            .Where(cell => !File.Exists(TilePath(cell.Latitude, cell.Longitude)) && !File.Exists(MissingMarkerPath(cell.Latitude, cell.Longitude)))
+            .Select(cell => CopernicusDem.CellLabel(cell.Latitude, cell.Longitude))];
+
     /// <summary>
     /// Reads the heights of <paramref name="bounds"/> from disk on the data's own 1 arc-second lattice,
     /// thinned by a whole factor when it would exceed <paramref name="maxPoints"/>. Never downloads.

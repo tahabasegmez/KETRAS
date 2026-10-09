@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Ketras.App.Common;
 using Ketras.App.Resources;
 using Ketras.Station.Settings;
+using Ketras.Station.Terrain;
 
 namespace Ketras.App.Settings;
 
@@ -23,8 +24,8 @@ public static class AppSettings
 public sealed record SettingChoice<T>(T Value, string Label);
 
 /// <summary>
-/// The Settings activity: the operator's display choices (stored at once), the folders the station uses, and what
-/// this build is. Theme and units offer one choice each until more exist.
+/// The Settings activity: the operator's display choices and how terrain is downloaded (stored at once), the folders
+/// the station uses, and what this build is. Theme and units offer one choice each until more exist.
 /// </summary>
 public sealed partial class SettingsViewModel : ObservableObject
 {
@@ -40,6 +41,33 @@ public sealed partial class SettingsViewModel : ObservableObject
         SelectedUnits = Units[0];
         TileUrl = settings.Get(AppSettings.CustomTileUrl);
         TileAttribution = settings.Get(AppSettings.CustomTileAttribution);
+        TerrainModes =
+        [
+            new SettingChoice<TerrainDownloadMode>(TerrainDownloadMode.Auto, Strings.TerrainDownloadAuto),
+            new SettingChoice<TerrainDownloadMode>(TerrainDownloadMode.Manual, Strings.TerrainDownloadManual)
+        ];
+        var mode = Enum.TryParse<TerrainDownloadMode>(settings.Get(TerrainService.DownloadModeSetting), out var saved) ? saved : TerrainDownloadMode.Auto;
+        _selectedTerrainMode = TerrainModes.First(choice => choice.Value == mode);
+    }
+
+    private SettingChoice<TerrainDownloadMode> _selectedTerrainMode;
+
+    /// <summary>How terrain cells are downloaded.</summary>
+    public IReadOnlyList<SettingChoice<TerrainDownloadMode>> TerrainModes { get; }
+
+    /// <summary>The terrain download mode in use; stored when chosen.</summary>
+    public SettingChoice<TerrainDownloadMode> SelectedTerrainMode
+    {
+        get => _selectedTerrainMode;
+        set
+        {
+            if (value is null || !SetProperty(ref _selectedTerrainMode, value))
+            {
+                return;
+            }
+
+            _settings.Set(TerrainService.DownloadModeSetting, value.Value.ToString());
+        }
     }
 
     /// <summary>The custom tile URL being edited; stored on commit when it is a valid template (or empty).</summary>

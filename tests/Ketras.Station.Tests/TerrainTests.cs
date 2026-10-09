@@ -21,13 +21,59 @@ public sealed class TerrainTests : IDisposable
 
     public void Dispose() => System.IO.Directory.Delete(_directory, recursive: true);
 
-    private (PlanStore Plans, TerrainService Terrain) Create()
+    // Just south of the synthetic cell: the 2 km margin reaches N46E008, which is not on disk.
+    private static readonly GeoPoint Edge = new(47.005, 8.5);
+    private readonly NotFound _bucket = new();
+
+    private (PlanStore Plans, TerrainService Terrain) Create(SettingsStore? settings = null)
     {
-        var tiles = new TerrainTileStore(_directory, new HttpClient(new NotFound()));
+        var tiles = new TerrainTileStore(_directory, new HttpClient(_bucket));
         SyntheticGeoTiff.Write(tiles.TilePath(47, 8), 101, 101, 32, 48, 8, 0.01, (row, _) => 400 + row);
         var plans = new PlanStore(new NotificationStore(TimeProvider.System));
         var options = Options.Create(new StationOptions { Terrain = { Enabled = true } });
-        return (plans, new TerrainService(plans, options, tiles, TimeProvider.System, NullLogger<TerrainService>.Instance));
+        return (plans, new TerrainService(plans, options, tiles, TimeProvider.System, NullLogger<TerrainService>.Instance, settings));
+    }
+
+    [Fact]
+    public async Task By_hand_the_missing_cells_are_listed_until_the_operator_downloads_them()
+    {
+        var (plans, terrain) = Create();
+        using var _ = terrain;
+
+        plans.UpdateSettings(s => s with { PlannedHome = Edge });
+        await StationFixture.WaitForAsync(() => terrain.MissingCells.SequenceEqual(["N46E008"]));
+        await Task.Delay(200);
+        Assert.Equal((TerrainDownloadMode.Manual, 0), (terrain.DownloadMode, _bucket.Requests));
+
+        var result = await terrain.DownloadPlanAreaAsync();
+
+        Assert.Equal(["N46E008"], result!.NotPublished);
+        Assert.Equal(["N47E008"], result.Present);
+        Assert.Empty(terrain.MissingCells);
+        Assert.False(terrain.IsDownloading);
+    }
+
+    [Fact]
+    public async Task Automatically_a_missing_cell_is_tried_once_as_the_plan_reaches_it()
+    {
+        var settings = new SettingsStore(new StationPaths(_directory, _directory), NullLogger<SettingsStore>.Instance);
+        var (plans, terrain) = Create(settings);
+        using var _ = terrain;
+        var downloads = new TaskCompletionSource<TileFetchResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+        terrain.Downloaded += result => downloads.TrySetResult(result);
+        _bucket.Offline = true;
+
+        plans.UpdateSettings(s => s with { PlannedHome = Edge });
+        var first = await downloads.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        plans.UpdateSettings(s => s with { PlannedHome = new GeoPoint(Edge.Latitude + 0.001, Edge.Longitude) });
+        await Task.Delay(1000);
+
+        Assert.Equal(TerrainDownloadMode.Auto, terrain.DownloadMode);
+        Assert.Equal("N46E008", Assert.Single(first.Failed).Cell);
+        Assert.Equal(1, _bucket.Requests);
+        Assert.Equal(["N46E008"], terrain.MissingCells);
+        settings.Set(TerrainService.DownloadModeSetting, nameof(TerrainDownloadMode.Manual));
+        Assert.Equal(TerrainDownloadMode.Manual, terrain.DownloadMode);
     }
 
     [Fact]
@@ -132,10 +178,19 @@ public sealed class TerrainTests : IDisposable
         changed = source;
     }
 
-    /// <summary>The bucket has no cell beyond the ones on disk.</summary>
+    /// <summary>The bucket has no cell beyond the ones on disk, or cannot be reached; counts requests.</summary>
     private sealed class NotFound : HttpMessageHandler
     {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) =>
-            Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound));
+        private int _requests;
+
+        public int Requests => _requests;
+
+        public bool Offline { get; set; }
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            Interlocked.Increment(ref _requests);
+            return Offline ? throw new HttpRequestException("offline") : Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound));
+        }
     }
 }

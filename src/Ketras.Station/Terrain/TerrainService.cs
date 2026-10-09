@@ -11,6 +11,16 @@ using TerrainGrid = Ketras.Model.Terrain.TerrainGrid;
 
 namespace Ketras.Station.Terrain;
 
+/// <summary>When the cells the plan needs are downloaded besides before an upload.</summary>
+public enum TerrainDownloadMode
+{
+    /// <summary>As soon as the plan reaches a cell not on disk.</summary>
+    Auto,
+
+    /// <summary>Only when the operator asks (<see cref="TerrainService.DownloadPlanAreaAsync"/>).</summary>
+    Manual
+}
+
 /// <summary>The terrain part of an upload: the aligned plan and a one-line summary of what was checked.</summary>
 /// <param name="Plan">The plan with home and touchdown altitudes on the terrain.</param>
 /// <param name="Summary">E.g. "terrain clear" or "terrain data missing (N47E008 not published)".</param>
@@ -18,7 +28,10 @@ public sealed record TerrainPreparation(Plan Plan, string Summary);
 
 /// <summary>
 /// Terrain for the plan, from Copernicus DEM cells: while the plan is edited it reads the cells already on disk and keeps
-/// the home and touchdown altitudes on the terrain; before an upload it downloads the cells the plan needs. While the
+/// the home and touchdown altitudes on the terrain, and lists the cells of the plan's area never fetched
+/// (<see cref="MissingCells"/>). Those are downloaded as the plan reaches them (<see cref="TerrainDownloadMode.Auto"/>,
+/// each cell tried once per session) or when the operator asks (<see cref="TerrainDownloadMode.Manual"/>), and always
+/// before an upload. While the
 /// station flies a simulator world without terrain (<see cref="UseFlatGround"/>), the ground is level with the planned
 /// home everywhere (the DEM height there, where the simulator puts its ground), for the alignment, the grid and every
 /// height read through <see cref="GroundAt"/> and <see cref="LoadGrid"/>. It never commands the vehicle. Thread-safe.
@@ -40,23 +53,144 @@ public sealed class TerrainService : IDisposable
     private TerrainGrid? _grid;
     private CancellationTokenSource? _settle;
     private bool _flat;
+    private readonly SettingsStore? _settings;
+    private readonly HashSet<string> _autoTried = [];
+    private IReadOnlyList<string> _missing = [];
+    private bool _downloading;
+
+    /// <summary>How missing cells are downloaded, saved by name; Auto by default.</summary>
+    public static SettingDefinition<string> DownloadModeSetting { get; } = new("terrain.download", nameof(TerrainDownloadMode.Auto));
 
     /// <summary>Follows the plan in <paramref name="plans"/> when terrain is enabled.</summary>
-    public TerrainService(PlanStore plans, IOptions<StationOptions> options, StationPaths paths, TimeProvider time, ILogger<TerrainService> logger)
-        : this(plans, options, new TerrainTileStore(paths.DataPath(options.Value.Terrain.CacheDirectory, "terrain")), time, logger)
+    public TerrainService(PlanStore plans, IOptions<StationOptions> options, StationPaths paths, SettingsStore settings, TimeProvider time, ILogger<TerrainService> logger)
+        : this(plans, options, new TerrainTileStore(paths.DataPath(options.Value.Terrain.CacheDirectory, "terrain")), time, logger, settings)
     {
     }
 
-    internal TerrainService(PlanStore plans, IOptions<StationOptions> options, TerrainTileStore tiles, TimeProvider time, ILogger<TerrainService> logger)
+    /// <summary>Without <paramref name="settings"/> the mode is <see cref="TerrainDownloadMode.Manual"/>.</summary>
+    internal TerrainService(PlanStore plans, IOptions<StationOptions> options, TerrainTileStore tiles, TimeProvider time, ILogger<TerrainService> logger,
+        SettingsStore? settings = null)
     {
         _plans = plans;
         _options = options.Value.Terrain;
         Tiles = tiles;
         _time = time;
         _logger = logger;
+        _settings = settings;
         if (_options.Enabled)
         {
             plans.Changed += OnPlanChanged;
+            if (settings is not null)
+            {
+                settings.Changed += OnSetting;
+            }
+        }
+    }
+
+    /// <summary>How missing cells are downloaded.</summary>
+    public TerrainDownloadMode DownloadMode =>
+        _settings is not null && Enum.TryParse<TerrainDownloadMode>(_settings.Get(DownloadModeSetting), out var mode) ? mode : TerrainDownloadMode.Manual;
+
+    /// <summary>Cells of the plan's area (with its margin) never fetched, e.g. <c>N47E008</c>; empty when all are known.</summary>
+    public IReadOnlyList<string> MissingCells
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _missing;
+            }
+        }
+    }
+
+    /// <summary>True while cells are being downloaded.</summary>
+    public bool IsDownloading
+    {
+        get
+        {
+            lock (_lock)
+            {
+                return _downloading;
+            }
+        }
+    }
+
+    /// <summary><see cref="MissingCells"/> or <see cref="IsDownloading"/> changed. Raised on a worker thread.</summary>
+    public event Action? CoverageChanged;
+
+    /// <summary>A download of the plan's area finished, with what it got. Raised on a worker thread.</summary>
+    public event Action<TileFetchResult>? Downloaded;
+
+    /// <summary>
+    /// Downloads the cells of the plan's area not on disk, then reloads the grid. Null when there is nothing to do: no
+    /// plan positions, terrain off, or a download already running. Download failures are in the result.
+    /// </summary>
+    public async Task<TileFetchResult?> DownloadPlanAreaAsync(CancellationToken cancellation = default)
+    {
+        var plan = _plans.Current;
+        if (!IsEnabled || BoundsOf(plan.Mission, plan.Fences) is not { } needed)
+        {
+            return null;
+        }
+
+        lock (_lock)
+        {
+            if (_downloading)
+            {
+                return null;
+            }
+
+            _downloading = true;
+        }
+
+        CoverageChanged?.Invoke();
+        try
+        {
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellation);
+            timeout.CancelAfter(_options.DownloadTimeout);
+            var fetch = await Tiles.EnsureAsync(needed.Expand(PlanMarginMeters), timeout.Token);
+            foreach (var cell in fetch.Downloaded)
+            {
+                _logger.LogInformation("Terrain cell {Cell} downloaded", cell);
+            }
+
+            lock (_lock)
+            {
+                _bounds = null;
+            }
+
+            await Task.Run(() => Refresh(_plans.Current), CancellationToken.None);
+            Downloaded?.Invoke(fetch);
+            return fetch;
+        }
+        finally
+        {
+            lock (_lock)
+            {
+                _downloading = false;
+            }
+
+            CoverageChanged?.Invoke();
+        }
+    }
+
+    private void OnSetting(string key)
+    {
+        if (key == DownloadModeSetting.Key && DownloadMode == TerrainDownloadMode.Auto)
+        {
+            _ = Task.Run(() => RefreshLogged(_plans.Current));
+        }
+    }
+
+    private void RefreshLogged(Plan plan)
+    {
+        try
+        {
+            Refresh(plan);
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException)
+        {
+            _logger.LogWarning(exception, "Terrain could not be read for the plan");
         }
     }
 
@@ -224,6 +358,7 @@ public sealed class TerrainService : IDisposable
 
             var load = await Task.Run(() => Tiles.Load(bounds), cancellation);
             SetGrid(bounds, load.Grid);
+            UpdateMissing(bounds);
             var (mission, changes) = TerrainAlignment.Align(plan.Mission, GroundAt);
             if (changes.Count > 0)
             {
@@ -277,6 +412,7 @@ public sealed class TerrainService : IDisposable
     {
         if (BoundsOf(plan.Mission, plan.Fences) is not { } needed)
         {
+            UpdateMissing(null);
             return;
         }
 
@@ -288,6 +424,7 @@ public sealed class TerrainService : IDisposable
 
         var bounds = needed.Expand(PlanMarginMeters);
         var cells = CopernicusDem.CellsFor(bounds).Count;
+        UpdateMissing(bounds);
         if (!covered && cells <= TerrainTileStore.MaxCellsPerRequest)
         {
             var load = Tiles.Load(bounds);
@@ -308,6 +445,39 @@ public sealed class TerrainService : IDisposable
             _logger.LogInformation("Terrain alignment: {Changes}", string.Join("; ", changes));
             return current with { Mission = mission };
         }, PlanChange.Mission);
+    }
+
+    /// <summary>Lists the cells never fetched and, in Auto, downloads those not tried yet this session.</summary>
+    private void UpdateMissing(GeoBounds? bounds)
+    {
+        var missing = bounds is { } area ? Tiles.AbsentCells(area) : [];
+        bool changed, download;
+        lock (_lock)
+        {
+            changed = !missing.SequenceEqual(_missing);
+            _missing = missing;
+            download = DownloadMode == TerrainDownloadMode.Auto && !_downloading && missing.Any(_autoTried.Add);
+        }
+
+        if (changed)
+        {
+            CoverageChanged?.Invoke();
+        }
+
+        if (download)
+        {
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await DownloadPlanAreaAsync();
+                }
+                catch (Exception exception) when (exception is IOException or InvalidDataException or HttpRequestException)
+                {
+                    _logger.LogWarning(exception, "Terrain could not be downloaded for the plan");
+                }
+            });
+        }
     }
 
     private void SetGrid(GeoBounds bounds, ElevationGrid elevation)

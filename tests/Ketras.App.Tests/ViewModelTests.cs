@@ -134,6 +134,20 @@ public sealed class ViewModelTests
     }
 
     [Fact]
+    public async Task The_terrain_download_mode_is_automatic_until_manual_is_chosen_and_stays_chosen()
+    {
+        await using var app = AppFixture.Create();
+        var settings = app.Get<SettingsViewModel>();
+        Assert.Equal(Station.Terrain.TerrainDownloadMode.Auto, settings.SelectedTerrainMode.Value);
+
+        settings.SelectedTerrainMode = settings.TerrainModes.Single(m => m.Value == Station.Terrain.TerrainDownloadMode.Manual);
+
+        Assert.Equal("Manual", app.Get<SettingsStore>().Get(Station.Terrain.TerrainService.DownloadModeSetting));
+        var reopened = new SettingsViewModel(new SettingsStore(app.Get<StationPaths>(), NullLogger<SettingsStore>.Instance), app.Get<StationPaths>(), new UnitService());
+        Assert.Equal(Station.Terrain.TerrainDownloadMode.Manual, reopened.SelectedTerrainMode.Value);
+    }
+
+    [Fact]
     public void Units_are_formatted_in_metric()
     {
         var units = new UnitService();

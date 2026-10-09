@@ -71,6 +71,9 @@ public sealed partial class PlanningViewModel : ObservableObject, IDisposable
         TerrainAttribution = options.Value.Terrain.Enabled ? Strings.TerrainCredit : string.Empty;
         ReadCustomTiles();
         settings.Changed += OnSetting;
+        _terrain.CoverageChanged += OnCoverage;
+        _terrain.Downloaded += OnTerrainDownloaded;
+        ReadCoverage();
         BaseMap = Enum.TryParse<BaseMapKind>(settings.Get(BaseMapSetting), out var kind) ? kind : BaseMapKind.Satellite;
         Plan = plans.Current;
         Mission = new MissionPanelViewModel(plans, ui, time, ArmPlacement, id => SelectItem(id),
@@ -186,9 +189,20 @@ public sealed partial class PlanningViewModel : ObservableObject, IDisposable
     /// <summary>The terrain data's credit while terrain is checked; empty without. Shown with the base map's credit behind the view column's info mark.</summary>
     [ObservableProperty] public partial string TerrainAttribution { get; private set; } = string.Empty;
 
+    /// <summary>Terrain is downloaded by hand and cells of the plan's area are missing: the download button shows.</summary>
+    [ObservableProperty] public partial bool ShowTerrainDownload { get; private set; }
+
+    /// <summary>Terrain cells are being downloaded.</summary>
+    [ObservableProperty] public partial bool IsTerrainDownloading { get; private set; }
+
+    /// <summary>The download button's tooltip: the cells it fetches, or that it is busy.</summary>
+    [ObservableProperty] public partial string TerrainDownloadTip { get; private set; } = string.Empty;
+
     /// <inheritdoc />
     public void Dispose()
     {
+        _terrain.CoverageChanged -= OnCoverage;
+        _terrain.Downloaded -= OnTerrainDownloaded;
         _plans.Changed -= OnPlanChanged;
         _validation.Changed -= OnFindings;
         Telemetry.PropertyChanged -= OnTelemetryChanged;
@@ -357,6 +371,53 @@ public sealed partial class PlanningViewModel : ObservableObject, IDisposable
         if (key == Settings.AppSettings.CustomTileUrl.Key || key == Settings.AppSettings.CustomTileAttribution.Key)
         {
             _ui.Post(ReadCustomTiles);
+        }
+        else if (key == TerrainService.DownloadModeSetting.Key)
+        {
+            _ui.Post(ReadCoverage);
+        }
+    }
+
+    private void OnCoverage() => _ui.Post(ReadCoverage);
+
+    private void ReadCoverage()
+    {
+        var missing = _terrain.MissingCells;
+        IsTerrainDownloading = _terrain.IsDownloading;
+        ShowTerrainDownload = _terrain.IsEnabled && _terrain.DownloadMode == TerrainDownloadMode.Manual && (missing.Count > 0 || IsTerrainDownloading);
+        TerrainDownloadTip = IsTerrainDownloading
+            ? Strings.PlanningDownloadingTerrain
+            : string.Format(CultureInfo.CurrentCulture, Strings.PlanningDownloadTerrain, string.Join(", ", missing));
+    }
+
+    [RelayCommand]
+    private async Task DownloadTerrainAsync()
+    {
+        try
+        {
+            await _terrain.DownloadPlanAreaAsync();
+        }
+        catch (Exception exception) when (exception is IOException or InvalidDataException or HttpRequestException)
+        {
+            _notifications.Notify(TerrainSource, NotificationSeverity.Error, Strings.TerrainDownloadIncomplete, exception.Message);
+        }
+    }
+
+    private const string TerrainSource = "Terrain";
+
+    /// <summary>Says what a download of the plan's area got, in either mode.</summary>
+    private void OnTerrainDownloaded(Ketras.Terrain.TileFetchResult result)
+    {
+        var problems = result.Failed.Select(f => $"{f.Cell}: {f.Reason}")
+            .Concat(result.NotPublished.Select(cell => string.Format(CultureInfo.CurrentCulture, Strings.TerrainNotPublished, cell)))
+            .ToList();
+        if (problems.Count > 0)
+        {
+            _notifications.Notify(TerrainSource, NotificationSeverity.Warning, Strings.TerrainDownloadIncomplete, string.Join("; ", problems));
+        }
+        else if (result.Downloaded.Count > 0)
+        {
+            _notifications.Notify(TerrainSource, NotificationSeverity.Success, Strings.TerrainDownloaded, string.Join(", ", result.Downloaded));
         }
     }
 

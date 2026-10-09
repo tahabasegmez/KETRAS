@@ -1,7 +1,8 @@
 <!-- The Planning activity, laid out as the KetrasPlanner control: the map fills the work area and every panel floats over
      it. Top left, the planning panel (300 wide): the Mission / Geofence switch and the collapse chevron in its title row,
-     the chosen editor under it. Top right, the view column (satellite / street, then the layers, then follow and fit, then
-     the data credits on hover); bottom right, the telemetry panel; bottom left, the weather. -->
+     the chosen editor under it. Top right, the view column (satellite / street, then the layers, then the terrain download
+     while terrain is downloaded by hand and the plan's area lacks it, then follow and fit, then the data credits on
+     hover); bottom right, the telemetry panel; bottom left, the weather. -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:planning="using:Ketras.App.Planning"
@@ -90,6 +91,11 @@
             <lucide:LucideIcon Kind="Radar" Size="{StaticResource Size.ToolIcon}" />
           </Button>
           <Border Height="1" Margin="2" Background="{DynamicResource Brush.Border}" />
+          <!-- Manual terrain download: only while cells of the plan's area are missing. -->
+          <Button x:Name="DownloadTerrain" Classes="view-toggle" Classes.on="{Binding IsTerrainDownloading}" Command="{Binding DownloadTerrainCommand}"
+                  IsVisible="{Binding ShowTerrainDownload}" ToolTip.Tip="{Binding TerrainDownloadTip}" ToolTip.Placement="Pointer">
+            <lucide:LucideIcon Kind="CloudDownload" Size="{StaticResource Size.ToolIcon}" />
+          </Button>
           <Button x:Name="Follow" Classes="view-toggle" Classes.on="{Binding FollowVehicle}" Command="{Binding ToggleFollowCommand}" ToolTip.Tip="{x:Static r:Strings.MapFollow}" ToolTip.Placement="Pointer">
             <lucide:LucideIcon Kind="Crosshair" Size="{StaticResource Size.ToolIcon}" />
           </Button>
