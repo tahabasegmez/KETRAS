@@ -33,6 +33,10 @@ internal static class MapPalette
     public static readonly MColor FenceExclusion = new(0xF1, 0x4C, 0x4C);
     public static readonly MColor FenceDraft = new(0xCC, 0xA7, 0x00);
 
+    // Guides for the selected item: Muted for limits kept, Warning for limits broken.
+    public static readonly MColor Guide = new(0xCC, 0xCC, 0xCC);
+    public static readonly MColor GuideWarning = new(0xCC, 0xA7, 0x00);
+
     // Chrome
     public static readonly MColor SymbolOutline = new(0x10, 0x10, 0x10);
     public static readonly MColor LabelText = new(0xCC, 0xCC, 0xCC);

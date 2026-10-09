@@ -14,7 +14,10 @@ internal enum MissionHandleKind
     Item,
 
     /// <summary>The start of a landing pattern's approach, which swings and stretches it.</summary>
-    LandingApproachStart
+    LandingApproachStart,
+
+    /// <summary>The point due east on a selected loiter's orbit, which changes its radius.</summary>
+    OrbitRadius
 }
 
 /// <summary>Which handle of a fence the pointer grabbed.</summary>
@@ -38,12 +41,13 @@ internal static class MapHitTester
     /// <summary>
     /// Nearest grabbable mission handle within the threshold, or null. A landing pattern
     /// exposes two handles - touchdown and orbit centre - and both compete on distance, so
-    /// the operator gets whichever they aimed at.
+    /// the operator gets whichever they aimed at. The selected loiter also exposes its radius handle.
     /// </summary>
     public static MissionDragTarget? FindMissionHandle(
         IReadOnlyList<MissionItem> items,
         MPoint world,
-        double thresholdMapUnits)
+        double thresholdMapUnits,
+        Guid? selectedId = null)
     {
         var nearestDistance = double.MaxValue;
         MissionDragTarget? nearest = null;
@@ -75,10 +79,19 @@ internal static class MapHitTester
                 var approach = MapGeometry.MetersToMapUnits(Math.Max(item.Param3, 1), location.Latitude);
                 Test(item, LandingPatternGeometry.ApproachStart(anchor, item.Param4, approach), MissionHandleKind.LandingApproachStart);
             }
+
+            if (item.Id == selectedId && item.Type != MissionItemType.LandingPattern && MissionItemValues.LoiterRadiusMeters(item) is { } radius)
+            {
+                Test(item, OrbitRadiusHandle(anchor, radius, location.Latitude), MissionHandleKind.OrbitRadius);
+            }
         }
 
         return nearest;
     }
+
+    /// <summary>Where a loiter's radius handle sits: due east of the centre, on the orbit.</summary>
+    public static MPoint OrbitRadiusHandle(MPoint center, double radiusMeters, double latitude) =>
+        new(center.X + MapGeometry.MetersToMapUnits(radiusMeters, latitude), center.Y);
 
     /// <summary>
     /// Nearest grabbable fence handle. A circle's centre wins ties against its radius handle,

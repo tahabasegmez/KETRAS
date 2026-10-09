@@ -125,7 +125,7 @@ internal sealed class PointerInteraction
         }
 
         var threshold = _surface.GrabThresholdMapUnits();
-        _missionDrag = MapHitTester.FindMissionHandle(_view.Plan.Mission.Items, e.WorldPosition, threshold);
+        _missionDrag = MapHitTester.FindMissionHandle(_view.Plan.Mission.Items, e.WorldPosition, threshold, _view.SelectedItemId);
         // A handled press is not reported as a tap, so pressing a handle also selects its owner.
         if (_missionDrag is not null)
         {
@@ -204,6 +204,11 @@ internal sealed class PointerInteraction
     {
         var location = target.Item.Location ?? default;
         var anchor = MapGeometry.ToMercator(location);
+        if (target.Kind == MissionHandleKind.OrbitRadius)
+        {
+            return MapHitTester.OrbitRadiusHandle(anchor, Model.Missions.MissionItemValues.LoiterRadiusMeters(target.Item) ?? 0, location.Latitude);
+        }
+
         if (target.Kind != MissionHandleKind.LandingApproachStart)
         {
             return anchor;
@@ -232,9 +237,17 @@ internal sealed class PointerInteraction
             return;
         }
 
-        // Moving the approach start keeps the touchdown fixed; heading and length follow the drag.
+        // Moving the approach start keeps the touchdown fixed; heading and length follow the drag. The radius handle
+        // keeps the orbit's centre.
         if (_view.Plan.Mission.Items.FirstOrDefault(i => i.Id == target.Item.Id)?.Location is not { } touchdown)
         {
+            return;
+        }
+
+        if (target.Kind == MissionHandleKind.OrbitRadius)
+        {
+            var radius = MapGeometry.DistanceBetween(MapGeometry.ToMercator(touchdown), world) * Math.Cos(touchdown.Latitude * Math.PI / 180d);
+            _view.RaiseResizeOrbit(new OrbitResize(target.Item.Id, Math.Max(Math.Round(radius), 1)));
             return;
         }
 
@@ -270,7 +283,7 @@ internal sealed class PointerInteraction
     private void SelectNearest(MPoint world)
     {
         var threshold = _surface.GrabThresholdMapUnits();
-        if (MapHitTester.FindMissionHandle(_view.Plan.Mission.Items, world, threshold) is { } item)
+        if (MapHitTester.FindMissionHandle(_view.Plan.Mission.Items, world, threshold, _view.SelectedItemId) is { } item)
         {
             _view.Select(item.Item.Id, null);
             return;

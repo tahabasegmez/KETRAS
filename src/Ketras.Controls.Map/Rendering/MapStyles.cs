@@ -76,6 +76,38 @@ internal static class MapStyles
         Offset = offset ?? new Offset(0, 0)
     };
 
+    // ---------------------------------------------------------------- guides
+
+    /// <summary>A guide ring: thin and dashed, so it reads as a limit rather than part of the plan.</summary>
+    public static VectorStyle GuideRing(bool warning)
+    {
+        var color = warning ? MapPalette.GuideWarning : MapPalette.Fade(MapPalette.Guide, 0.75);
+        return new VectorStyle
+        {
+            Fill = new MBrush(new MColor(0, 0, 0, 0)),
+            Line = new MPen(color, 1.2f) { PenStyle = PenStyle.Dash },
+            Outline = new MPen(color, 1.2f) { PenStyle = PenStyle.Dash }
+        };
+    }
+
+    /// <summary>A guide point: a small dot on the route, or a hollow square on a drag handle.</summary>
+    public static SymbolStyle GuidePoint(bool handle, bool warning) => new()
+    {
+        SymbolType = handle ? SymbolType.Rectangle : SymbolType.Ellipse,
+        Fill = new MBrush(handle ? new MColor(0, 0, 0, 0) : warning ? MapPalette.GuideWarning : MapPalette.Guide),
+        Outline = new MPen(warning ? MapPalette.GuideWarning : MapPalette.Guide, 1.5f),
+        SymbolScale = (handle ? 11 : 7) / 32d
+    };
+
+    /// <summary>A guide's label, in the Warning colour when its limit is broken.</summary>
+    public static LabelStyle GuideLabel(string text, bool warning, Offset offset)
+    {
+        var label = MapLabel(text, offset: offset);
+        label.ForeColor = warning ? MapPalette.GuideWarning : MapPalette.LabelText;
+        label.Font = new Font { FontFamily = LabelFamily, Size = 10 };
+        return label;
+    }
+
     // ---------------------------------------------------------------- mission
 
     /// <summary>Filled disc behind a waypoint's sequence number, coloured by flight phase; selection adds a ring, the disc keeps its size.</summary>

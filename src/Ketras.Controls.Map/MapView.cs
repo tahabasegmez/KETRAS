@@ -81,6 +81,12 @@ public sealed class MapView : UserControl
     /// <summary>Defines <see cref="MoveApproachCommand"/>.</summary>
     public static readonly StyledProperty<ICommand?> MoveApproachCommandProperty = AvaloniaProperty.Register<MapView, ICommand?>(nameof(MoveApproachCommand));
 
+    /// <summary>Defines <see cref="ResizeOrbitCommand"/>.</summary>
+    public static readonly StyledProperty<ICommand?> ResizeOrbitCommandProperty = AvaloniaProperty.Register<MapView, ICommand?>(nameof(ResizeOrbitCommand));
+
+    /// <summary>Defines <see cref="Guides"/>.</summary>
+    public static readonly StyledProperty<IReadOnlyList<MapGuide>> GuidesProperty = AvaloniaProperty.Register<MapView, IReadOnlyList<MapGuide>>(nameof(Guides), []);
+
     /// <summary>Defines <see cref="AddFenceCommand"/>.</summary>
     public static readonly StyledProperty<ICommand?> AddFenceCommandProperty = AvaloniaProperty.Register<MapView, ICommand?>(nameof(AddFenceCommand));
 
@@ -112,6 +118,7 @@ public sealed class MapView : UserControl
         SelectedFenceIdProperty.Changed.AddClassHandler<MapView>((view, _) => view.RefreshFences());
         ZonesProperty.Changed.AddClassHandler<MapView>((view, _) => view.RefreshFences());
         PointsProperty.Changed.AddClassHandler<MapView>((view, _) => view._surface.RefreshMarkers(view.Points));
+        GuidesProperty.Changed.AddClassHandler<MapView>((view, _) => view._surface.RefreshGuides(view.Guides));
         ToolProperty.Changed.AddClassHandler<MapView>((view, e) => view.OnToolChanged((MapTool)e.NewValue!));
         BaseMapProperty.Changed.AddClassHandler<MapView>((view, _) => view.RebuildBaseMap());
         CustomTilesProperty.Changed.AddClassHandler<MapView>((view, _) => view.RebuildBaseMap());
@@ -262,6 +269,20 @@ public sealed class MapView : UserControl
         set => SetValue(MoveApproachCommandProperty, value);
     }
 
+    /// <summary>Raised with <see cref="OrbitResize"/> while a selected loiter's radius handle is dragged.</summary>
+    public ICommand? ResizeOrbitCommand
+    {
+        get => GetValue(ResizeOrbitCommandProperty);
+        set => SetValue(ResizeOrbitCommandProperty, value);
+    }
+
+    /// <summary>The selected item's guide drawings (limits around it, what can be dragged); the host computes them.</summary>
+    public IReadOnlyList<MapGuide> Guides
+    {
+        get => GetValue(GuidesProperty);
+        set => SetValue(GuidesProperty, value);
+    }
+
     /// <summary>Add a fence; the parameter is its <see cref="Area"/>.</summary>
     public ICommand? AddFenceCommand
     {
@@ -377,6 +398,8 @@ public sealed class MapView : UserControl
 
     internal void RaiseMoveApproach(ApproachMove move) => Execute(MoveApproachCommand, move);
 
+    internal void RaiseResizeOrbit(OrbitResize resize) => Execute(ResizeOrbitCommand, resize);
+
     internal void RaiseAddFence(Area area) => Execute(AddFenceCommand, area);
 
     internal void RaiseEditFence(FenceEdit edit) => Execute(EditFenceCommand, edit);
@@ -408,6 +431,7 @@ public sealed class MapView : UserControl
         Attribution = _surface.Attribution;
         RefreshPlan();
         _surface.RefreshMarkers(Points);
+        _surface.RefreshGuides(Guides);
         _surface.RefreshVehicles();
     }
 

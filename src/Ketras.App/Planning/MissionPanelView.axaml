@@ -34,7 +34,11 @@
         <planning:FieldRowView DataContext="{Binding CruiseSpeed}" />
         <planning:FieldRowView DataContext="{Binding DefaultAltitude}" />
         <planning:FieldRowView DataContext="{Binding AltitudeReference}" />
-        <planning:FieldRowView DataContext="{Binding EndAction}" />
+        <Panel x:Name="EndActionRow" IsVisible="{Binding ShowEndAction}">
+          <planning:FieldRowView DataContext="{Binding EndAction}" />
+        </Panel>
+        <TextBlock x:Name="EndActionIgnored" Classes="small wrap" Text="{x:Static r:Strings.PlanningEndActionIgnored}" Foreground="{DynamicResource Brush.Faint}"
+                   Margin="0,4" IsVisible="{Binding !ShowEndAction}" />
         <TextBlock Classes="section-header" Text="{x:Static r:Strings.PlanningLanding}" Margin="0,10,0,2" />
         <planning:FieldRowView DataContext="{Binding LandingTerrain}" />
         <planning:FieldRowView DataContext="{Binding AbortIfNotFound}" />

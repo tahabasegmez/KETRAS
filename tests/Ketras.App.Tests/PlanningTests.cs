@@ -431,4 +431,93 @@ public sealed class PlanningTests
 
     private static T Find<T>(Control root, string name) where T : Control =>
         root.GetVisualDescendants().OfType<T>().First(control => control.Name == name);
+
+    [Fact]
+    public async Task A_field_shows_the_span_the_vehicle_allows_and_warns_on_a_value_outside_it_but_refuses_one_outside_its_limits()
+    {
+        await using var app = Create();
+        var planning = app.Get<PlanningViewModel>();
+        var plans = app.Get<PlanStore>();
+        plans.AddItem(MissionItemType.Takeoff, GeoMath.Offset(Home, 0, 300));
+        var id = plans.AddItem(MissionItemType.LoiterUnlimited, GeoMath.Offset(Home, 0, 2000))!.Value;
+        planning.SelectItem(id);
+        var radius = planning.Mission.Rows.Single(r => r.Id == id).Fields.Single(f => f.Key == "radius");
+
+        // PX4 defaults: 18 m/s at 50° bank turns in about 27.7 m.
+        Assert.Contains("Turn ≥ 28 m at 18 m/s", radius.RangeLine, StringComparison.Ordinal);
+        Assert.Contains("Accepted 10–5000 m", radius.RangeTip, StringComparison.Ordinal);
+        Assert.Empty(radius.Advice);
+
+        radius.Text = "20";
+        radius.CommitCommand.Execute(null);
+        Assert.Equal(FieldFlash.Warned, radius.Flash);
+        Assert.Equal(20, MissionItemValues.LoiterRadiusMeters(plans.Current.Mission.Items[1]));
+        Assert.Equal(radius.RangeLine, radius.Advice);
+        Assert.True(radius.ShowsAdvice);
+
+        radius.Text = "5";
+        radius.CommitCommand.Execute(null);
+        Assert.Equal(FieldFlash.Rejected, radius.Flash);
+        Assert.Equal(20, MissionItemValues.LoiterRadiusMeters(plans.Current.Mission.Items[1]));
+    }
+
+    [Fact]
+    public async Task The_end_action_shows_only_while_the_plan_has_no_landing()
+    {
+        await using var app = Create();
+        var planning = app.Get<PlanningViewModel>();
+        var plans = app.Get<PlanStore>();
+        plans.AddItem(MissionItemType.Takeoff, GeoMath.Offset(Home, 0, 300));
+        Assert.True(planning.Mission.ShowEndAction);
+
+        var land = plans.AddItem(MissionItemType.Land, GeoMath.Offset(Home, 180, 600))!.Value;
+        Assert.False(planning.Mission.ShowEndAction);
+
+        plans.RemoveItem(land);
+        Assert.True(planning.Mission.ShowEndAction);
+    }
+
+    [Fact]
+    public async Task The_selected_item_gets_its_guides_and_a_dragged_radius_handle_resizes_its_orbit()
+    {
+        await using var app = Create();
+        var planning = app.Get<PlanningViewModel>();
+        var plans = app.Get<PlanStore>();
+        plans.AddItem(MissionItemType.Takeoff, GeoMath.Offset(Home, 0, 300));
+        var id = plans.AddItem(MissionItemType.LoiterUnlimited, GeoMath.Offset(Home, 0, 2000))!.Value;
+        Assert.Empty(planning.Guides);
+
+        planning.SelectItem(id);
+        planning.ResizeOrbitCommand.Execute(new OrbitResize(id, 140));
+
+        Assert.Contains(planning.Guides, g => g.Shape == MapGuideShape.Ring && g.Label.StartsWith("min orbit", StringComparison.Ordinal));
+        Assert.Contains(planning.Guides, g => g.Shape == MapGuideShape.Handle && g.Label == "drag: radius 140 m");
+        Assert.Equal(140, MissionItemValues.LoiterRadiusMeters(plans.Current.Mission.Items[1]));
+        planning.ToggleGuidesLayerCommand.Execute(null);
+        Assert.False(planning.Layers.Guides);
+        planning.SelectItem(null);
+        Assert.Empty(planning.Guides);
+    }
+
+    [AvaloniaFact]
+    public void The_span_line_shows_under_a_field_only_while_its_box_has_the_focus()
+    {
+        var field = new FieldViewModel("radius", "Radius", "m", 80, 0, 10, 5000, _ => true, new InlineUiDispatcher(), TimeProvider.System);
+        field.SetRange(new ParameterRange(10, 5000, 28, null, RangeReason.TurnRadius, 18), "tip", "Turn ≥ 28 m at 18 m/s");
+        var other = new FieldViewModel("delay", "Delay", "s", 0, 0, 0, 3600, _ => true, new InlineUiDispatcher(), TimeProvider.System);
+        var row = new FieldRowView { DataContext = field };
+        var window = new Window { Width = 300, Height = 200, Content = new StackPanel { Children = { row, new FieldRowView { DataContext = other } } } };
+        window.Show();
+        Dispatcher.UIThread.RunJobs();
+        var line = row.GetVisualDescendants().OfType<TextBlock>().Single(t => t.Name == "RangeLine");
+        Assert.False(line.IsVisible);
+
+        row.GetVisualDescendants().OfType<TextBox>().Single(t => t.Name == "Box").Focus();
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(field.IsEditing);
+        Assert.True(line.IsVisible);
+        Assert.Equal("Turn ≥ 28 m at 18 m/s", line.Text);
+        Assert.False(other.IsEditing);
+        window.Close();
+    }
 }

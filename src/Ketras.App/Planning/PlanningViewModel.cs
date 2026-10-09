@@ -180,11 +180,20 @@ public sealed partial class PlanningViewModel : ObservableObject, IDisposable
     /// <summary>Traffic is drawn.</summary>
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Layers))] public partial bool ShowTraffic { get; set; } = true;
 
+    /// <summary>The selected item's guide drawings are on the map.</summary>
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Layers))] public partial bool ShowGuides { get; set; } = true;
+
+    /// <summary>
+    /// The selected item's guide drawings: the vehicle's limits around it (tightest turns, smallest orbit, shortest
+    /// approach or glide, where its altitude is reached) and its drag handles, labelled.
+    /// </summary>
+    [ObservableProperty] public partial IReadOnlyList<MapGuide> Guides { get; private set; } = [];
+
     /// <summary>The map keeps the vehicle centred.</summary>
     [ObservableProperty] public partial bool FollowVehicle { get; set; }
 
     /// <summary>The layers for the map.</summary>
-    public MapLayers Layers => new() { BaseMap = ShowBaseMap, Mission = ShowMission, Fences = ShowFences, Ownship = ShowVehicle, Traffic = ShowTraffic };
+    public MapLayers Layers => new() { BaseMap = ShowBaseMap, Mission = ShowMission, Fences = ShowFences, Ownship = ShowVehicle, Traffic = ShowTraffic, Guides = ShowGuides };
 
     /// <summary>The terrain data's credit while terrain is checked; empty without. Shown with the base map's credit behind the view column's info mark.</summary>
     [ObservableProperty] public partial string TerrainAttribution { get; private set; } = string.Empty;
@@ -273,6 +282,9 @@ public sealed partial class PlanningViewModel : ObservableObject, IDisposable
     private void ToggleTrafficLayer() => ShowTraffic = !ShowTraffic;
 
     [RelayCommand]
+    private void ToggleGuidesLayer() => ShowGuides = !ShowGuides;
+
+    [RelayCommand]
     private void ToggleFollow() => FollowVehicle = !FollowVehicle;
 
     [RelayCommand]
@@ -289,6 +301,12 @@ public sealed partial class PlanningViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     private void MoveItem(ItemMove move) => _plans.UpdateItem(move.ItemId, item => item with { Location = move.Location });
+
+    [RelayCommand]
+    private void ResizeOrbit(OrbitResize resize) =>
+        _plans.UpdateItem(resize.ItemId, item => MissionItemValues.LoiterRadiusMeters(item) is null ? item
+            : item.Type == MissionItemType.LoiterToAltitude ? MissionItemParameters.Write(item, MissionItemField.OrbitRadius, resize.RadiusMeters)
+            : item with { Param3 = item.Param3 < 0 ? -resize.RadiusMeters : resize.RadiusMeters });
 
     [RelayCommand]
     private void MoveApproach(ApproachMove move) =>
@@ -356,7 +374,17 @@ public sealed partial class PlanningViewModel : ObservableObject, IDisposable
         }
     }
 
-    partial void OnSelectedItemIdChanged(Guid? value) => Mission.Apply(Plan, value, ExecutingItemIndex);
+    partial void OnSelectedItemIdChanged(Guid? value)
+    {
+        Mission.Apply(Plan, value, ExecutingItemIndex);
+        UpdateGuides();
+    }
+
+    /// <summary>The selected item's guides for the plan, the active vehicle's limits and the terrain.</summary>
+    private void UpdateGuides() =>
+        Guides = [.. MissionGuideRules.For(Plan.Mission, SelectedItemId, _plans.Limits, _terrain.GroundAt).Select(guide => new MapGuide(
+            guide.Shape switch { GuideShape.Ring => MapGuideShape.Ring, GuideShape.Handle => MapGuideShape.Handle, _ => MapGuideShape.Mark },
+            guide.Position, guide.RadiusMeters, MissionLabels.Guide(guide), guide.Warning))];
 
     partial void OnSelectedFenceIdChanged(string? value) => Fences.Apply(Plan.Fences, value);
 
@@ -448,12 +476,15 @@ public sealed partial class PlanningViewModel : ObservableObject, IDisposable
 
         Mission.Apply(plan, SelectedItemId, ExecutingItemIndex);
         Fences.Apply(plan.Fences, SelectedFenceId);
+        UpdateGuides();
     });
 
     private void OnFindings(IReadOnlyList<PlanFinding> findings) => _ui.Post(() =>
     {
         TerrainConflicts = [.. findings.Where(f => f.Source == FindingSource.Terrain && f.Location is not null).Select(f => f.Location!.Value)];
         Mission.ApplyEstimate(_validation.Estimate, _validation.Budget, _units.Distance);
+        Mission.RefreshLimits();
+        UpdateGuides();
     });
 
     private void OnTelemetryChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

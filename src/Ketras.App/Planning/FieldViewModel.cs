@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.App.Common;
 using Ketras.App.Resources;
+using Ketras.Model.Missions;
 
 namespace Ketras.App.Planning;
 
@@ -16,7 +17,10 @@ public enum FieldFlash
     Saved,
 
     /// <summary>Refused (an Error line).</summary>
-    Rejected
+    Rejected,
+
+    /// <summary>Stored, but outside what the vehicle can fly as planned (a Warning line).</summary>
+    Warned
 }
 
 /// <summary>One choice of a choice field.</summary>
@@ -27,7 +31,9 @@ public sealed record FieldChoice(double Value, string Label);
 /// <summary>
 /// A field row (docs/UI_RULES.md "Field row"): a label and a number in its unit, or a choice. A number is stored when
 /// the operator commits it (Enter or leaving the box), after a parse and range check; the row flashes saved or
-/// refused for a second. The value shown follows the model, so a refused edit snaps back.
+/// refused for a second. The value shown follows the model, so a refused edit snaps back. A field with a
+/// <see cref="ParameterRange"/> shows its span on hover and while edited, and keeps a warning under the box while its
+/// value lies outside what the vehicle can fly; such a value is stored all the same.
 /// </summary>
 public sealed partial class FieldViewModel : ObservableObject
 {
@@ -40,6 +46,7 @@ public sealed partial class FieldViewModel : ObservableObject
     private ITimer? _flashTimer;
     private double _value;
     private bool _applying;
+    private ParameterRange? _range;
 
     /// <summary>A number field.</summary>
     public FieldViewModel(string key, string label, string unit, double value, int decimals, double minimum, double maximum,
@@ -107,14 +114,56 @@ public sealed partial class FieldViewModel : ObservableObject
 
     /// <summary>The flash of the last commit.</summary>
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsSaved), nameof(IsRejected))]
+    [NotifyPropertyChangedFor(nameof(IsSaved), nameof(IsRejected), nameof(IsWarned))]
     public partial FieldFlash Flash { get; private set; }
 
     /// <summary>Why the last commit was refused; empty otherwise.</summary>
     [ObservableProperty] public partial string Problem { get; private set; } = string.Empty;
 
+    /// <summary>The span on hover: every limit and where it comes from; empty without a range.</summary>
+    [ObservableProperty] public partial string RangeTip { get; private set; } = string.Empty;
+
+    /// <summary>The span in one short line, shown under the box while it is edited; empty without a range.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsRangeLine))]
+    public partial string RangeLine { get; private set; } = string.Empty;
+
+    /// <summary>The value lies outside what the vehicle can fly as planned: the range line, shown as a warning; empty otherwise.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsAdvice), nameof(ShowsRangeLine))]
+    public partial string Advice { get; private set; } = string.Empty;
+
+    /// <summary>The box has the keyboard focus; set by the view.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowsRangeLine))]
+    public partial bool IsEditing { get; set; }
+
+    /// <summary>The warning shows (no refusal is shown instead).</summary>
+    public bool ShowsAdvice => Advice.Length > 0 && Problem.Length == 0;
+
+    /// <summary>The range line shows: while edited, when no refusal or warning takes its place.</summary>
+    public bool ShowsRangeLine => IsEditing && RangeLine.Length > 0 && Problem.Length == 0 && Advice.Length == 0;
+
+    partial void OnProblemChanged(string value)
+    {
+        OnPropertyChanged(nameof(ShowsAdvice));
+        OnPropertyChanged(nameof(ShowsRangeLine));
+    }
+
+    /// <summary>Sets the span the value may take, with its tooltip and one-line forms.</summary>
+    public void SetRange(ParameterRange? range, string tip, string line)
+    {
+        _range = range;
+        RangeTip = tip;
+        RangeLine = line;
+        UpdateAdvice();
+    }
+
     /// <summary>The saved line shows.</summary>
     public bool IsSaved => Flash == FieldFlash.Saved;
+
+    /// <summary>The warning line shows.</summary>
+    public bool IsWarned => Flash == FieldFlash.Warned;
 
     /// <summary>The refused line shows.</summary>
     public bool IsRejected => Flash == FieldFlash.Rejected;
@@ -127,6 +176,7 @@ public sealed partial class FieldViewModel : ObservableObject
         Text = double.IsNaN(value) ? string.Empty : value.ToString($"F{_decimals}", CultureInfo.CurrentCulture);
         SelectedChoice = Choices.FirstOrDefault(c => c.Value == value);
         _applying = false;
+        UpdateAdvice();
     }
 
     /// <summary>Stores the text, if it changed.</summary>
@@ -178,7 +228,8 @@ public sealed partial class FieldViewModel : ObservableObject
         {
             _value = value;
             Problem = string.Empty;
-            Show(FieldFlash.Saved);
+            UpdateAdvice();
+            Show(_range?.IsOutsideSoft(value) == true ? FieldFlash.Warned : FieldFlash.Saved);
         }
         else
         {
@@ -192,6 +243,8 @@ public sealed partial class FieldViewModel : ObservableObject
         Apply(_value);
         Show(FieldFlash.Rejected);
     }
+
+    private void UpdateAdvice() => Advice = _range is { } range && !double.IsNaN(_value) && range.IsOutsideSoft(_value) ? RangeLine : string.Empty;
 
     private void Show(FieldFlash flash)
     {

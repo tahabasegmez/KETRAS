@@ -186,7 +186,7 @@ public static class MissionRules
         airspeedMps * airspeedMps / (GravityMps2 * Math.Tan(bankDegrees * Math.PI / 180d));
 
     /// <summary>How far a landing pattern descends from its orbit to the touchdown, above mean sea level; null when unknown.</summary>
-    private static double? LandingDrop(MissionSettings settings, MissionItem item, Func<GeoPoint, double?>? groundAt) =>
+    internal static double? LandingDrop(MissionSettings settings, MissionItem item, Func<GeoPoint, double?>? groundAt) =>
         MissionAltitudes.AmslOf(settings, item, groundAt) - MissionAltitudes.TouchdownAmslOf(settings, item, groundAt);
 
     private static string Format(string format, params object[] args) => string.Format(CultureInfo.InvariantCulture, format, args);

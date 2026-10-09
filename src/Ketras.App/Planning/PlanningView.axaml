@@ -26,7 +26,8 @@
                  TileCacheDirectory="{Binding TileCacheDirectory}" CustomTiles="{Binding CustomTiles}"
                  PlaceItemCommand="{Binding PlaceItemCommand}" MoveItemCommand="{Binding MoveItemCommand}" MoveApproachCommand="{Binding MoveApproachCommand}"
                  AddFenceCommand="{Binding AddFenceCommand}" EditFenceCommand="{Binding EditFenceCommand}"
-                 DrawingDiscardedCommand="{Binding DrawingDiscardedCommand}" />
+                 DrawingDiscardedCommand="{Binding DrawingDiscardedCommand}"
+                 Guides="{Binding Guides}" ResizeOrbitCommand="{Binding ResizeOrbitCommand}" />
 
     <!-- The planning panel: the switch picks the editor below it. -->
     <Border x:Name="PlanningPanel" Classes="floating" Width="300" Padding="0" ClipToBounds="True"
@@ -89,6 +90,9 @@
           </Button>
           <Button Classes="view-toggle" Classes.on="{Binding ShowTraffic}" Command="{Binding ToggleTrafficLayerCommand}" ToolTip.Tip="{x:Static r:Strings.MapTraffic}" ToolTip.Placement="Pointer">
             <lucide:LucideIcon Kind="Radar" Size="{StaticResource Size.ToolIcon}" />
+          </Button>
+          <Button x:Name="ToggleGuides" Classes="view-toggle" Classes.on="{Binding ShowGuides}" Command="{Binding ToggleGuidesLayerCommand}" ToolTip.Tip="{x:Static r:Strings.MapGuides}" ToolTip.Placement="Pointer">
+            <lucide:LucideIcon Kind="DraftingCompass" Size="{StaticResource Size.ToolIcon}" />
           </Button>
           <Border Height="1" Margin="2" Background="{DynamicResource Brush.Border}" />
           <!-- Manual terrain download: only while cells of the plan's area are missing. -->

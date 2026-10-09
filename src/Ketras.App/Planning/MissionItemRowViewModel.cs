@@ -6,6 +6,7 @@ using Ketras.App.Common;
 using Ketras.App.Resources;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
+using Ketras.Model.Vehicles;
 using Ketras.Station.Missions;
 
 namespace Ketras.App.Planning;
@@ -17,7 +18,7 @@ public sealed record JumpTargetChoice(Guid ItemId, string Label);
 
 /// <summary>
 /// One mission item as a list row (docs/UI_RULES.md "List row", "Row details"): its number, icon, name and summary,
-/// and while selected its fields underneath. The row is kept across edits and updated in place, so a field keeps its
+/// and while selected its fields underneath, each with the span the vehicle and the terrain allow. The row is kept across edits and updated in place, so a field keeps its
 /// flash and the list does not jump.
 /// </summary>
 public sealed partial class MissionItemRowViewModel : ObservableObject
@@ -115,8 +116,8 @@ public sealed partial class MissionItemRowViewModel : ObservableObject
     /// <summary>The jump's target.</summary>
     [ObservableProperty] public partial JumpTargetChoice? JumpTarget { get; set; }
 
-    /// <summary>Takes the plan's current state of the item.</summary>
-    public void Apply(MissionItem item, int index, Mission mission)
+    /// <summary>Takes the plan's current state of the item, and its fields' spans for <paramref name="limits"/>.</summary>
+    public void Apply(MissionItem item, int index, Mission mission, VehicleLimits? limits = null, Func<GeoPoint, double?>? groundAt = null)
     {
         _applying = true;
         Item = item;
@@ -127,6 +128,13 @@ public sealed partial class MissionItemRowViewModel : ObservableObject
         foreach (var field in Fields)
         {
             var parameter = MissionItemParameters.For(item.Type).First(p => p.Key == field.Key);
+            if (parameter.Quantity != Quantity.Choice)
+            {
+                var range = MissionParameterRules.Range(mission, item, parameter, limits ?? VehicleLimits.Default, groundAt);
+                var (tip, line) = MissionLabels.Range(range, parameter.Quantity);
+                field.SetRange(range, tip, line);
+            }
+
             field.Apply(MissionItemParameters.Read(item, parameter.Field));
         }
 

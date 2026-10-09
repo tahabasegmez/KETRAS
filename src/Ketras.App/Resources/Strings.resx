@@ -608,6 +608,22 @@
   <data name="ActuatorsTestStopped" xml:space="preserve"><value>Actuator test stopped: {0}</value></data>
   <data name="TerrainCredit" xml:space="preserve"><value>Terrain: Copernicus WorldDEM-30 © DLR e.V. 2010-2014 and © Airbus Defence and Space GmbH 2014-2018, provided under COPERNICUS by the European Union and ESA</value></data>
   <data name="SettingsMap" xml:space="preserve"><value>MAP</value></data>
+  <data name="RangeAccepted" xml:space="preserve"><value>Accepted {0}–{1} {2}</value></data>
+  <data name="RangeTurn" xml:space="preserve"><value>Turn ≥ {0} {1} at {2} m/s</value></data>
+  <data name="RangeAirspeed" xml:space="preserve"><value>Vehicle {0}–{1} {2}</value></data>
+  <data name="RangeGlide" xml:space="preserve"><value>≥ {0} {1} for a {2}° glide</value></data>
+  <data name="RangeClimb" xml:space="preserve"><value>{0}–{1} {2} reachable from item {3}</value></data>
+  <data name="RangeGround" xml:space="preserve"><value>Ground at {0} {1}</value></data>
+  <data name="RangeOutsideNote" xml:space="preserve"><value>Outside the vehicle's span a value is stored, but the plan check warns.</value></data>
+  <data name="GuideTightestTurn" xml:space="preserve"><value>min turn {0} m</value></data>
+  <data name="GuideSmallestOrbit" xml:space="preserve"><value>min orbit {0} m</value></data>
+  <data name="GuideShortestApproach" xml:space="preserve"><value>approach ≥ {0} m</value></data>
+  <data name="GuideShortestGlide" xml:space="preserve"><value>glide ≥ {0} m</value></data>
+  <data name="GuideAltitudeReached" xml:space="preserve"><value>{0} m reached</value></data>
+  <data name="GuideRadiusHandle" xml:space="preserve"><value>drag: radius {0} m</value></data>
+  <data name="GuideApproachHandle" xml:space="preserve"><value>drag: approach {0} m</value></data>
+  <data name="MapGuides" xml:space="preserve"><value>Guides for the selected item</value></data>
+  <data name="PlanningEndActionIgnored" xml:space="preserve"><value>The plan ends with its landing; the end action applies only to a plan without one.</value></data>
   <data name="SettingsTerrain" xml:space="preserve"><value>TERRAIN</value></data>
   <data name="SettingsTerrainDownload" xml:space="preserve"><value>Download</value></data>
   <data name="SettingsTerrainDownloadTip" xml:space="preserve"><value>Automatic downloads the terrain cells (about 40 MB each) as the plan reaches them. Manual downloads them only from the button in Planning, or before an upload.</value></data>

@@ -218,4 +218,45 @@ public sealed class MapViewTests
         using var bitmap = new RenderTargetBitmap(new PixelSize(800, 600));
         bitmap.Render(map);
     }
+
+    [Fact]
+    public void A_selected_loiter_offers_its_radius_handle_and_no_other_item_does()
+    {
+        var loiter = MissionItemFactory.Create(MissionItemType.LoiterUnlimited, Home) with { Param3 = 150 };
+        var waypoint = MissionItemFactory.Create(MissionItemType.Waypoint, GeoMath.Offset(Home, 0, 2000));
+        var center = Rendering.MapGeometry.ToMercator(Home);
+        var handle = Interaction.MapHitTester.OrbitRadiusHandle(center, 150, Home.Latitude);
+        var threshold = Rendering.MapGeometry.MetersToMapUnits(10, Home.Latitude);
+
+        var selected = Interaction.MapHitTester.FindMissionHandle([loiter, waypoint], handle, threshold, loiter.Id);
+        var unselected = Interaction.MapHitTester.FindMissionHandle([loiter, waypoint], handle, threshold, waypoint.Id);
+
+        Assert.Equal((loiter.Id, Interaction.MissionHandleKind.OrbitRadius), (selected!.Item.Id, selected.Kind));
+        Assert.Null(unselected);
+        Assert.Equal(150, Rendering.MapGeometry.DistanceBetween(center, handle) * Math.Cos(Home.Latitude * Math.PI / 180), 1);
+    }
+
+    [Fact]
+    public void Guides_become_rings_with_labels_and_labelled_points_and_hide_with_their_layer()
+    {
+        var guides = new[]
+        {
+            new MapGuide(MapGuideShape.Ring, Home, 60, "min turn 60 m", false),
+            new MapGuide(MapGuideShape.Mark, GeoMath.Offset(Home, 0, 300), 0, "120 m reached", true),
+            new MapGuide(MapGuideShape.Handle, GeoMath.Offset(Home, 90, 150), 0, "drag: radius 150 m", false)
+        };
+        var layers = new Rendering.MapLayerSet();
+
+        var features = Rendering.GuideLayerBuilder.Build(guides);
+        layers.SetGuideFeatures(features);
+        layers.ApplyVisibility(new MapLayers());
+        var shown = layers.ShowsGuides;
+        layers.ApplyVisibility(new MapLayers { Guides = false });
+
+        Assert.Equal(4, features.Count);
+        Assert.Equal(["min turn 60 m", "120 m reached", "drag: radius 150 m"],
+            features.SelectMany(f => f.Styles.OfType<Mapsui.Styles.LabelStyle>().Select(l => l.GetLabelText(f))));
+        Assert.True(shown);
+        Assert.False(layers.ShowsGuides);
+    }
 }

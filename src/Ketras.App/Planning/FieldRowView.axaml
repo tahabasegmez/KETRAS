@@ -1,5 +1,7 @@
 <!-- A field row (docs/UI_RULES.md "Field row"): the label, then the editor at FieldWidth with the unit inside the box; a
-     2 px Success or Error line under the box for a second after a commit, and the reason a value was refused. -->
+     2 px Success, Warning or Error line under the box for a second after a commit. Under the row, one Small line: the
+     reason a value was refused (Error), else the vehicle's span while the value lies outside it (Warning), else, while
+     the box is edited, the span (Faint). The span's full form is the box's tooltip. -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:planning="using:Ketras.App.Planning"
@@ -14,6 +16,7 @@
     <StackPanel Grid.Column="1" Width="{Binding EditorWidth}">
       <Panel>
         <TextBox x:Name="Box" IsVisible="{Binding IsNumber}" Text="{Binding Text}" FontFamily="{StaticResource Font.Mono}" Padding="6,0"
+                 ToolTip.Tip="{Binding RangeTip, Converter={x:Static planning:FieldRowView.EmptyToNull}}" ToolTip.Placement="Left"
                  common:Commit.Command="{Binding CommitCommand}" common:Commit.CancelCommand="{Binding CancelCommand}">
           <TextBox.InnerRightContent>
             <TextBlock Text="{Binding Unit}" FontSize="11" Foreground="{DynamicResource Brush.Faint}" VerticalAlignment="Center" Margin="0,0,6,0" />
@@ -25,9 +28,14 @@
       <Panel Height="2">
         <Border Background="{DynamicResource Brush.Success}" IsVisible="{Binding IsSaved}" />
         <Border Background="{DynamicResource Brush.Error}" IsVisible="{Binding IsRejected}" />
+        <Border Background="{DynamicResource Brush.Warning}" IsVisible="{Binding IsWarned}" />
       </Panel>
     </StackPanel>
     <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Classes="small error" Text="{Binding Problem}" HorizontalAlignment="Right"
                IsVisible="{Binding Problem, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    <TextBlock x:Name="Advice" Grid.Row="1" Grid.ColumnSpan="2" Classes="small warning" Text="{Binding Advice}" HorizontalAlignment="Right"
+               TextTrimming="CharacterEllipsis" IsVisible="{Binding ShowsAdvice}" />
+    <TextBlock x:Name="RangeLine" Grid.Row="1" Grid.ColumnSpan="2" Classes="small" Text="{Binding RangeLine}" HorizontalAlignment="Right"
+               TextTrimming="CharacterEllipsis" Foreground="{DynamicResource Brush.Faint}" IsVisible="{Binding ShowsRangeLine}" />
   </Grid>
 </UserControl>

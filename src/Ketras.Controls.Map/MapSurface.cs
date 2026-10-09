@@ -81,6 +81,12 @@ internal sealed class MapSurface
         Refresh();
     }
 
+    public void RefreshGuides(IReadOnlyList<MapGuide> guides)
+    {
+        _layers.SetGuideFeatures(GuideLayerBuilder.Build(guides));
+        Refresh();
+    }
+
     public void RefreshMarkers(IReadOnlyList<PointOfInterest> points)
     {
         _layers.SetMarkerFeatures(MarkerLayerBuilder.Build(points));

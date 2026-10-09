@@ -24,6 +24,7 @@ internal sealed class MapLayerSet
     private readonly MemoryLayer _grid = new("Grid") { Style = null, Enabled = false };
     private readonly MemoryLayer _fences = new("Fences") { Style = null };
     private readonly MemoryLayer _missionRoute = new("MissionRoute") { Style = null };
+    private readonly MemoryLayer _guides = new("Guides") { Style = null };
     private readonly MemoryLayer _missionItems = new("MissionItems") { Style = null };
     private readonly MemoryLayer _markers = new("Markers") { Style = null };
     private readonly MemoryLayer _trafficTrails = new("TrafficTrails") { Style = null };
@@ -35,7 +36,7 @@ internal sealed class MapLayerSet
 
     /// <summary>
     /// Rebuilds the stack with a fresh base layer. Order is bottom-to-top: tiles, the grid that stands in for them,
-    /// fences, plan, markers, trails, vehicles - live aircraft always on top.
+    /// fences, route, the selected item's guides, items, markers, trails, vehicles - live aircraft always on top.
     /// </summary>
     public void Rebuild(Mapsui.Map map, BaseMapKind kind, CustomTileSource? customSource, string? cacheDirectory)
     {
@@ -46,6 +47,7 @@ internal sealed class MapLayerSet
         map.Layers.Add(_grid);
         map.Layers.Add(_fences);
         map.Layers.Add(_missionRoute);
+        map.Layers.Add(_guides);
         map.Layers.Add(_missionItems);
         map.Layers.Add(_markers);
         map.Layers.Add(_trafficTrails);
@@ -67,6 +69,7 @@ internal sealed class MapLayerSet
 
         _missionRoute.Enabled = visibility.Mission;
         _missionItems.Enabled = visibility.Mission;
+        _guides.Enabled = visibility.Mission && visibility.Guides;
 
         // Vehicle and trail toggle together; a trail with no aircraft reads as a stale track.
         _ownship.Enabled = visibility.Ownship;
@@ -83,6 +86,14 @@ internal sealed class MapLayerSet
     }
 
     public void SetFenceFeatures(IReadOnlyList<IFeature> features) => _fences.Features = features;
+
+    public void SetGuideFeatures(IReadOnlyList<IFeature> features) => _guides.Features = features;
+
+    /// <summary>True while the guides are drawn; for tests.</summary>
+    internal bool ShowsGuides => _guides.Enabled;
+
+    /// <summary>The guide features; for tests.</summary>
+    internal IEnumerable<IFeature> GuideFeatures => _guides.Features;
 
     /// <summary>True while the grid stands in for the base map.</summary>
     public bool ShowsGrid => _grid.Enabled;

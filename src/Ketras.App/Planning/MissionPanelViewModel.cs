@@ -56,6 +56,8 @@ public sealed partial class MissionPanelViewModel : ObservableObject
     private readonly Action<string, string> _refused;
     private readonly Func<GeoPoint, double?>? _groundAt;
     private readonly Dictionary<Guid, MissionItemRowViewModel> _rows = [];
+    private (Plan Plan, Guid? Selected, int? Executing)? _applied;
+    private Model.Vehicles.VehicleLimits? _appliedLimits;
 
     /// <summary>Edits the plan in <paramref name="plans"/>.</summary>
     public MissionPanelViewModel(PlanStore plans, IUiDispatcher ui, TimeProvider time, Action<MissionItemType> armPlacement, Action<Guid?> select,
@@ -172,10 +174,28 @@ public sealed partial class MissionPanelViewModel : ObservableObject
     /// <summary>There are no items.</summary>
     public bool IsEmpty => Rows.Count == 0;
 
+    /// <summary>
+    /// The end action shows: the plan has no landing-phase item, so the encoder appends RTL or the vehicle holds. With a
+    /// landing item it is ignored (MissionEncoder), and a note says so instead.
+    /// </summary>
+    [ObservableProperty] public partial bool ShowEndAction { get; private set; } = true;
+
+    /// <summary>Takes the vehicle's limits again when they changed since the last <see cref="Apply"/>, for the fields' spans.</summary>
+    public void RefreshLimits()
+    {
+        if (_applied is { } applied && _plans.Limits != _appliedLimits)
+        {
+            Apply(applied.Plan, applied.Selected, applied.Executing);
+        }
+    }
+
     /// <summary>Takes the plan, the selection and the item the vehicle flies.</summary>
     public void Apply(Plan plan, Guid? selected, int? executing)
     {
+        _applied = (plan, selected, executing);
+        var limits = _appliedLimits = _plans.Limits;
         var settings = plan.Mission.Settings;
+        ShowEndAction = !plan.Mission.Items.Any(item => item.Phase == MissionPhase.Landing);
         CruiseSpeed.Apply(settings.CruiseSpeedMps);
         DefaultAltitude.Apply(settings.DefaultAltitudeMeters);
         EndAction.Apply((int)settings.EndAction);
@@ -198,7 +218,7 @@ public sealed partial class MissionPanelViewModel : ObservableObject
                 _rows[item.Id] = row = new MissionItemRowViewModel(item, _plans, _select, _ui, _time);
             }
 
-            row.Apply(item, i, plan.Mission);
+            row.Apply(item, i, plan.Mission, limits, _groundAt);
             row.IsSelected = item.Id == selected;
             row.IsExecuting = i == executing;
             if (i < Rows.Count && ReferenceEquals(Rows[i], row))

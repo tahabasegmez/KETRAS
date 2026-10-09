@@ -46,6 +46,44 @@ public static class MissionLabels
         _ => string.Empty
     };
 
+    /// <summary>
+    /// A parameter's span as a tooltip (the accepted limits, then the vehicle's and why) and as one short line (the
+    /// vehicle's span when there is one, else the accepted limits).
+    /// </summary>
+    public static (string Tip, string Line) Range(ParameterRange range, Quantity quantity)
+    {
+        var unit = Unit(quantity);
+        string N(double value, bool up = false) => (up ? Math.Ceiling(value) : Math.Round(value, Decimals(quantity))).ToString($"F{Decimals(quantity)}", CultureInfo.CurrentCulture);
+        var accepted = string.Format(CultureInfo.CurrentCulture, Strings.RangeAccepted, N(range.HardMinimum), N(range.HardMaximum), unit).Trim();
+        var vehicle = range.Reason switch
+        {
+            RangeReason.TurnRadius => string.Format(CultureInfo.CurrentCulture, Strings.RangeTurn, N(range.SoftMinimum ?? 0, up: true), unit,
+                range.ReasonValue.ToString("F0", CultureInfo.CurrentCulture)),
+            RangeReason.Airspeed => string.Format(CultureInfo.CurrentCulture, Strings.RangeAirspeed, N(range.SoftMinimum ?? 0), N(range.SoftMaximum ?? 0), unit),
+            RangeReason.GlideSlope => string.Format(CultureInfo.CurrentCulture, Strings.RangeGlide, N(range.SoftMinimum ?? 0, up: true), unit,
+                range.ReasonValue.ToString("F1", CultureInfo.CurrentCulture)),
+            RangeReason.ClimbFromPrevious => string.Format(CultureInfo.CurrentCulture, Strings.RangeClimb, N(range.SoftMinimum ?? 0), N(range.SoftMaximum ?? 0), unit,
+                range.ReasonValue.ToString("F0", CultureInfo.CurrentCulture)),
+            RangeReason.Ground => string.Format(CultureInfo.CurrentCulture, Strings.RangeGround, N(range.ReasonValue), unit),
+            _ => null
+        };
+        return vehicle is null
+            ? (accepted, accepted)
+            : (accepted + System.Environment.NewLine + vehicle + System.Environment.NewLine + Strings.RangeOutsideNote, vehicle);
+    }
+
+    /// <summary>A guide drawing's label on the map, e.g. "min turn 41 m".</summary>
+    public static string Guide(MissionGuide guide) => string.Format(CultureInfo.CurrentCulture, guide.Reason switch
+    {
+        GuideReason.TightestTurn => Strings.GuideTightestTurn,
+        GuideReason.SmallestOrbit => Strings.GuideSmallestOrbit,
+        GuideReason.ShortestApproach => Strings.GuideShortestApproach,
+        GuideReason.ShortestGlide => Strings.GuideShortestGlide,
+        GuideReason.AltitudeReached => Strings.GuideAltitudeReached,
+        GuideReason.RadiusHandle => Strings.GuideRadiusHandle,
+        _ => Strings.GuideApproachHandle
+    }, Math.Ceiling(guide.Value).ToString("F0", CultureInfo.CurrentCulture));
+
     /// <summary>Decimals shown for a quantity.</summary>
     public static int Decimals(Quantity quantity) => quantity switch
     {

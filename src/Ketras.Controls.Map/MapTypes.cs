@@ -38,6 +38,32 @@ public enum BaseMapKind
 /// <param name="MaxZoom">Highest zoom it serves.</param>
 public sealed record CustomTileSource(string UrlTemplate, string Attribution, int MinZoom = 0, int MaxZoom = 19);
 
+/// <summary>An orbit's radius dragged by its handle; the centre stays.</summary>
+/// <param name="ItemId">The loiter.</param>
+/// <param name="RadiusMeters">New radius.</param>
+public sealed record OrbitResize(Guid ItemId, double RadiusMeters);
+
+/// <summary>How a guide drawing is drawn.</summary>
+public enum MapGuideShape
+{
+    /// <summary>A thin dashed circle with its label at the top.</summary>
+    Ring,
+
+    /// <summary>A small dot on the route with its label beside it.</summary>
+    Mark,
+
+    /// <summary>A hollow square on a drag handle with its label beside it.</summary>
+    Handle
+}
+
+/// <summary>One drawing of the guide layer, which the host computes for the selected item.</summary>
+/// <param name="Shape">How it is drawn.</param>
+/// <param name="Position">Its point, or a ring's centre.</param>
+/// <param name="RadiusMeters">A ring's radius; 0 otherwise.</param>
+/// <param name="Label">Its text, e.g. "min turn 41 m".</param>
+/// <param name="Warning">The plan breaks this limit: drawn in the Warning colour.</param>
+public sealed record MapGuide(MapGuideShape Shape, GeoPoint Position, double RadiusMeters, string Label, bool Warning);
+
 /// <summary>Which map layers are drawn.</summary>
 public sealed record MapLayers
 {
@@ -55,6 +81,9 @@ public sealed record MapLayers
 
     /// <summary>Other aircraft and their trails.</summary>
     public bool Traffic { get; init; } = true;
+
+    /// <summary>The selected item's guide drawings (shown with the mission).</summary>
+    public bool Guides { get; init; } = true;
 }
 
 /// <summary>An aircraft sample for the map. Fed from any thread; motion between samples is eased.</summary>
