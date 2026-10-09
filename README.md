@@ -160,10 +160,8 @@ reused alone. Architecture tests enforce these boundaries.
 
 ## Contributing
 
-Issues and pull requests are welcome. Please keep changes focused, add tests for new behaviour, and make sure
-`dotnet build` has no warnings and `dotnet test` passes on your platform.
+There are some issues with the architecture still, after solving these issues I will update this section.
 
 ## License
 
-Ketras is free software under the [GNU General Public License v3.0 or later](LICENSE).
-Third-party components and data are listed in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
+Ketras is free software under the [GNU General Public License v3.0 or later].
