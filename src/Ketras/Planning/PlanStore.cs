@@ -1,9 +1,8 @@
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
-using Ketras.Model.Vehicles;
+using Ketras.Geo;
 using Ketras.Notifications;
+using Ketras.Planning.Fences;
+using Ketras.Planning.Missions;
+using Ketras.Vehicles;
 
 namespace Ketras.Planning;
 

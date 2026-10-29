@@ -1,4 +1,3 @@
-using Ketras.Model.Vehicles;
 using Ketras.Settings;
 
 namespace Ketras.Vehicles;

@@ -1,6 +1,6 @@
 using System.Globalization;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
+using Ketras.Geo;
+using Ketras.Planning.Missions;
 
 namespace Ketras.Terrain;
 

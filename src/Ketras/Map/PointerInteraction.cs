@@ -1,8 +1,8 @@
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Ketras.Geo;
 using Ketras.Map.Interaction;
 using Ketras.Map.Rendering;
-using Ketras.Model.Geo;
 using Mapsui;
 using Mapsui.Manipulations;
 using Mapsui.UI.Avalonia;
@@ -206,7 +206,7 @@ internal sealed class PointerInteraction
         var anchor = MapGeometry.ToMercator(location);
         if (target.Kind == MissionHandleKind.OrbitRadius)
         {
-            return MapHitTester.OrbitRadiusHandle(anchor, Model.Missions.MissionItemValues.LoiterRadiusMeters(target.Item) ?? 0, location.Latitude);
+            return MapHitTester.OrbitRadiusHandle(anchor, Planning.Missions.MissionItemValues.LoiterRadiusMeters(target.Item) ?? 0, location.Latitude);
         }
 
         if (target.Kind != MissionHandleKind.LandingApproachStart)

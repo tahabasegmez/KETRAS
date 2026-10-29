@@ -6,7 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Threading;
-using Ketras.Model.Geo;
+using Ketras.Geo;
 
 namespace Ketras.Scene3D.Rendering;
 
@@ -1211,7 +1211,7 @@ internal sealed class AirspaceViewport : Control
     /// <summary>The point on the terrain under <paramref name="world"/>, or on the datum plane without terrain there.</summary>
     private Vector3 SurfaceBelow((double Latitude, double Longitude, double AltitudeMeters) center, double latitude, double longitude, Vector3 world)
     {
-        var height = _terrain is { HasSurface: true, Grid: { } grid } ? grid.HeightAt(new Ketras.Model.Geo.GeoPoint(latitude, longitude)) : null;
+        var height = _terrain is { HasSurface: true, Grid: { } grid } ? grid.HeightAt(new Ketras.Geo.GeoPoint(latitude, longitude)) : null;
         var y = height is { } h ? GeoToWorld(center, latitude, longitude, h).Y : 0f;
         return new Vector3(world.X, y, world.Z);
     }

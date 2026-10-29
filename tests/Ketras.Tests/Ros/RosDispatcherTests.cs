@@ -1,5 +1,5 @@
 using System.Text.Json.Nodes;
-using Ketras.Rosbridge;
+using Ketras.Ros;
 
 namespace Ketras.Tests.Ros;
 

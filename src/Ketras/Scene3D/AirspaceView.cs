@@ -1,9 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Terrain;
+using Ketras.Geo;
+using Ketras.Planning.Missions;
 using Ketras.Scene3D.Rendering;
+using Ketras.Terrain;
 
 namespace Ketras.Scene3D;
 

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Ketras.Model.Geo;
+using Ketras.Geo;
 using Ketras.Notifications;
 using Ketras.Resources;
 using Ketras.Utilities;

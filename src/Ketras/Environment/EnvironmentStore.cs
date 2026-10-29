@@ -1,5 +1,4 @@
-using Ketras.Model.Environment;
-using Ketras.Model.Fences;
+using Ketras.Planning.Fences;
 using Ketras.Settings;
 using Microsoft.Extensions.Options;
 

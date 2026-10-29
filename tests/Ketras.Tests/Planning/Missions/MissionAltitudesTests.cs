@@ -1,5 +1,5 @@
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
+using Ketras.Geo;
+using Ketras.Planning.Missions;
 
 namespace Ketras.Tests.Planning.Missions;
 

@@ -3,7 +3,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Ketras.Events;
 using Ketras.Mavlink.Protocols;
-using Ketras.Model.Vehicles;
 using Ketras.Settings;
 using Ketras.Vehicles;
 using Microsoft.Extensions.Logging;

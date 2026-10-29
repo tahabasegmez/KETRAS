@@ -1,5 +1,5 @@
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
+using Ketras.Geo;
+using Ketras.Planning.Missions;
 using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Nts;

@@ -1,9 +1,9 @@
+using Ketras.Environment;
+using Ketras.Geo;
 using Ketras.Map;
-using Ketras.Model.Environment;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
-using Ketras.Model.Vehicles;
+using Ketras.Planning;
+using Ketras.Planning.Missions;
+using Ketras.Vehicles;
 
 namespace Ketras.Scene3D;
 

@@ -1,7 +1,7 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Ketras.Model.Missions;
+using Ketras.Planning.Missions;
 using Ketras.Resources;
 using Ketras.Utilities;
 

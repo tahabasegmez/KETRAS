@@ -6,14 +6,11 @@
 using Ketras;
 using Ketras.Commands;
 using Ketras.Comms;
-using Ketras.Mavlink.Logging;
+using Ketras.Geo;
 using Ketras.Mavlink.Messages;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Vehicles;
 using Ketras.Parameters;
 using Ketras.Planning;
+using Ketras.Planning.Fences;
 using Ketras.Planning.Missions;
 using Ketras.Settings;
 using Ketras.Setup;

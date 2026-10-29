@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using Ketras.Comms;
-using Ketras.Model.Vehicles;
 using Ketras.Resources;
 using Ketras.Ros;
 using Ketras.Utilities;

@@ -1,12 +1,10 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
-using Ketras.Model.Vehicles;
+using Ketras.Geo;
 using Ketras.Resources;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Planning.Missions;
 
@@ -56,7 +54,7 @@ public sealed partial class MissionPanelViewModel : ObservableObject
     private readonly Func<GeoPoint, double?>? _groundAt;
     private readonly Dictionary<Guid, MissionItemRowViewModel> _rows = [];
     private (Plan Plan, Guid? Selected, int? Executing)? _applied;
-    private Model.Vehicles.VehicleLimits? _appliedLimits;
+    private Vehicles.VehicleLimits? _appliedLimits;
 
     /// <summary>Edits the plan in <paramref name="plans"/>.</summary>
     public MissionPanelViewModel(PlanStore plans, IUiDispatcher ui, TimeProvider time, Action<MissionItemType> armPlacement, Action<Guid?> select,
@@ -77,9 +75,9 @@ public sealed partial class MissionPanelViewModel : ObservableObject
             v => Settings(s => s with { EndAction = (MissionEndAction)(int)v }), ui, time) { Help = Strings.PlanningEndActionHelp };
         AltitudeReference = new FieldViewModel("altitude-reference", Strings.PlanningAltitudeReference,
             [
-                new FieldChoice((int)Model.Missions.AltitudeReference.RelativeToHome, Strings.PlanningReferenceRelative),
-                new FieldChoice((int)Model.Missions.AltitudeReference.AboveSeaLevel, Strings.PlanningReferenceAmsl),
-                new FieldChoice((int)Model.Missions.AltitudeReference.AboveTerrain, Strings.PlanningReferenceTerrain)
+                new FieldChoice((int)Planning.Missions.AltitudeReference.RelativeToHome, Strings.PlanningReferenceRelative),
+                new FieldChoice((int)Planning.Missions.AltitudeReference.AboveSeaLevel, Strings.PlanningReferenceAmsl),
+                new FieldChoice((int)Planning.Missions.AltitudeReference.AboveTerrain, Strings.PlanningReferenceTerrain)
             ], (int)settings.AltitudeReference, v => SetReference((AltitudeReference)(int)v), ui, time) { Help = Strings.PlanningAltitudeReferenceHelp };
         LandingTerrain = new FieldViewModel("landing-terrain", Strings.PlanningRangefinderUse,
             [

@@ -1,6 +1,4 @@
 using Ketras.Comms;
-using Ketras.Mavlink.Logging;
-using Ketras.Model.Vehicles;
 using Ketras.Notifications;
 using Ketras.Planning;
 using Ketras.Simulation;
@@ -150,7 +148,7 @@ public sealed class LinkAndVehicleTests
 
     private sealed class ThrowingFactory : ILinkFactory
     {
-        public Mavlink.MavlinkConnection Create(LinkProfile profile, Mavlink.MavlinkConnectionOptions options) =>
+        public Ketras.Mavlink.MavlinkConnection Create(LinkProfile profile, Ketras.Mavlink.MavlinkConnectionOptions options) =>
             throw new FormatException("bad serial format");
     }
 

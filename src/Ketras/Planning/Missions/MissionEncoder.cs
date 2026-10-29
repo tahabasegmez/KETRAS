@@ -1,7 +1,6 @@
+using Ketras.Geo;
 using Ketras.Mavlink.Messages;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
+using Ketras.Planning.Fences;
 
 using WireItem = Ketras.Mavlink.Protocols.MissionItem;
 

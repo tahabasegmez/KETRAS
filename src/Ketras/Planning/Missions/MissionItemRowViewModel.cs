@@ -2,11 +2,10 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Vehicles;
+using Ketras.Geo;
 using Ketras.Resources;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Planning.Missions;
 

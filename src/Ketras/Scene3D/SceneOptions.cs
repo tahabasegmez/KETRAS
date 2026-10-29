@@ -1,4 +1,4 @@
-using Ketras.Model.Geo;
+using Ketras.Geo;
 
 namespace Ketras.Scene3D;
 

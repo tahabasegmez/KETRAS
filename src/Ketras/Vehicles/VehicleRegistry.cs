@@ -1,6 +1,5 @@
 using Ketras.Comms;
 using Ketras.Mavlink;
-using Ketras.Model.Vehicles;
 using Microsoft.Extensions.Logging;
 
 namespace Ketras.Vehicles;

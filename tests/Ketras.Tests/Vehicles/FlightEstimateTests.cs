@@ -1,6 +1,6 @@
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Vehicles;
+using Ketras.Geo;
+using Ketras.Planning.Missions;
+using Ketras.Vehicles;
 
 namespace Ketras.Tests.Vehicles;
 

@@ -1,5 +1,5 @@
 using Ketras.Comms;
-using Ketras.Model.Geo;
+using Ketras.Geo;
 
 namespace Ketras.Simulation;
 

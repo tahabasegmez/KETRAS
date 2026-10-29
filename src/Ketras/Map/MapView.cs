@@ -4,11 +4,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Threading;
+using Ketras.Environment;
+using Ketras.Geo;
 using Ketras.Map.Telemetry;
-using Ketras.Model.Environment;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Planning;
+using Ketras.Planning;
+using Ketras.Planning.Fences;
 
 namespace Ketras.Map;
 

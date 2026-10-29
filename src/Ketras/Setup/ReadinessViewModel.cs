@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Ketras.Model.Missions;
-using Ketras.Model.Vehicles;
 using Ketras.Planning;
 using Ketras.Planning.Missions;
 using Ketras.Resources;
@@ -144,5 +142,5 @@ public sealed class ReadinessViewModel : IDisposable
 
     private void OnFlight(FlightStatus status) => _ui.Post(Refresh);
 
-    private void OnFindings(IReadOnlyList<Model.Planning.PlanFinding> findings) => _ui.Post(Refresh);
+    private void OnFindings(IReadOnlyList<Planning.PlanFinding> findings) => _ui.Post(Refresh);
 }

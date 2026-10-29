@@ -1,7 +1,7 @@
 using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using Ketras.Model.Geo;
+using Ketras.Geo;
 
 namespace Ketras.Scene3D.Rendering;
 

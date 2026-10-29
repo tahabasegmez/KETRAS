@@ -4,10 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Environment;
 using Ketras.Map;
-using Ketras.Model.Environment;
-using Ketras.Model.Planning;
-using Ketras.Model.Terrain;
-using Ketras.Model.Vehicles;
 using Ketras.Planning;
 using Ketras.Resources;
 using Ketras.Settings;
@@ -133,7 +129,7 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
     /// The scene asks for finer tiles in <paramref name="range"/> around where its camera looks, or for none (null).
     /// A newer request cancels the one before; a block from another source than the one shown is not asked for.
     /// </summary>
-    public void RequestImageryDetail(Ketras.Model.Geo.TileRange? range)
+    public void RequestImageryDetail(Ketras.Geo.TileRange? range)
     {
         _detailLoad?.Cancel();
         _detailLoad = null;
@@ -182,7 +178,7 @@ public sealed partial class Scene3DViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial TerrainGrid? Terrain { get; private set; }
 
     /// <summary>Terrain height above sea level at a point, for above-terrain plans; null when unknown.</summary>
-    public double? GroundAt(Ketras.Model.Geo.GeoPoint point) => _terrain.GroundAt(point);
+    public double? GroundAt(Ketras.Geo.GeoPoint point) => _terrain.GroundAt(point);
 
     /// <summary>The followed aircraft's scene id; null when the camera follows nothing.</summary>
     [ObservableProperty] public partial string? Followed { get; private set; }

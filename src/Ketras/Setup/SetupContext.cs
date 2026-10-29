@@ -192,7 +192,7 @@ public sealed partial class SetupContext : ObservableObject, IDisposable
         OnPropertyChanged(nameof(Progress));
     });
 
-    private void OnSnapshot(Model.Vehicles.VehicleSnapshot snapshot)
+    private void OnSnapshot(Vehicles.VehicleSnapshot snapshot)
     {
         if (ParameterRules.WhyNotEditable(_vehicle) != Block)
         {
@@ -204,7 +204,7 @@ public sealed partial class SetupContext : ObservableObject, IDisposable
 
     private void OnHealth(Events.HealthReport report) => _ui.Post(() => HealthChanged?.Invoke());
 
-    private void OnMetadataLoaded(Model.Vehicles.VehicleId id, VehicleMetadata metadata) => _ui.Post(() =>
+    private void OnMetadataLoaded(Vehicles.VehicleId id, VehicleMetadata metadata) => _ui.Post(() =>
     {
         if (_vehicle?.Id == id)
         {

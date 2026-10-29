@@ -3,8 +3,8 @@ using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using Ketras.Comms;
-using Ketras.Model.Missions;
 using Ketras.Notifications;
+using Ketras.Planning.Missions;
 using Lucide.Avalonia;
 
 namespace Ketras.Controls;

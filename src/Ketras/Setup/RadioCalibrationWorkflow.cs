@@ -1,5 +1,5 @@
 using System.Globalization;
-using Ketras.Mavlink.Autopilots;
+using Ketras.Autopilots;
 using Ketras.Parameters;
 using Ketras.Vehicles;
 

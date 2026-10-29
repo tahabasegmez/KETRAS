@@ -5,7 +5,6 @@ using Ketras.Mavlink.Messages;
 using Ketras.Mavlink.Protocols;
 using Ketras.Notifications;
 using Ketras.Ros;
-using Ketras.Rosbridge;
 using Ketras.Vehicles;
 using Microsoft.Extensions.Logging;
 

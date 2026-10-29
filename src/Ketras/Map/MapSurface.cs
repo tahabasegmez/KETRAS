@@ -1,10 +1,10 @@
 using Avalonia.Controls;
+using Ketras.Environment;
+using Ketras.Geo;
 using Ketras.Map.Rendering;
 using Ketras.Map.Telemetry;
-using Ketras.Model.Environment;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
+using Ketras.Planning.Fences;
+using Ketras.Planning.Missions;
 using Mapsui;
 using Mapsui.Extensions;
 using Mapsui.UI.Avalonia;

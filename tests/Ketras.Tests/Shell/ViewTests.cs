@@ -64,7 +64,7 @@ public sealed class ViewTests
         var window = Show(app);
         var shell = app.Get<ShellViewModel>();
         var map = window.GetVisualDescendants().OfType<Ketras.Map.MapView>().Single();
-        map.CenterOn(new Model.Geo.GeoPoint(47.4, 8.5), 14);
+        map.CenterOn(new Ketras.Geo.GeoPoint(47.4, 8.5), 14);
         Pump(window);
 
         shell.Show(ShellViewModel.Scene3D);

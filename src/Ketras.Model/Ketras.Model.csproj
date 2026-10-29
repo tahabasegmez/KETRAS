@@ -1,6 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Description>Ketras' shared model: missions, fences, terrain grids, vehicle snapshots and environment data as immutable records, with the pure rules that check a plan. No dependencies.</Description>
-    <PackageTags>gcs;mission;geofence;uav</PackageTags>
-  </PropertyGroup>
-</Project>

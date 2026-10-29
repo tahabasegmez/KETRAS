@@ -4,7 +4,6 @@
     <AssemblyName>Ketras</AssemblyName>
     <RootNamespace>Ketras</RootNamespace>
     <Description>Ketras ground control station: the desktop application.</Description>
-    <IsPackable>false</IsPackable>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <!-- TerrainView passes vertex data and matrices to OpenGL by pointer. -->
@@ -14,22 +13,16 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Lucide.Avalonia" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="SharpCompress" />
+    <PackageReference Include="System.IO.Ports" />
     <PackageReference Include="Mapsui.Avalonia" />
     <PackageReference Include="Mapsui.Nts" />
     <PackageReference Include="BruTile" />
     <PackageReference Include="HelixToolkit.Maths" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Ketras.Model\Ketras.Model.csproj" />
-    <ProjectReference Include="..\Ketras.Mavlink\Ketras.Mavlink.csproj" />
-    <ProjectReference Include="..\Ketras.Rosbridge\Ketras.Rosbridge.csproj" />
-    <ProjectReference Include="..\Ketras.Terrain\Ketras.Terrain.csproj" />
-    <ProjectReference Include="..\Ketras.Theme\Ketras.Theme.csproj" />
   </ItemGroup>
 
   <ItemGroup>

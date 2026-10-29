@@ -1,7 +1,6 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Ketras.Model.Vehicles;
 using Ketras.Resources;
 using Ketras.Settings;
 using Ketras.Terrain;

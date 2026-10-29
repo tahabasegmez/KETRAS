@@ -6,12 +6,10 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Ketras.Comms;
 using Ketras.Environment;
-using Ketras.Model.Environment;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Vehicles;
+using Ketras.Geo;
 using Ketras.Planning;
+using Ketras.Planning.Fences;
+using Ketras.Planning.Missions;
 using Ketras.Scene3D;
 using Ketras.Settings;
 using Ketras.Shell;
@@ -50,7 +48,7 @@ public sealed class Scene3DTests
         Assert.Equal(2, volumes.Count);
         Assert.Equal(("area", true, 488.0, 488.0 + 230), (volumes[0].Id, volumes[0].StayIn, volumes[0].FloorMeters, volumes[0].CeilingMeters));
         Assert.Equal(("file:z1", "Restricted", false, 500.0, 900.0), (volumes[1].Id, volumes[1].Label, volumes[1].StayIn, volumes[1].FloorMeters, volumes[1].CeilingMeters));
-        Assert.Null(SceneMapper.Options(new Model.Planning.Plan()).Origin);
+        Assert.Null(SceneMapper.Options(new Ketras.Planning.Plan()).Origin);
     }
 
     [Fact]
@@ -145,7 +143,7 @@ public sealed class Scene3DTests
         scene.ShowGreyCommand.Execute(null);
         Assert.Equal((SceneSurface.Grey, "Grey"), (scene.Surface, settings.Get(Scene3DViewModel.SurfaceSetting)));
         Assert.Equal(Ketras.Resources.Strings.TerrainCredit, scene.Credits);
-        scene.RequestImageryDetail(new Model.Geo.TileRange(18, 1, 1, 1, 1));
+        scene.RequestImageryDetail(new Ketras.Geo.TileRange(18, 1, 1, 1, 1));
         Assert.Null(scene.ImageryDetail);
     }
 

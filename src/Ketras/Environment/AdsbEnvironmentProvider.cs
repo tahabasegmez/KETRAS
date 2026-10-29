@@ -1,9 +1,8 @@
 using System.Globalization;
 using Ketras.Comms;
+using Ketras.Geo;
 using Ketras.Mavlink;
 using Ketras.Mavlink.Messages;
-using Ketras.Model.Environment;
-using Ketras.Model.Geo;
 
 namespace Ketras.Environment;
 

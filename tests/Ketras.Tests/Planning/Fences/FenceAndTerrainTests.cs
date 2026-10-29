@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
-using Ketras.Model.Environment;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
-using Ketras.Model.Terrain;
-using Ketras.Model.Vehicles;
+using Ketras.Environment;
+using Ketras.Geo;
+using Ketras.Planning;
+using Ketras.Planning.Fences;
+using Ketras.Planning.Missions;
+using Ketras.Terrain;
+using Ketras.Vehicles;
 
 namespace Ketras.Tests.Planning.Fences;
 

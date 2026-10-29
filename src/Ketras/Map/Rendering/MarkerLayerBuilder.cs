@@ -1,4 +1,4 @@
-using Ketras.Model.Environment;
+using Ketras.Environment;
 using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Styles;

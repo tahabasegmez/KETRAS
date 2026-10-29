@@ -1,6 +1,4 @@
-using Ketras.Mavlink.Vehicles;
-using Ketras.Model.Geo;
-using Ketras.Model.Planning;
+using Ketras.Geo;
 using Ketras.Terrain;
 using Ketras.Vehicles;
 using Microsoft.Extensions.Hosting;

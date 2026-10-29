@@ -1,4 +1,4 @@
-using TerrainGrid = Ketras.Model.Terrain.TerrainGrid;
+using TerrainGrid = Ketras.Terrain.TerrainGrid;
 
 namespace Ketras.Scene3D.Rendering;
 

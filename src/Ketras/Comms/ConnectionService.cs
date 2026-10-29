@@ -1,6 +1,5 @@
 using System.Globalization;
 using Ketras.Mavlink;
-using Ketras.Mavlink.Logging;
 using Ketras.Notifications;
 using Ketras.Settings;
 using Ketras.Simulation;

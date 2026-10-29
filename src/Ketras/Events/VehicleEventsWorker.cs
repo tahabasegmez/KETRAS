@@ -102,7 +102,7 @@ public sealed class VehicleEventsWorker : IHostedService, IDisposable
         }
     }
 
-    private void OnMetadata(Model.Vehicles.VehicleId id, VehicleMetadata metadata)
+    private void OnMetadata(Vehicles.VehicleId id, VehicleMetadata metadata)
     {
         Follower? follower;
         lock (_lock)

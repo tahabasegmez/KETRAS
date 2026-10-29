@@ -1,5 +1,4 @@
 using Ketras.Commands;
-using Ketras.Model.Vehicles;
 using Ketras.Vehicles;
 
 namespace Ketras.Planning.Missions;
@@ -85,7 +84,7 @@ public sealed class MissionProgressTracker : IDisposable
         Update();
     }
 
-    private void OnState(Mavlink.Vehicles.VehicleState state) => Update();
+    private void OnState(Vehicles.VehicleState state) => Update();
 
     private void OnCurrent(int sequence, int total) => Update();
 

@@ -4,7 +4,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Ketras.Commands;
 using Ketras.Comms;
-using Ketras.Model.Geo;
+using Ketras.Geo;
 using Ketras.Notifications;
 using Ketras.Shell;
 using Ketras.Simulation;

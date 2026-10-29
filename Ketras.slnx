@@ -1,13 +1,6 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Ketras/Ketras.csproj" />
-
-    <Project Path="src/Ketras.Mavlink.Testing/Ketras.Mavlink.Testing.csproj" />
-    <Project Path="src/Ketras.Mavlink/Ketras.Mavlink.csproj" />
-    <Project Path="src/Ketras.Model/Ketras.Model.csproj" />
-    <Project Path="src/Ketras.Rosbridge/Ketras.Rosbridge.csproj" />
-    <Project Path="src/Ketras.Terrain/Ketras.Terrain.csproj" />
-    <Project Path="src/Ketras.Theme/Ketras.Theme.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Ketras.Tests/Ketras.Tests.csproj" />

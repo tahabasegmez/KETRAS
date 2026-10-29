@@ -1,10 +1,8 @@
 using System.Globalization;
+using Ketras.Autopilots;
 using Ketras.Commands;
 using Ketras.Environment;
-using Ketras.Mavlink.Autopilots;
 using Ketras.Mavlink.Messages;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
 using Ketras.Terrain;
 using Ketras.Vehicles;
 using Microsoft.Extensions.Hosting;

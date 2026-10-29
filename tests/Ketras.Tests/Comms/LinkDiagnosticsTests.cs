@@ -69,6 +69,6 @@ public sealed class LinkDiagnosticsTests
 
     private sealed class FailingFactory : ILinkFactory
     {
-        public Mavlink.MavlinkConnection Create(LinkProfile profile, Mavlink.MavlinkConnectionOptions options) => throw new FormatException("bad port");
+        public Ketras.Mavlink.MavlinkConnection Create(LinkProfile profile, Ketras.Mavlink.MavlinkConnectionOptions options) => throw new FormatException("bad port");
     }
 }

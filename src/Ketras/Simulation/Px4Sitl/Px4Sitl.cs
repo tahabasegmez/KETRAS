@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Ketras.Comms;
-using Ketras.Model.Geo;
+using Ketras.Geo;
 using Ketras.Settings;
 using Ketras.Terrain;
 using Microsoft.Extensions.Logging;

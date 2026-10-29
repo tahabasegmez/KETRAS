@@ -87,7 +87,7 @@ public sealed class EnvironmentWorker(
         }
     }
 
-    private void Report(Model.Vehicles.VehicleSnapshot snapshot)
+    private void Report(Vehicles.VehicleSnapshot snapshot)
     {
         List<IEnvironmentProvider> started;
         lock (_started)

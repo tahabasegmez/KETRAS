@@ -1,8 +1,8 @@
 using System.Net;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
+using Ketras.Geo;
 using Ketras.Notifications;
 using Ketras.Planning;
+using Ketras.Planning.Missions;
 using Ketras.Settings;
 using Ketras.Terrain;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -153,8 +153,8 @@ public sealed class TerrainTests : IDisposable
         plans.AddItem(MissionItemType.Land, Touchdown);
 
         var prepared = await terrain.PrepareForUploadAsync(plans.Current, []);
-        var far = await terrain.PrepareForUploadAsync(new Model.Planning.Plan { Mission = MissionEditor.UpdateSettings(new Mission(), s => s with { PlannedHome = new GeoPoint(-30.5, 20.5) }) }, []);
-        var empty = await terrain.PrepareForUploadAsync(new Model.Planning.Plan(), []);
+        var far = await terrain.PrepareForUploadAsync(new Ketras.Planning.Plan { Mission = MissionEditor.UpdateSettings(new Mission(), s => s with { PlannedHome = new GeoPoint(-30.5, 20.5) }) }, []);
+        var empty = await terrain.PrepareForUploadAsync(new Ketras.Planning.Plan(), []);
 
         Assert.Equal("terrain data complete", prepared.Summary);
         Assert.Equal(450, prepared.Plan.Mission.Settings.HomeAltitudeMeters);

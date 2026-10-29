@@ -1,6 +1,5 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Ketras.Model.Vehicles;
 using Ketras.Resources;
 using Ketras.Telemetry;
 using Ketras.Utilities;

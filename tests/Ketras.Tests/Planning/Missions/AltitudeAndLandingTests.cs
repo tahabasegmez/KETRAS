@@ -1,7 +1,5 @@
+using Ketras.Geo;
 using Ketras.Mavlink.Messages;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
 using Ketras.Planning;
 using Ketras.Planning.Missions;
 

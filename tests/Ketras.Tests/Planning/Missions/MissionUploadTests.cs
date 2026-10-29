@@ -1,14 +1,12 @@
 using Ketras.Commands;
 using Ketras.Environment;
+using Ketras.Geo;
 using Ketras.Mavlink.Messages;
-using Ketras.Model.Environment;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Vehicles;
 using Ketras.Notifications;
 using Ketras.Planning;
+using Ketras.Planning.Fences;
 using Ketras.Planning.Missions;
+using Ketras.Vehicles;
 
 namespace Ketras.Tests.Planning.Missions;
 

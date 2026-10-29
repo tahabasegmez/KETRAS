@@ -2,8 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
-using Ketras.Model.Environment;
-using Ketras.Model.Geo;
+using Ketras.Geo;
 
 namespace Ketras.Environment;
 

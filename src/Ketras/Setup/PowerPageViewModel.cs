@@ -67,7 +67,7 @@ public sealed partial class BatteryCalculatorViewModel(SetupContext context, str
     [ObservableProperty] public partial bool CanCalculate { get; private set; }
 
     /// <summary>Takes the vehicle's reading.</summary>
-    public void Apply(Mavlink.Vehicles.BatteryReading? battery)
+    public void Apply(Vehicles.BatteryReading? battery)
     {
         _reading = voltage ? battery?.VoltageVolts : battery?.CurrentAmps;
         ReadingText = _reading is { } value
@@ -212,7 +212,7 @@ public sealed class PowerPageViewModel : IDisposable
         }
     }
 
-    private void OnBattery(Mavlink.Vehicles.BatteryReading reading) => _ui.Post(() =>
+    private void OnBattery(Vehicles.BatteryReading reading) => _ui.Post(() =>
     {
         foreach (var calculator in Calculators)
         {

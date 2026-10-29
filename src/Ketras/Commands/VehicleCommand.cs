@@ -1,4 +1,4 @@
-using Ketras.Model.Vehicles;
+using Ketras.Vehicles;
 
 namespace Ketras.Commands;
 

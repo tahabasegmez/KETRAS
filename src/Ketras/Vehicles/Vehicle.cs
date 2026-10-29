@@ -1,8 +1,6 @@
 using Ketras.Events;
+using Ketras.Geo;
 using Ketras.Mavlink.Messages;
-using Ketras.Mavlink.Vehicles;
-using Ketras.Model.Geo;
-using Ketras.Model.Vehicles;
 using Ketras.Notifications;
 using Microsoft.Extensions.Logging;
 

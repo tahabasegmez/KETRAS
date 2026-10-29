@@ -1,5 +1,5 @@
 using System.Globalization;
-using Ketras.Model.Missions;
+using Ketras.Planning.Missions;
 
 using MColor = Mapsui.Styles.Color;
 

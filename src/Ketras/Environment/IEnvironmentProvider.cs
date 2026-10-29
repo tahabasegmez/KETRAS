@@ -1,5 +1,4 @@
-using Ketras.Model.Environment;
-using Ketras.Model.Vehicles;
+using Ketras.Vehicles;
 
 namespace Ketras.Environment;
 

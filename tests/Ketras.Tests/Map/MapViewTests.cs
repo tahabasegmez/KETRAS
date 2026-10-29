@@ -5,11 +5,11 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
+using Ketras.Geo;
 using Ketras.Map;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
+using Ketras.Planning;
+using Ketras.Planning.Fences;
+using Ketras.Planning.Missions;
 
 namespace Ketras.Tests.Map;
 

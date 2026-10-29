@@ -1,4 +1,4 @@
-using Ketras.Model.Missions;
+using Ketras.Planning.Missions;
 using Mapsui.Styles;
 
 using MBrush = Mapsui.Styles.Brush;

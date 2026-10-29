@@ -1,5 +1,5 @@
 using System.Net;
-using Ketras.Model.Geo;
+using Ketras.Geo;
 using Ketras.Settings;
 using Microsoft.Extensions.Logging;
 

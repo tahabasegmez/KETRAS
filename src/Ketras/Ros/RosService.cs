@@ -1,5 +1,4 @@
 using Ketras.Notifications;
-using Ketras.Rosbridge;
 using Ketras.Settings;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

@@ -1,5 +1,5 @@
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
+using Ketras.Geo;
+using Ketras.Planning.Fences;
 using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Nts;

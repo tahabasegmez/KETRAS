@@ -1,6 +1,6 @@
-using Ketras.Mavlink.Autopilots;
+using Ketras.Autopilots;
+using Ketras.Comms.MockLink;
 using Ketras.Mavlink.Messages;
-using Ketras.Mavlink.Testing;
 
 namespace Ketras.Tests.Parameters;
 

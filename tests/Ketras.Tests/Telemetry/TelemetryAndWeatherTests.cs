@@ -4,7 +4,6 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Ketras.Comms;
 using Ketras.Environment.Weather;
-using Ketras.Model.Vehicles;
 using Ketras.Shell;
 using Ketras.Telemetry;
 using Ketras.Vehicles;

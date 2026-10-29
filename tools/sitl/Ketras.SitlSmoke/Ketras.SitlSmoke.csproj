@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <IsPackable>false</IsPackable>
     <Description>Smoke run of the station against a real PX4 SITL.</Description>
   </PropertyGroup>
 

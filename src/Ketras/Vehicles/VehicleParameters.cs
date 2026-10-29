@@ -1,4 +1,4 @@
-using Ketras.Mavlink.Autopilots;
+using Ketras.Autopilots;
 using Ketras.Mavlink.Protocols;
 using Microsoft.Extensions.Logging;
 

@@ -1,5 +1,3 @@
-using Ketras.Mavlink.Vehicles;
-using Ketras.Model.Environment;
 using Ketras.Vehicles;
 
 namespace Ketras.Environment;

@@ -1,6 +1,5 @@
 using Ketras.Comms;
-using Ketras.Model.Geo;
-using Ketras.Model.Vehicles;
+using Ketras.Geo;
 using Ketras.Notifications;
 using Ketras.Planning;
 using Ketras.Planning.Missions;

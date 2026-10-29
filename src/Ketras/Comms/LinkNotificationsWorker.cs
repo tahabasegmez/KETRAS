@@ -1,5 +1,4 @@
 using Ketras.Events;
-using Ketras.Model.Vehicles;
 using Ketras.Notifications;
 using Ketras.Simulation;
 using Ketras.Vehicles;

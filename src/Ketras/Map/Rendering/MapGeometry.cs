@@ -1,4 +1,4 @@
-using Ketras.Model.Geo;
+using Ketras.Geo;
 using Mapsui;
 using Mapsui.Projections;
 using NetTopologySuite.Geometries;

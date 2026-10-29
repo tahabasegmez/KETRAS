@@ -1,4 +1,3 @@
-using Ketras.Model.Environment;
 
 namespace Ketras.Environment;
 

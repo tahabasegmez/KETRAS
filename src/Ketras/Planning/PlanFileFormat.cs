@@ -2,11 +2,9 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Ketras.Geo;
 using Ketras.Mavlink.Messages;
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
+using Ketras.Planning.Fences;
 using Ketras.Planning.Missions;
 
 namespace Ketras.Planning;

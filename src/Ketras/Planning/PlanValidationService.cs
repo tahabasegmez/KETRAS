@@ -1,9 +1,7 @@
 using Ketras.Environment;
 using Ketras.Mavlink.Protocols;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
-using Ketras.Model.Vehicles;
 using Ketras.Notifications;
+using Ketras.Planning.Missions;
 using Ketras.Settings;
 using Ketras.Terrain;
 using Ketras.Vehicles;

@@ -1,9 +1,7 @@
 using System.Globalization;
 using Ketras.Commands;
+using Ketras.Geo;
 using Ketras.Mavlink.Messages;
-using Ketras.Mavlink.Vehicles;
-using Ketras.Model.Geo;
-using Ketras.Model.Vehicles;
 using Ketras.Notifications;
 using Ketras.Planning.Missions;
 using Ketras.Settings;

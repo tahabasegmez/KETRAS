@@ -1,8 +1,7 @@
 using Ketras.Environment;
-using Ketras.Model.Environment;
-using Ketras.Model.Geo;
-using Ketras.Model.Vehicles;
+using Ketras.Geo;
 using Ketras.Notifications;
+using Ketras.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ketras.Tests.Environment;

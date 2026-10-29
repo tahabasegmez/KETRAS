@@ -1,13 +1,11 @@
-using Ketras.Model.Fences;
-using Ketras.Model.Geo;
-using Ketras.Model.Missions;
-using Ketras.Model.Planning;
+using Ketras.Geo;
 using Ketras.Planning;
+using Ketras.Planning.Fences;
+using Ketras.Planning.Missions;
 using Ketras.Settings;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using TerrainGrid = Ketras.Model.Terrain.TerrainGrid;
 
 namespace Ketras.Terrain;
 
