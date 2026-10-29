@@ -20,6 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Ketras.Station.Tests" />
+    <InternalsVisibleTo Include="Ketras.Tests" />
   </ItemGroup>
 </Project>

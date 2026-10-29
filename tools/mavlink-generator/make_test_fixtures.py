@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes reference MAVLink 2 frames encoded by pymavlink, which tests/Ketras.Mavlink.Tests compares byte for byte
+"""Writes reference MAVLink 2 frames encoded by pymavlink, which tests/Ketras.Tests (MAVLink/FramingTests) compares byte for byte
 with Ketras.Mavlink's encoder.
 
 Usage: make_test_fixtures.py <output.json>

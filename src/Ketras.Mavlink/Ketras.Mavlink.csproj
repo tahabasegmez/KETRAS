@@ -12,6 +12,6 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Ketras.Mavlink.Testing" />
-    <InternalsVisibleTo Include="Ketras.Mavlink.Tests" />
+    <InternalsVisibleTo Include="Ketras.Tests" />
   </ItemGroup>
 </Project>

@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Ketras.Controls.Map.Tests" />
+    <InternalsVisibleTo Include="Ketras.Tests" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Ketras.Terrain.Tests" />
+    <InternalsVisibleTo Include="Ketras.Tests" />
   </ItemGroup>
 </Project>

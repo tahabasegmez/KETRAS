@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Ketras.Controls.Scene3D.Tests" />
+    <InternalsVisibleTo Include="Ketras.Tests" />
   </ItemGroup>
 </Project>

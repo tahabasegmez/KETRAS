@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Ketras.Controls.Map\Ketras.Controls.Map.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Avalonia.Headless.XUnit" />
-  </ItemGroup>
-</Project>

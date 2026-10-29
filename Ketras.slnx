@@ -21,17 +21,7 @@
     <Project Path="src/Ketras.Theme/Ketras.Theme.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Ketras.App.Tests/Ketras.App.Tests.csproj" />
-    <Project Path="tests/Ketras.Architecture.Tests/Ketras.Architecture.Tests.csproj" />
-    <Project Path="tests/Ketras.Controls.Instruments.Tests/Ketras.Controls.Instruments.Tests.csproj" />
-    <Project Path="tests/Ketras.Controls.Scene3D.Tests/Ketras.Controls.Scene3D.Tests.csproj" />
-    <Project Path="tests/Ketras.Controls.Map.Tests/Ketras.Controls.Map.Tests.csproj" />
-    <Project Path="tests/Ketras.Mavlink.Tests/Ketras.Mavlink.Tests.csproj" />
-    <Project Path="tests/Ketras.Model.Tests/Ketras.Model.Tests.csproj" />
-    <Project Path="tests/Ketras.Rosbridge.Tests/Ketras.Rosbridge.Tests.csproj" />
-    <Project Path="tests/Ketras.Simulation.Px4Sitl.Tests/Ketras.Simulation.Px4Sitl.Tests.csproj" />
-    <Project Path="tests/Ketras.Station.Tests/Ketras.Station.Tests.csproj" />
-    <Project Path="tests/Ketras.Terrain.Tests/Ketras.Terrain.Tests.csproj" />
+    <Project Path="tests/Ketras.Tests/Ketras.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/sitl/Ketras.SitlSmoke/Ketras.SitlSmoke.csproj" />
