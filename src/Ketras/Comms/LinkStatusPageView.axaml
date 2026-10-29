@@ -1,0 +1,158 @@
+<!-- The Status page: the current link card (fixed height: a change of state moves nothing), the steps of its phase and
+     the link details. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:comms="using:Ketras.Comms"
+             xmlns:controls="using:Ketras.Controls"
+             xmlns:r="using:Ketras.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.Comms.LinkStatusPageView"
+             x:DataType="comms:LinkStatusPageViewModel">
+  <UserControl.Styles>
+    <Style Selector="lucide|LucideIcon.state">
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Muted}" />
+    </Style>
+    <Style Selector="lucide|LucideIcon.state.connecting">
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Accent}" />
+    </Style>
+    <Style Selector="lucide|LucideIcon.state.connected">
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Success}" />
+    </Style>
+    <Style Selector="lucide|LucideIcon.state.lost">
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Error}" />
+    </Style>
+  </UserControl.Styles>
+
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,12">
+    <StackPanel Spacing="8">
+      <TextBlock Classes="page-title" Text="{Binding Title}" />
+
+      <Border x:Name="CurrentLinkCard" Classes="card">
+        <StackPanel Spacing="8">
+          <Grid Height="40" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+            <Panel VerticalAlignment="Center">
+              <lucide:LucideIcon Classes="state" Kind="Unplug" Size="20" IsVisible="{Binding !CanDisconnect}" />
+              <lucide:LucideIcon Classes="state connecting" Kind="LoaderCircle" Size="20" IsVisible="{Binding IsConnecting}" />
+              <lucide:LucideIcon Classes="state connected" Kind="Plug" Size="20" IsVisible="{Binding IsConnected}" />
+              <lucide:LucideIcon Classes="state lost" Kind="TriangleAlert" Size="20" IsVisible="{Binding IsLost}" />
+            </Panel>
+            <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+              <TextBlock x:Name="Heading" Classes="title" FontSize="15" Text="{Binding Heading}" />
+              <TextBlock Classes="small mono" Text="{Binding Summary}" />
+            </StackPanel>
+            <Button x:Name="Disconnect" Grid.Column="2" Classes="danger" VerticalAlignment="Center"
+                    IsVisible="{Binding CanDisconnect}" Command="{Binding DisconnectCommand}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <lucide:LucideIcon Kind="Unplug" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.TextStrong}" />
+                <TextBlock Text="{Binding DisconnectLabel}" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+          </Grid>
+
+          <!-- One message at a time in a fixed slot: a pending confirmation, else the error, else the hint. -->
+          <Panel Height="40">
+            <TextBlock Classes="small wrap" MaxLines="2" Text="{Binding Hint}" IsVisible="{Binding ShowHint}" VerticalAlignment="Center" />
+            <Border Classes="error-box" IsVisible="{Binding ShowError}" VerticalAlignment="Center" ToolTip.Tip="{Binding Error}">
+              <TextBlock Text="{Binding Error}" TextTrimming="CharacterEllipsis" />
+            </Border>
+            <Border x:Name="Confirmation" IsVisible="{Binding IsConfirming}" Padding="8,0,6,0" CornerRadius="{StaticResource Radius.Control}"
+                    BorderThickness="1" BorderBrush="{DynamicResource Brush.Warning}" Background="{DynamicResource Brush.WarningFill}">
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <TextBlock Classes="small wrap" MaxLines="2" Text="{Binding ConfirmText}" Foreground="{DynamicResource Brush.TextStrong}" VerticalAlignment="Center" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                  <Button x:Name="ConfirmButton" Classes="danger" Content="{Binding ConfirmAction}" Command="{Binding ConfirmCommand}" />
+                  <Button Content="{x:Static r:Strings.Cancel}" Command="{Binding CancelConfirmCommand}" />
+                </StackPanel>
+              </Grid>
+            </Border>
+          </Panel>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="section"><TextBlock Text="{Binding StepsTitle}" /></Border>
+      <TextBlock Classes="small" Text="{x:Static r:Strings.LinkStepsNone}" IsVisible="{Binding HasNoSteps}" Margin="20,0" />
+      <ItemsControl x:Name="Steps" ItemsSource="{Binding Steps}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="comms:LinkStepRow">
+            <Grid ColumnDefinitions="22,180,*" MinHeight="{StaticResource Size.RowHeight}" Margin="20,0,12,0">
+              <lucide:LucideIcon Kind="{Binding State, Converter={x:Static controls:Converters.StepIcon}}"
+                                 Foreground="{Binding State, Converter={x:Static controls:Converters.StepBrush}}"
+                                 Size="{StaticResource Size.RowIcon}" VerticalAlignment="Top" Margin="0,4,0,0" />
+              <TextBlock Grid.Column="1" Text="{Binding Title}" Classes.small="{Binding IsPending}" Margin="0,3" />
+              <TextBlock Grid.Column="2" Classes="small wrap" Text="{Binding Detail}" Margin="0,4" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <Border Classes="section"><TextBlock Text="{x:Static r:Strings.LinkSectionVehicle}" /></Border>
+      <StackPanel>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipHeartbeat}">
+          <TextBlock Text="{x:Static r:Strings.KeyHeartbeat}" />
+          <TextBlock x:Name="HeartbeatValue" Grid.Column="1" Classes="value" Text="{Binding Heartbeat}"
+                     Classes.warning="{Binding HeartbeatLevel, Converter={x:Static controls:Converters.IsWarning}}"
+                     Classes.error="{Binding HeartbeatLevel, Converter={x:Static controls:Converters.IsError}}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipIdentity}">
+          <TextBlock Text="{x:Static r:Strings.KeyIdentity}" />
+          <TextBlock x:Name="IdentityValue" Grid.Column="1" Classes="value" Text="{Binding Identity}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipAutopilot}">
+          <TextBlock Text="{x:Static r:Strings.KeyAutopilot}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding Autopilot}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipVehicleType}">
+          <TextBlock Text="{x:Static r:Strings.KeyVehicleType}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding VehicleType}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipFirmware}">
+          <TextBlock Text="{x:Static r:Strings.KeyFirmware}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding Firmware}" />
+        </Grid>
+      </StackPanel>
+
+      <Border Classes="section"><TextBlock Text="{x:Static r:Strings.LinkSectionQuality}" /></Border>
+      <StackPanel>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipMessages}">
+          <TextBlock Text="{x:Static r:Strings.KeyMessages}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding Messages}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipDataRate}">
+          <TextBlock Text="{x:Static r:Strings.KeyDataRate}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding DataRate}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipLoss}">
+          <TextBlock Text="{x:Static r:Strings.KeyLoss}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding Loss}"
+                     Classes.warning="{Binding LossLevel, Converter={x:Static controls:Converters.IsWarning}}"
+                     Classes.error="{Binding LossLevel, Converter={x:Static controls:Converters.IsError}}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipChecksum}">
+          <TextBlock Text="{x:Static r:Strings.KeyChecksum}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding Checksum}" />
+        </Grid>
+      </StackPanel>
+
+      <Border Classes="section"><TextBlock Text="{x:Static r:Strings.LinkSectionRadio}" /></Border>
+      <StackPanel>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipRssi}">
+          <TextBlock Text="{x:Static r:Strings.KeyRssi}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding Rssi}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipNoise}">
+          <TextBlock Text="{x:Static r:Strings.KeyNoise}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding Noise}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipTxBuffer}">
+          <TextBlock Text="{x:Static r:Strings.KeyTxBuffer}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding TxBuffer}"
+                     Classes.warning="{Binding TxBufferLevel, Converter={x:Static controls:Converters.IsWarning}}" />
+        </Grid>
+        <Grid Classes="key-value" ColumnDefinitions="200,*" ToolTip.Tip="{x:Static r:Strings.TipRxErrors}">
+          <TextBlock Text="{x:Static r:Strings.KeyRxErrors}" />
+          <TextBlock Grid.Column="1" Classes="value" Text="{Binding RxErrors}" />
+        </Grid>
+      </StackPanel>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

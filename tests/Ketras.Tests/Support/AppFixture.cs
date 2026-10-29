@@ -1,12 +1,11 @@
 using Avalonia;
 using Avalonia.Headless;
 using Avalonia.Threading;
-using Ketras.App.Common;
-using Ketras.App.Composition;
 using Ketras.Mavlink.Messages;
 using Ketras.Mavlink.Testing;
 using Ketras.Station.Links;
 using Ketras.Station.Settings;
+using Ketras.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -17,7 +16,7 @@ namespace Ketras.Tests.Support;
 /// <summary>The real application (theme, view map) on Avalonia's headless platform.</summary>
 public static class TestAppBuilder
 {
-    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<Ketras.App.App>().UseHeadless(new AvaloniaHeadlessPlatformOptions());
+    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<Ketras.App>().UseHeadless(new AvaloniaHeadlessPlatformOptions());
 }
 
 /// <summary>Runs posted work at once, on the caller's thread, one piece at a time as a UI thread would.</summary>

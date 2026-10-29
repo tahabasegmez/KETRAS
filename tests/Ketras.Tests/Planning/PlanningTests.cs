@@ -5,15 +5,16 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Ketras.App.Common;
-using Ketras.App.Planning;
-using Ketras.App.Resources;
+using Ketras.Controls;
 using Ketras.Controls.Map;
 using Ketras.Model.Fences;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
+using Ketras.Planning;
+using Ketras.Resources;
 using Ketras.Station.Missions;
 using Ketras.Station.Notifications;
+using Ketras.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ketras.Tests.Planning;
@@ -243,7 +244,7 @@ public sealed class PlanningTests
     public async Task A_custom_tile_source_from_settings_replaces_the_base_maps()
     {
         await using var app = Create();
-        var settings = app.Get<Ketras.App.Settings.SettingsViewModel>();
+        var settings = app.Get<Ketras.Settings.SettingsViewModel>();
         var planning = app.Get<PlanningViewModel>();
 
         settings.TileUrl = "not a url";

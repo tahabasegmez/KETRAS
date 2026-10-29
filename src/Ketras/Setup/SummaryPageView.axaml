@@ -1,0 +1,97 @@
+<!-- The Summary page: the vehicle's identity as key / value rows, airframe warnings, the checks that fail in the
+     vehicle's health and arming report (an error or warning icon, the message, then where and which modes it stops), the
+     Ready to fly list (Pass / Warn / Fail / unknown icon, the check, its values), and the setup checklist (one row per task page with its state; Open shows the page). -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:setup="using:Ketras.Setup"
+             xmlns:controls="using:Ketras.Controls"
+             xmlns:r="using:Ketras.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.Setup.SummaryPageView"
+             x:DataType="setup:SummaryPageViewModel">
+  <ScrollViewer Padding="0,0,10,12">
+    <StackPanel Spacing="8" MaxWidth="720" HorizontalAlignment="Left">
+      <TextBlock Classes="page-title" Text="{Binding Title}" />
+      <Border Classes="section"><TextBlock Text="{x:Static r:Strings.SummaryVehicle}" /></Border>
+      <ItemsControl x:Name="Identity" ItemsSource="{Binding Identity}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="setup:SummaryRow">
+            <Grid Classes="key-value" ColumnDefinitions="200,*">
+              <TextBlock Text="{Binding Key}" />
+              <TextBlock Grid.Column="1" Classes="value" Text="{Binding Value}" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <ItemsControl x:Name="Warnings" ItemsSource="{Binding Warnings}" IsVisible="{Binding HasWarnings}" Margin="20,0,12,0">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="x:String">
+            <Border Classes="error-box" Margin="0,2"><TextBlock Text="{Binding}" /></Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <StackPanel IsVisible="{Binding HasHealthReport}" Spacing="2">
+        <Border Classes="section" Margin="0,6,0,0"><TextBlock Text="{x:Static r:Strings.SummaryHealth}" /></Border>
+        <StackPanel Orientation="Horizontal" Spacing="6" Margin="20,2,12,0" IsVisible="{Binding IsHealthy}">
+          <lucide:LucideIcon Kind="CircleCheck" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Success}" />
+          <TextBlock Classes="small" Text="{x:Static r:Strings.SummaryHealthy}" VerticalAlignment="Center" />
+        </StackPanel>
+        <ItemsControl x:Name="Health" ItemsSource="{Binding Health}" Margin="20,0,12,0">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="setup:HealthRow">
+              <Grid ColumnDefinitions="Auto,*" Margin="0,2">
+                <lucide:LucideIcon Kind="CircleX" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Error}" IsVisible="{Binding IsError}"
+                                   VerticalAlignment="Top" Margin="0,2,8,0" />
+                <lucide:LucideIcon Kind="TriangleAlert" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Warning}" IsVisible="{Binding !IsError}"
+                                   VerticalAlignment="Top" Margin="0,2,8,0" />
+                <StackPanel Grid.Column="1">
+                  <TextBlock Classes="wrap" Text="{Binding Message}" />
+                  <TextBlock Classes="caption" Text="{Binding Detail}" TextWrapping="Wrap" />
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+
+      <StackPanel IsVisible="{Binding Readiness, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <Border Classes="section" Margin="0,6,0,0"><TextBlock Text="{x:Static r:Strings.SummaryReady}" /></Border>
+        <ItemsControl x:Name="Ready" ItemsSource="{Binding Readiness.Rows}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="setup:ReadyRowViewModel">
+              <Grid ColumnDefinitions="Auto,200,*" MinHeight="{StaticResource Size.RowHeight}" Margin="20,0,12,0">
+                <Panel Width="{StaticResource Size.RowIcon}" Margin="0,0,8,0" VerticalAlignment="Center">
+                  <lucide:LucideIcon Kind="CircleCheck" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Success}" IsVisible="{Binding IsPass}" />
+                  <lucide:LucideIcon Kind="TriangleAlert" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Warning}" IsVisible="{Binding IsWarning}" />
+                  <lucide:LucideIcon Kind="CircleX" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Error}" IsVisible="{Binding IsError}" />
+                  <lucide:LucideIcon Kind="CircleDashed" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Faint}" IsVisible="{Binding IsUnknown}" />
+                </Panel>
+                <TextBlock Grid.Column="1" Text="{Binding Title}" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="2" Classes="small" Text="{Binding Detail}" TextWrapping="Wrap" VerticalAlignment="Center" />
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+
+      <Border Classes="section" Margin="0,6,0,0"><TextBlock Text="{x:Static r:Strings.SummaryChecklist}" /></Border>
+      <ItemsControl x:Name="Checklist" ItemsSource="{Binding Checklist}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="setup:ChecklistRowViewModel">
+            <Grid ColumnDefinitions="Auto,200,*,Auto" Height="{StaticResource Size.RowHeight}" Margin="20,0,12,0">
+              <lucide:LucideIcon Kind="{Binding Icon, Converter={x:Static controls:Converters.Icon}}" Size="{StaticResource Size.RowIcon}" VerticalAlignment="Center" Margin="0,0,8,0" />
+              <TextBlock Grid.Column="1" Text="{Binding Title}" VerticalAlignment="Center" />
+              <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                <lucide:LucideIcon Kind="CircleCheck" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Success}" IsVisible="{Binding IsReady}" />
+                <lucide:LucideIcon Kind="TriangleAlert" Size="{StaticResource Size.RowIcon}" Foreground="{DynamicResource Brush.Warning}" IsVisible="{Binding IsRequired}" />
+                <TextBlock Classes="small" Text="{Binding StateText}" VerticalAlignment="Center" />
+              </StackPanel>
+              <Button Grid.Column="3" Classes="ghost" Content="{x:Static r:Strings.SummaryOpen}" Command="{Binding OpenCommand}" VerticalAlignment="Center" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

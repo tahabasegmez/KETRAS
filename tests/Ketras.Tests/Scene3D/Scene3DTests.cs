@@ -4,14 +4,14 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Ketras.App.Scene3D;
-using Ketras.App.Shell;
 using Ketras.Controls.Scene3D;
 using Ketras.Model.Environment;
 using Ketras.Model.Fences;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
 using Ketras.Model.Vehicles;
+using Ketras.Scene3D;
+using Ketras.Shell;
 using Ketras.Station.Environment;
 using Ketras.Station.Links;
 using Ketras.Station.Missions;
@@ -135,17 +135,17 @@ public sealed class Scene3DTests
         Assert.Equal((SceneSurface.Street, true, "Street"), (scene.Surface, scene.IsStreet, settings.Get(Scene3DViewModel.SurfaceSetting)));
         Assert.Null(scene.Imagery);
 
-        settings.Set(Ketras.App.Settings.AppSettings.CustomTileUrl, "https://tiles.test/{z}/{x}/{y}.png");
+        settings.Set(Ketras.Settings.AppSettings.CustomTileUrl, "https://tiles.test/{z}/{x}/{y}.png");
         Dispatcher.UIThread.RunJobs();
         Assert.Equal((SceneSurface.Custom, true), (scene.Surface, scene.HasCustomTiles));
 
-        settings.Set(Ketras.App.Settings.AppSettings.CustomTileUrl, string.Empty);
+        settings.Set(Ketras.Settings.AppSettings.CustomTileUrl, string.Empty);
         Dispatcher.UIThread.RunJobs();
         Assert.Equal((SceneSurface.Street, false), (scene.Surface, scene.HasCustomTiles));
 
         scene.ShowGreyCommand.Execute(null);
         Assert.Equal((SceneSurface.Grey, "Grey"), (scene.Surface, settings.Get(Scene3DViewModel.SurfaceSetting)));
-        Assert.Equal(Ketras.App.Resources.Strings.TerrainCredit, scene.Credits);
+        Assert.Equal(Ketras.Resources.Strings.TerrainCredit, scene.Credits);
         scene.RequestImageryDetail(new Model.Geo.TileRange(18, 1, 1, 1, 1));
         Assert.Null(scene.ImageryDetail);
     }
@@ -162,15 +162,15 @@ public sealed class Scene3DTests
         Rect Place(Control control) => new(control.TranslatePoint(default, window)!.Value, control.Bounds.Size);
         T Named<T>(Control root, string name) where T : Control => root.GetVisualDescendants().OfType<T>().First(c => c.Name == name);
 
-        var planning = window.GetVisualDescendants().OfType<Ketras.App.Planning.PlanningView>().Single();
-        var planningTelemetry = Place(Named<Ketras.App.Telemetry.TelemetryPanelView>(planning, "Telemetry"));
+        var planning = window.GetVisualDescendants().OfType<Ketras.Planning.PlanningView>().Single();
+        var planningTelemetry = Place(Named<Ketras.Telemetry.TelemetryPanelView>(planning, "Telemetry"));
         var planningColumn = Place(Named<Border>(planning, "ViewColumn"));
         shell.Show(ShellViewModel.Scene3D);
         Dispatcher.UIThread.RunJobs();
         window.UpdateLayout();
         var view = window.GetVisualDescendants().OfType<Scene3DView>().Single();
 
-        Assert.Equal(planningTelemetry, Place(Named<Ketras.App.Telemetry.TelemetryPanelView>(view, "Telemetry")));
+        Assert.Equal(planningTelemetry, Place(Named<Ketras.Telemetry.TelemetryPanelView>(view, "Telemetry")));
         Assert.Equal((planningColumn.Right, planningColumn.Top), (Place(Named<Border>(view, "ViewColumn")).Right, Place(Named<Border>(view, "ViewColumn")).Top));
         Assert.Equal((HorizontalAlignment.Left, VerticalAlignment.Top), (Named<Border>(view, "TrafficPanel").HorizontalAlignment, Named<Border>(view, "TrafficPanel").VerticalAlignment));
         Assert.True(Named<Button>(view, "SurfaceSatellite").IsVisible);

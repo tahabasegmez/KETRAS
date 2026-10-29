@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Ketras.App\Ketras.App.csproj" />
+    <ProjectReference Include="..\..\src\Ketras\Ketras.csproj" />
     <ProjectReference Include="..\..\src\Ketras.Mavlink.Testing\Ketras.Mavlink.Testing.csproj" />
     <ProjectReference Include="..\..\plugins\Ketras.Plugins.Template\Ketras.Plugins.Template.csproj" />
   </ItemGroup>

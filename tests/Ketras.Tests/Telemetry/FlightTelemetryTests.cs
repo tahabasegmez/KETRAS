@@ -2,16 +2,16 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Ketras.App.Setup;
-using Ketras.App.Shell;
-using Ketras.App.Telemetry;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
 using Ketras.Model.Vehicles;
+using Ketras.Setup;
+using Ketras.Shell;
 using Ketras.Station.Links;
 using Ketras.Station.Missions;
 using Ketras.Station.Settings;
 using Ketras.Station.Vehicles;
+using Ketras.Telemetry;
 
 namespace Ketras.Tests.Telemetry;
 
@@ -33,7 +33,7 @@ public sealed class FlightTelemetryTests
         await using var app = AppFixture.Create();
         await ConnectAsync(app);
         var panel = app.Get<TelemetryPanelViewModel>();
-        var units = app.Get<Ketras.App.Common.UnitService>();
+        var units = app.Get<Ketras.Utilities.UnitService>();
         Assert.False(panel.IsExpanded);
 
         panel.ToggleExpandedCommand.Execute(null);

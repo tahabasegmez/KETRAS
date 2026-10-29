@@ -1,4 +1,4 @@
-using Ketras.App.Common;
+using Ketras.Utilities;
 
 namespace Ketras.Tests.Support;
 

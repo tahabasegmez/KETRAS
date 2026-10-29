@@ -1,0 +1,166 @@
+<!-- The telemetry panel (docs/UI_RULES.md "Telemetry panel"): one floating panel at the bottom right of Planning and 3D. The
+     horizon (96 square, heading at its foot) on the left; on its right two columns of readouts, each an icon (ChevronIcon,
+     Faint), a Caption key and a Mono value, four rows of 24; a chevron at the top right. Expanded, a divider and three
+     more columns across the panel: navigation (WP, ETA, END, HOME), errors and drive (ΔALT, XTRK, THR, MRGN) and the
+     battery (V, A, USED, LEFT). Readouts take the Warning or Error colour their ViewModel gives, with the reason as the
+     tooltip. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:telemetry="using:Ketras.Telemetry"
+             xmlns:gauges="using:Ketras.Controls.Instruments"
+             xmlns:r="using:Ketras.Resources"
+             xmlns:lucide="using:Lucide.Avalonia"
+             x:Class="Ketras.Telemetry.TelemetryPanelView"
+             x:DataType="telemetry:TelemetryPanelViewModel">
+  <UserControl.Styles>
+    <Style Selector="Grid.readout">
+      <Setter Property="Height" Value="24" />
+      <Setter Property="Width" Value="100" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="ToolTip.Placement" Value="Top" />
+    </Style>
+    <Style Selector="Grid.readout > lucide|LucideIcon">
+      <Setter Property="Size" Value="{StaticResource Size.ChevronIcon}" />
+      <Setter Property="Foreground" Value="{DynamicResource Brush.Faint}" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Grid.readout > TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Grid.readout > TextBlock.value">
+      <Setter Property="Grid.Column" Value="2" />
+      <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style Selector="Grid.readout > TextBlock.caption">
+      <Setter Property="Grid.Column" Value="1" />
+    </Style>
+  </UserControl.Styles>
+
+  <Border Classes="floating" Padding="6">
+    <Grid ColumnDefinitions="96,Auto,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="6">
+      <gauges:AttitudeIndicator x:Name="Horizon" Width="96" Height="96" Roll="{Binding Roll}" Pitch="{Binding Pitch}" Heading="{Binding Heading}" />
+
+      <StackPanel Grid.Column="1">
+        <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryAmslHelp}">
+          <lucide:LucideIcon Kind="WavesHorizontal" />
+          <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryAmsl}" />
+          <TextBlock x:Name="Amsl" Classes="value" Text="{Binding Amsl}" />
+        </Grid>
+        <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryRelativeHelp}">
+          <lucide:LucideIcon Kind="House" />
+          <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryRelative}" />
+          <TextBlock x:Name="Relative" Classes="value" Text="{Binding Relative}" />
+        </Grid>
+        <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{Binding AglDetail}">
+          <lucide:LucideIcon Kind="Mountain" />
+          <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryAgl}" />
+          <TextBlock x:Name="Agl" Classes="value" Classes.warning="{Binding IsAglWarning}" Classes.error="{Binding IsAglError}" Text="{Binding Agl}" />
+        </Grid>
+        <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryBatteryHelp}">
+          <lucide:LucideIcon Kind="BatteryMedium" />
+          <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryBattery}" />
+          <TextBlock x:Name="Battery" Classes="value" Text="{Binding Battery}" />
+        </Grid>
+      </StackPanel>
+
+      <StackPanel Grid.Column="2">
+        <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryAirspeedHelp}">
+          <lucide:LucideIcon Kind="Wind" />
+          <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryAirspeed}" />
+          <TextBlock x:Name="Airspeed" Classes="value" Classes.warning="{Binding IsAirspeedWarning}" Text="{Binding Airspeed}" />
+        </Grid>
+        <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryGroundSpeedHelp}">
+          <lucide:LucideIcon Kind="Gauge" />
+          <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryGroundSpeed}" />
+          <TextBlock x:Name="GroundSpeed" Classes="value" Text="{Binding GroundSpeed}" />
+        </Grid>
+        <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryClimbHelp}">
+          <lucide:LucideIcon Kind="ArrowUpDown" />
+          <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryClimb}" />
+          <TextBlock x:Name="Climb" Classes="value" Text="{Binding Climb}" />
+        </Grid>
+        <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryThrottleHelp}">
+          <lucide:LucideIcon Kind="ChevronsUp" />
+          <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryThrottle}" />
+          <TextBlock x:Name="Throttle" Classes="value" Text="{Binding Throttle}" />
+        </Grid>
+      </StackPanel>
+
+      <Button x:Name="ToggleExpanded" Grid.Column="3" Classes="row-action" VerticalAlignment="Top" Command="{Binding ToggleExpandedCommand}"
+              ToolTip.Tip="{x:Static r:Strings.TelemetryToggle}" ToolTip.Placement="Top">
+        <Panel>
+          <lucide:LucideIcon Kind="ChevronUp" Size="{StaticResource Size.RowIcon}" IsVisible="{Binding !IsExpanded}" />
+          <lucide:LucideIcon Kind="ChevronDown" Size="{StaticResource Size.RowIcon}" IsVisible="{Binding IsExpanded}" />
+        </Panel>
+      </Button>
+
+      <!-- Expanded: navigation, errors and drive, battery. -->
+      <Border x:Name="More" Grid.Row="1" Grid.ColumnSpan="4" IsVisible="{Binding IsExpanded}" Margin="0,6,0,0" Padding="0,4,0,0"
+              BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,1,0,0">
+        <StackPanel Orientation="Horizontal" Spacing="6">
+          <StackPanel>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryWaypointHelp}">
+              <lucide:LucideIcon Kind="Target" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryWaypoint}" />
+              <TextBlock x:Name="Waypoint" Classes="value" Text="{Binding Waypoint}" />
+            </Grid>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryWaypointEtaHelp}">
+              <lucide:LucideIcon Kind="Timer" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryWaypointEta}" />
+              <TextBlock x:Name="WaypointEta" Classes="value" Text="{Binding WaypointEta}" />
+            </Grid>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryEndHelp}">
+              <lucide:LucideIcon Kind="Flag" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryEnd}" />
+              <TextBlock x:Name="EndEta" Classes="value" Text="{Binding EndEta}" />
+            </Grid>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryHomeHelp}">
+              <lucide:LucideIcon Kind="House" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryHome}" />
+              <TextBlock x:Name="Home" Classes="value" Text="{Binding Home}" />
+            </Grid>
+          </StackPanel>
+          <StackPanel>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryAltitudeErrorHelp}">
+              <lucide:LucideIcon Kind="MoveVertical" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryAltitudeError}" />
+              <TextBlock x:Name="AltitudeError" Classes="value" Classes.warning="{Binding IsAltitudeErrorWarning}" Text="{Binding AltitudeError}" />
+            </Grid>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryCrossTrackHelp}">
+              <lucide:LucideIcon Kind="MoveHorizontal" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryCrossTrack}" />
+              <TextBlock x:Name="CrossTrack" Classes="value" Classes.warning="{Binding IsCrossTrackWarning}" Text="{Binding CrossTrack}" />
+            </Grid>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{Binding MarginDetail}">
+              <lucide:LucideIcon Kind="Scale" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryMargin}" />
+              <TextBlock x:Name="EnergyMargin" Classes="value" Classes.warning="{Binding IsMarginWarning}" Classes.error="{Binding IsMarginError}" Text="{Binding Margin}" />
+            </Grid>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryTimeLeftHelp}">
+              <lucide:LucideIcon Kind="Hourglass" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryTimeLeft}" />
+              <TextBlock x:Name="TimeLeft" Classes="value" Text="{Binding TimeLeft}" />
+            </Grid>
+          </StackPanel>
+          <StackPanel>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{Binding VoltageDetail}">
+              <lucide:LucideIcon Kind="Battery" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryVoltage}" />
+              <TextBlock x:Name="Voltage" Classes="value" Text="{Binding Voltage}" />
+            </Grid>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryCurrentHelp}">
+              <lucide:LucideIcon Kind="Zap" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryCurrent}" />
+              <TextBlock x:Name="Current" Classes="value" Text="{Binding Current}" />
+            </Grid>
+            <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryConsumedHelp}">
+              <lucide:LucideIcon Kind="Fuel" />
+              <TextBlock Classes="caption" Text="{x:Static r:Strings.TelemetryConsumed}" />
+              <TextBlock x:Name="Consumed" Classes="value" Text="{Binding Consumed}" />
+            </Grid>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+    </Grid>
+  </Border>
+</UserControl>

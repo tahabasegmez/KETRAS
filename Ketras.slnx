@@ -6,7 +6,7 @@
     <Project Path="samples/Ketras.Samples.MapOnly/Ketras.Samples.MapOnly.csproj" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/Ketras.App/Ketras.App.csproj" />
+    <Project Path="src/Ketras/Ketras.csproj" />
     <Project Path="src/Ketras.Controls.Instruments/Ketras.Controls.Instruments.csproj" />
     <Project Path="src/Ketras.Controls.Map/Ketras.Controls.Map.csproj" />
     <Project Path="src/Ketras.Controls.Scene3D/Ketras.Controls.Scene3D.csproj" />

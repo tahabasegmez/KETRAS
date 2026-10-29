@@ -4,9 +4,9 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Ketras.App.Commands;
-using Ketras.App.Shell;
+using Ketras.Commands;
 using Ketras.Mavlink.Messages;
+using Ketras.Shell;
 using Ketras.Station.Commands;
 using Ketras.Station.Links;
 

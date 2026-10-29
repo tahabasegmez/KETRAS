@@ -1,7 +1,7 @@
-using Ketras.App.Commands;
-using Ketras.App.Connection;
-using Ketras.App.Setup;
+using Ketras.Commands;
+using Ketras.Comms;
 using Ketras.Mavlink.Messages;
+using Ketras.Setup;
 using Ketras.Station.Links;
 using Ketras.Station.Vehicles;
 

@@ -65,7 +65,7 @@ flight goes wrong, and can start a PX4 simulator for you so you can try everythi
 ```sh
 git clone https://github.com/tahabasegmez/KETRAS.git
 cd KETRAS
-dotnet run --project src/Ketras.App
+dotnet run --project src/Ketras
 ```
 
 To build and run the tests:
@@ -119,7 +119,7 @@ Parameter edits are collected and written when you press **Apply**.
 | Logs, telemetry logs, map tiles, terrain, vehicle metadata | `%LOCALAPPDATA%\Ketras` | `~/.local/share/Ketras` |
 
 Deployment options (MAVLink system id, rosbridge, terrain, telemetry logging, zone files, plugins) go in an
-`appsettings.json` in the settings folder. See [src/Ketras.App/appsettings.json](src/Ketras.App/appsettings.json)
+`appsettings.json` in the settings folder. See [src/Ketras/appsettings.json](src/Ketras/appsettings.json)
 for the keys and defaults.
 
 ---

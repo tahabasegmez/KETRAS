@@ -2,13 +2,13 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Ketras.App.Shell;
-using Ketras.App.Telemetry;
-using Ketras.App.Weather;
 using Ketras.Controls.Instruments;
+using Ketras.Environment.Weather;
 using Ketras.Model.Vehicles;
+using Ketras.Shell;
 using Ketras.Station.Links;
 using Ketras.Station.Vehicles;
+using Ketras.Telemetry;
 
 namespace Ketras.Tests.Telemetry;
 
@@ -43,7 +43,7 @@ public sealed class TelemetryAndWeatherTests
         app.Vehicle.SendPosition(47.39, 8.54, 520, 30, headingDegrees: 90, northMps: 15, eastMps: 0);
         await AppFixture.WaitForAsync(() => panel.Relative == "30 m");
 
-        var units = app.Get<Ketras.App.Common.UnitService>();
+        var units = app.Get<Ketras.Utilities.UnitService>();
         panel.Apply(Snapshot(18));
         Assert.Equal((units.Altitude(612.4), units.Altitude(120), units.Speed(18), units.Speed(21.04), "+" + units.Speed(1.5), "76 %"),
             (panel.Amsl, panel.Relative, panel.Airspeed, panel.GroundSpeed, panel.Climb, panel.Battery));
@@ -82,7 +82,7 @@ public sealed class TelemetryAndWeatherTests
 
         Assert.Equal(225, weather.WindFrom!.Value, 6);
         Assert.EndsWith("· 225° SW", weather.Wind, StringComparison.Ordinal);
-        Assert.Equal(app.Get<Ketras.App.Common.UnitService>().Temperature(18.5), weather.Temperature);
+        Assert.Equal(app.Get<Ketras.Utilities.UnitService>().Temperature(18.5), weather.Temperature);
         Assert.StartsWith("Vehicle · ", weather.Status, StringComparison.Ordinal);
         Assert.Equal(("N", "NE", "SW", "N"), (WeatherViewModel.CompassPoint(10), WeatherViewModel.CompassPoint(44), WeatherViewModel.CompassPoint(225), WeatherViewModel.CompassPoint(359)));
 

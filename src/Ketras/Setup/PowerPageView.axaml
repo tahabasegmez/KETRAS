@@ -1,0 +1,54 @@
+<!-- The Power page: one section per battery and the low-battery failsafe, parameter field rows in each; then the energy
+     estimate's own inputs (the operator's settings, not parameters) as field rows. -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:setup="using:Ketras.Setup"
+             xmlns:parameters="using:Ketras.Parameters"
+             xmlns:planning="using:Ketras.Planning"
+             xmlns:r="using:Ketras.Resources"
+             x:Class="Ketras.Setup.PowerPageView"
+             x:DataType="setup:PowerPageViewModel">
+  <ScrollViewer Padding="0,0,10,12">
+    <StackPanel Spacing="8" MaxWidth="720" HorizontalAlignment="Left">
+      <TextBlock Classes="page-title" Text="{Binding Title}" />
+      <ItemsControl x:Name="Sections" ItemsSource="{Binding Sections}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="setup:ParameterSectionViewModel">
+            <StackPanel IsVisible="{Binding IsVisible}" Margin="0,0,0,8">
+              <Border Classes="section"><TextBlock Text="{Binding Title}" /></Border>
+              <ItemsControl ItemsSource="{Binding Shown}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="parameters:ParameterFieldViewModel">
+                    <parameters:ParameterFieldView />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+      <StackPanel x:Name="Energy" Margin="0,0,0,8">
+        <Border Classes="section"><TextBlock Text="{x:Static r:Strings.PowerEnergy}" /></Border>
+        <StackPanel Margin="20,2,12,2" MaxWidth="480" HorizontalAlignment="Left">
+          <planning:FieldRowView DataContext="{Binding CruiseCurrent}" />
+          <planning:FieldRowView DataContext="{Binding Capacity}" />
+        </StackPanel>
+      </StackPanel>
+      <ItemsControl x:Name="Calculators" ItemsSource="{Binding Calculators}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate x:DataType="setup:BatteryCalculatorViewModel">
+            <StackPanel IsVisible="{Binding IsVisible}" Margin="20,2,12,2" Spacing="2">
+              <Grid ColumnDefinitions="*,90,Auto,Auto" ColumnSpacing="8">
+                <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                <TextBox Grid.Column="1" Text="{Binding Measured}" FontFamily="{StaticResource Font.Mono}" />
+                <TextBlock Grid.Column="2" Classes="small" Text="{Binding ReadingText}" VerticalAlignment="Center" />
+                <Button Grid.Column="3" Content="{x:Static r:Strings.PowerCalculate}" Command="{Binding CalculateCommand}" IsEnabled="{Binding CanCalculate}" />
+              </Grid>
+              <TextBlock Classes="small error" Text="{Binding Problem}" IsVisible="{Binding Problem, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

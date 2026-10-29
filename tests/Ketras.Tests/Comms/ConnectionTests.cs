@@ -2,9 +2,10 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Ketras.App.Connection;
-using Ketras.App.Shell;
+using Ketras.Comms;
 using Ketras.Model.Geo;
+using Ketras.Shell;
+using Ketras.Simulation;
 using Ketras.Station.Commands;
 using Ketras.Station.Links;
 using Ketras.Station.Notifications;
@@ -272,7 +273,7 @@ public sealed class ConnectionTests
         Assert.Contains(page.GetVisualDescendants().OfType<SelectableTextBlock>(), t => t.Text == "start it");
 
         // World, home, the simulator's two options and the environment section each carry a "?" with their help.
-        var marks = page.GetVisualDescendants().OfType<Ketras.App.Common.HelpMark>().ToList();
+        var marks = page.GetVisualDescendants().OfType<Ketras.Controls.HelpMark>().ToList();
         Assert.Equal(5, marks.Count);
         Assert.All(marks, mark => Assert.False(string.IsNullOrEmpty(ToolTip.GetTip(mark) as string)));
         Assert.Contains(marks, mark => (string?)ToolTip.GetTip(mark) == "How fast time runs.");

@@ -4,8 +4,8 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
-using Ketras.App.Settings;
-using Ketras.App.Shell;
+using Ketras.Settings;
+using Ketras.Shell;
 using Ketras.Station.Notifications;
 
 namespace Ketras.Tests.Shell;
@@ -44,7 +44,7 @@ public sealed class ViewTests
         Assert.Equal("Not connected", Find<TextBlock>(window, "LinkText").Text);
         Assert.False(Find<Button>(window, "VehicleItem").IsVisible);
         Assert.False(Find<Button>(window, "ConditionsItem").IsVisible);
-        Assert.NotNull(window.GetVisualDescendants().OfType<Ketras.App.Planning.PlanningView>().SingleOrDefault());
+        Assert.NotNull(window.GetVisualDescendants().OfType<Ketras.Planning.PlanningView>().SingleOrDefault());
         Assert.True(window.Bounds.Width > 0);
 
         var settings = activityButtons.Single(b => b.CommandParameter == app.Get<ShellViewModel>().SettingsActivity);
@@ -76,7 +76,7 @@ public sealed class ViewTests
         Pump(window);
 
         Assert.Same(map, window.GetVisualDescendants().OfType<Controls.Map.MapView>().Single());
-        Assert.Same(app.Get<Ketras.App.Planning.PlanningViewModel>(), map.FindAncestorOfType<Ketras.App.Planning.PlanningView>()!.DataContext);
+        Assert.Same(app.Get<Ketras.Planning.PlanningViewModel>(), map.FindAncestorOfType<Ketras.Planning.PlanningView>()!.DataContext);
         window.Close();
     }
 
@@ -168,7 +168,7 @@ public sealed class ViewTests
         Pump(window);
 
         Assert.Equal(ShellViewModel.Link, shell.SelectedActivity.Id);
-        Assert.NotNull(window.GetVisualDescendants().OfType<Ketras.App.Common.SplitScreenView>().SingleOrDefault());
+        Assert.NotNull(window.GetVisualDescendants().OfType<Ketras.Controls.SplitScreenView>().SingleOrDefault());
         window.Close();
     }
 }
