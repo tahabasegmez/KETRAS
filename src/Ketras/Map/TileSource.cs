@@ -2,7 +2,7 @@ namespace Ketras.Map;
 
 /// <summary>
 /// An XYZ map tile server: its URL template, the credit its terms require and the cache folder its tiles share with the
-/// planning map. The built-in sources are the ones <c>Ketras.Controls.Map</c> offers.
+/// planning map. The built-in sources are the ones <see cref="MapView"/> offers.
 /// </summary>
 /// <param name="Name">Cache folder name under the tile cache.</param>
 /// <param name="UrlTemplate">URL with <c>{z}</c>, <c>{x}</c> and <c>{y}</c>.</param>

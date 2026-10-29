@@ -7,6 +7,8 @@
     <IsPackable>false</IsPackable>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- TerrainView passes vertex data and matrices to OpenGL by pointer. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +18,10 @@
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="SharpCompress" />
+    <PackageReference Include="Mapsui.Avalonia" />
+    <PackageReference Include="Mapsui.Nts" />
+    <PackageReference Include="BruTile" />
+    <PackageReference Include="HelixToolkit.Maths" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,9 +30,6 @@
     <ProjectReference Include="..\Ketras.Rosbridge\Ketras.Rosbridge.csproj" />
     <ProjectReference Include="..\Ketras.Terrain\Ketras.Terrain.csproj" />
     <ProjectReference Include="..\Ketras.Theme\Ketras.Theme.csproj" />
-    <ProjectReference Include="..\Ketras.Controls.Instruments\Ketras.Controls.Instruments.csproj" />
-    <ProjectReference Include="..\Ketras.Controls.Scene3D\Ketras.Controls.Scene3D.csproj" />
-    <ProjectReference Include="..\Ketras.Controls.Map\Ketras.Controls.Map.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,13 +4,12 @@
      the data credits on hover); bottom right, the telemetry panel. -->
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:scene="using:Ketras.Scene3D"
-             xmlns:scene3d="using:Ketras.Controls.Scene3D"
+             xmlns:scene3d="using:Ketras.Scene3D"
              xmlns:telemetry="using:Ketras.Telemetry"
              xmlns:r="using:Ketras.Resources"
              xmlns:lucide="using:Lucide.Avalonia"
              x:Class="Ketras.Scene3D.Scene3DView"
-             x:DataType="scene:Scene3DViewModel">
+             x:DataType="scene3d:Scene3DViewModel">
   <UserControl.Styles>
     <StyleInclude Source="avares://Ketras/Controls/ViewColumnStyles.axaml" />
   </UserControl.Styles>
@@ -27,10 +26,10 @@
         </Grid>
         <ItemsControl ItemsSource="{Binding TrafficRows}" Margin="0,0,0,4">
           <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="scene:TrafficRow">
+            <DataTemplate x:DataType="scene3d:TrafficRow">
               <Button Classes="ghost" Padding="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Height="{StaticResource Size.RowHeight}"
                       MinHeight="0" CornerRadius="0"
-                      Command="{Binding $parent[UserControl].((scene:Scene3DViewModel)DataContext).FollowTrafficCommand}" CommandParameter="{Binding}">
+                      Command="{Binding $parent[UserControl].((scene3d:Scene3DViewModel)DataContext).FollowTrafficCommand}" CommandParameter="{Binding}">
                 <Grid ColumnDefinitions="2,*,Auto">
                   <Border Background="{DynamicResource Brush.Landing}" />
                   <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" Margin="8,0" VerticalAlignment="Center">

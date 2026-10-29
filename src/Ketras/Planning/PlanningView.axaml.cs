@@ -4,7 +4,7 @@ using Avalonia.Animation.Easings;
 using Avalonia.Controls;
 using Avalonia.Media.Transformation;
 using Avalonia.Threading;
-using Ketras.Controls.Map;
+using Ketras.Map;
 
 namespace Ketras.Planning;
 

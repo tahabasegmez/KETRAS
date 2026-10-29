@@ -6,7 +6,7 @@ using Avalonia.Input;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Ketras.Controls;
-using Ketras.Controls.Map;
+using Ketras.Map;
 using Ketras.Model.Fences;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;

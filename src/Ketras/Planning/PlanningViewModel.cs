@@ -1,9 +1,9 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Ketras.Controls.Map;
 using Ketras.Environment;
 using Ketras.Environment.Weather;
+using Ketras.Map;
 using Ketras.Model.Environment;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;

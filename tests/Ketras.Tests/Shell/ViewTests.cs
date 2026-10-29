@@ -63,19 +63,19 @@ public sealed class ViewTests
         await using var app = AppFixture.Create();
         var window = Show(app);
         var shell = app.Get<ShellViewModel>();
-        var map = window.GetVisualDescendants().OfType<Controls.Map.MapView>().Single();
+        var map = window.GetVisualDescendants().OfType<Ketras.Map.MapView>().Single();
         map.CenterOn(new Model.Geo.GeoPoint(47.4, 8.5), 14);
         Pump(window);
 
         shell.Show(ShellViewModel.Scene3D);
         Pump(window);
-        Assert.Empty(window.GetVisualDescendants().OfType<Controls.Map.MapView>());
+        Assert.Empty(window.GetVisualDescendants().OfType<Ketras.Map.MapView>());
         shell.Show(ShellViewModel.Settings);
         Pump(window);
         shell.Show(ShellViewModel.Planning);
         Pump(window);
 
-        Assert.Same(map, window.GetVisualDescendants().OfType<Controls.Map.MapView>().Single());
+        Assert.Same(map, window.GetVisualDescendants().OfType<Ketras.Map.MapView>().Single());
         Assert.Same(app.Get<Ketras.Planning.PlanningViewModel>(), map.FindAncestorOfType<Ketras.Planning.PlanningView>()!.DataContext);
         window.Close();
     }

@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using Ketras.Controls.Instruments;
+using Ketras.Telemetry;
 
 namespace Ketras.Tests.Telemetry;
 

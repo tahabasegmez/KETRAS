@@ -3,7 +3,6 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Ketras.Comms;
-using Ketras.Controls.Instruments;
 using Ketras.Environment.Weather;
 using Ketras.Model.Vehicles;
 using Ketras.Shell;

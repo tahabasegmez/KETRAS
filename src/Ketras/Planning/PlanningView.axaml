@@ -10,7 +10,7 @@
              xmlns:fences="using:Ketras.Planning.Fences"
              xmlns:telemetry="using:Ketras.Telemetry"
              xmlns:weather="using:Ketras.Environment.Weather"
-             xmlns:map="using:Ketras.Controls.Map"
+             xmlns:map="using:Ketras.Map"
              xmlns:r="using:Ketras.Resources"
              xmlns:lucide="using:Lucide.Avalonia"
              x:Class="Ketras.Planning.PlanningView"

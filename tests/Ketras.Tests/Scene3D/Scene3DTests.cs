@@ -5,7 +5,6 @@ using Avalonia.Layout;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Ketras.Comms;
-using Ketras.Controls.Scene3D;
 using Ketras.Environment;
 using Ketras.Model.Environment;
 using Ketras.Model.Fences;

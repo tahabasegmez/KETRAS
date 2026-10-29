@@ -1,4 +1,3 @@
-using Ketras.Controls.Scene3D;
 using Ketras.Map;
 using Ketras.Model.Environment;
 using Ketras.Model.Geo;

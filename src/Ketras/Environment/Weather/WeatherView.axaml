@@ -4,7 +4,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:weather="using:Ketras.Environment.Weather"
-             xmlns:gauges="using:Ketras.Controls.Instruments"
+             xmlns:telemetry="using:Ketras.Telemetry"
              xmlns:r="using:Ketras.Resources"
              xmlns:lucide="using:Lucide.Avalonia"
              x:Class="Ketras.Environment.Weather.WeatherView"
@@ -42,7 +42,7 @@
       <Border x:Name="Body" IsVisible="{Binding IsExpanded}" BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,1,0,0" Padding="10,6,10,8">
         <StackPanel Spacing="6">
           <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-            <gauges:WindIndicator Width="48" Height="48" FromDegrees="{Binding WindFrom}" SpeedMps="{Binding WindSpeed}" />
+            <telemetry:WindIndicator Width="48" Height="48" FromDegrees="{Binding WindFrom}" SpeedMps="{Binding WindSpeed}" />
             <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="1">
               <TextBlock x:Name="Temperature" Classes="title mono" Text="{Binding Temperature}" />
               <TextBlock x:Name="Wind" Classes="value" FontSize="{StaticResource FontSize.Small}" Text="{Binding Wind}" TextTrimming="CharacterEllipsis"

@@ -1,5 +1,5 @@
 using System.Numerics;
-using Ketras.Controls.Scene3D.Rendering;
+using Ketras.Scene3D.Rendering;
 
 namespace Ketras.Tests.Scene3D;
 

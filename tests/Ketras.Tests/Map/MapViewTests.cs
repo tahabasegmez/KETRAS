@@ -5,7 +5,7 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using Ketras.Controls.Map;
+using Ketras.Map;
 using Ketras.Model.Fences;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
@@ -210,16 +210,16 @@ public sealed class MapViewTests
     {
         var loiter = MissionItemFactory.Create(MissionItemType.LoiterUnlimited, Home) with { Param3 = 150 };
         var waypoint = MissionItemFactory.Create(MissionItemType.Waypoint, GeoMath.Offset(Home, 0, 2000));
-        var center = Ketras.Controls.Map.Rendering.MapGeometry.ToMercator(Home);
-        var handle = Ketras.Controls.Map.Interaction.MapHitTester.OrbitRadiusHandle(center, 150, Home.Latitude);
-        var threshold = Ketras.Controls.Map.Rendering.MapGeometry.MetersToMapUnits(10, Home.Latitude);
+        var center = Ketras.Map.Rendering.MapGeometry.ToMercator(Home);
+        var handle = Ketras.Map.Interaction.MapHitTester.OrbitRadiusHandle(center, 150, Home.Latitude);
+        var threshold = Ketras.Map.Rendering.MapGeometry.MetersToMapUnits(10, Home.Latitude);
 
-        var selected = Ketras.Controls.Map.Interaction.MapHitTester.FindMissionHandle([loiter, waypoint], handle, threshold, loiter.Id);
-        var unselected = Ketras.Controls.Map.Interaction.MapHitTester.FindMissionHandle([loiter, waypoint], handle, threshold, waypoint.Id);
+        var selected = Ketras.Map.Interaction.MapHitTester.FindMissionHandle([loiter, waypoint], handle, threshold, loiter.Id);
+        var unselected = Ketras.Map.Interaction.MapHitTester.FindMissionHandle([loiter, waypoint], handle, threshold, waypoint.Id);
 
-        Assert.Equal((loiter.Id, Ketras.Controls.Map.Interaction.MissionHandleKind.OrbitRadius), (selected!.Item.Id, selected.Kind));
+        Assert.Equal((loiter.Id, Ketras.Map.Interaction.MissionHandleKind.OrbitRadius), (selected!.Item.Id, selected.Kind));
         Assert.Null(unselected);
-        Assert.Equal(150, Ketras.Controls.Map.Rendering.MapGeometry.DistanceBetween(center, handle) * Math.Cos(Home.Latitude * Math.PI / 180), 1);
+        Assert.Equal(150, Ketras.Map.Rendering.MapGeometry.DistanceBetween(center, handle) * Math.Cos(Home.Latitude * Math.PI / 180), 1);
     }
 
     [Fact]
@@ -231,9 +231,9 @@ public sealed class MapViewTests
             new MapGuide(MapGuideShape.Mark, GeoMath.Offset(Home, 0, 300), 0, "120 m reached", true),
             new MapGuide(MapGuideShape.Handle, GeoMath.Offset(Home, 90, 150), 0, "drag: radius 150 m", false)
         };
-        var layers = new Ketras.Controls.Map.Rendering.MapLayerSet();
+        var layers = new Ketras.Map.Rendering.MapLayerSet();
 
-        var features = Ketras.Controls.Map.Rendering.GuideLayerBuilder.Build(guides);
+        var features = Ketras.Map.Rendering.GuideLayerBuilder.Build(guides);
         layers.SetGuideFeatures(features);
         layers.ApplyVisibility(new MapLayers());
         var shown = layers.ShowsGuides;

@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Ketras.Controls.Map;
+using Ketras.Map;
 using Ketras.Model.Fences;
 using Ketras.Model.Geo;
 using Ketras.Parameters;

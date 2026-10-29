@@ -1,5 +1,5 @@
 <Project>
-  <!-- Shared by every project in the repository; tests/ and samples/ refine it in their own Directory.Build.props. -->
+  <!-- Shared by every project in the repository; tests/ refines it in its own Directory.Build.props. -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>

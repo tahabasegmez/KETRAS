@@ -7,7 +7,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:telemetry="using:Ketras.Telemetry"
-             xmlns:gauges="using:Ketras.Controls.Instruments"
              xmlns:r="using:Ketras.Resources"
              xmlns:lucide="using:Lucide.Avalonia"
              x:Class="Ketras.Telemetry.TelemetryPanelView"
@@ -38,7 +37,7 @@
 
   <Border Classes="floating" Padding="6">
     <Grid ColumnDefinitions="96,Auto,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="6">
-      <gauges:AttitudeIndicator x:Name="Horizon" Width="96" Height="96" Roll="{Binding Roll}" Pitch="{Binding Pitch}" Heading="{Binding Heading}" />
+      <telemetry:AttitudeIndicator x:Name="Horizon" Width="96" Height="96" Roll="{Binding Roll}" Pitch="{Binding Pitch}" Heading="{Binding Heading}" />
 
       <StackPanel Grid.Column="1">
         <Grid Classes="readout" ColumnDefinitions="16,34,*" ToolTip.Tip="{x:Static r:Strings.TelemetryAmslHelp}">

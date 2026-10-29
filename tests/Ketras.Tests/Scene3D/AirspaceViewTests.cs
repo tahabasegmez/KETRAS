@@ -3,11 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using Ketras.Controls.Scene3D;
-using Ketras.Controls.Scene3D.Rendering;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
 using Ketras.Model.Terrain;
+using Ketras.Scene3D;
+using Ketras.Scene3D.Rendering;
 
 namespace Ketras.Tests.Scene3D;
 
