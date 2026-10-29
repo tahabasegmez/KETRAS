@@ -60,7 +60,7 @@ public sealed class AltitudeAndLandingTests
     }
 
     [Fact]
-    public void A_qgc_item_above_terrain_carries_its_altitude_and_its_sea_level_value()
+    public void A_plan_file_item_above_terrain_carries_its_altitude_and_its_sea_level_value()
     {
         var json = PlanFileFormat.Write(new Plan { Mission = Waypoint(AltitudeReference.AboveTerrain, 80) }, Ground);
 

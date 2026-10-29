@@ -44,8 +44,8 @@
     <InternalsVisibleTo Include="Ketras.Tests" />
   </ItemGroup>
 
-  <!-- A custom build (QGroundControl's QGC_CUSTOM_DIR): the C# sources in <KetrasCustomDir>/src, a folder relative to the
-       repository root ("custom" unless set, e.g. -p:KetrasCustomDir=custom-example), are compiled into the application. -->
+  <!-- A custom build: the C# sources in <KetrasCustomDir>/src, a folder relative to the repository root ("custom" unless
+       set, e.g. -p:KetrasCustomDir=custom-example), are compiled into the application. -->
   <PropertyGroup>
     <KetrasCustomDir Condition="'$(KetrasCustomDir)' == ''">custom</KetrasCustomDir>
     <KetrasCustomSources>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..\..', '$(KetrasCustomDir)', 'src'))</KetrasCustomSources>

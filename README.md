@@ -47,8 +47,7 @@ flight goes wrong, and can start a PX4 simulator for you so you can try everythi
 
 ### Extend
 - A custom build adds plugins: commands, station actions and environment providers (traffic, zones, points of
-  interest, weather), compiled into the application as QGroundControl's custom builds are. Start from
-  [custom-example/](custom-example/).
+  interest, weather), compiled into the application. Start from [custom-example/](custom-example/).
 - Vehicle-side ROS 2 systems are reached through rosbridge.
 
 ---
@@ -128,7 +127,7 @@ for the keys and defaults.
 ## Project layout
 
 ```
-src/Ketras/          the application (Avalonia, MVVM), one folder per feature, as in QGroundControl:
+src/Ketras/          the application (Avalonia, MVVM), one folder per feature:
   Mavlink/           MAVLink framing, messages and protocol clients
   Comms/             links, transports, connection diagnostics, telemetry logs; MockLink/ (a fake vehicle)
   Vehicles/          vehicles, telemetry, limits, flight monitoring

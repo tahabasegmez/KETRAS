@@ -44,7 +44,7 @@ public sealed record ParamsDiff(IReadOnlyList<ParamsDiffRow> Rows, int ParsedCou
 
 /// <summary>
 /// <c>.params</c> files: tab-separated <c>VehicleId ComponentId Name Value MAV_PARAM_TYPE</c> under
-/// <c>#</c> header lines. Reading also accepts Mission Planner's two-column <c>Name,Value</c>. Numbers are invariant.
+/// <c>#</c> header lines. Reading also accepts the two-column <c>Name,Value</c> form. Numbers are invariant.
 /// </summary>
 public static partial class ParamsFileFormat
 {

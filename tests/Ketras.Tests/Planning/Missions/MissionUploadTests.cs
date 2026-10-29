@@ -146,7 +146,7 @@ public sealed class MissionUploadTests
     }
 
     [Fact]
-    public void A_plan_survives_a_qgc_plan_file_round_trip()
+    public void A_plan_survives_a_plan_file_round_trip()
     {
         var plans = new PlanStore(new NotificationStore(TimeProvider.System));
         BuildPlan(plans);
@@ -169,7 +169,7 @@ public sealed class MissionUploadTests
         Assert.Equal(expected.Param2, landing.Param2, 6);
         Assert.Equal(expected.AltitudeMeters, landing.AltitudeMeters);
         Assert.True(double.IsNaN(mission.Items[1].Param4));
-        // QGC's file keeps polygons and circles in separate lists, so polygons come back first.
+        // The file keeps polygons and circles in separate lists, so polygons come back first.
         Assert.Equal(original.Fences.OrderBy(f => f.Area is CircleArea).Select(f => (f.Area.GetType(), f.Inclusion)), read.Plan.Fences.Select(f => (f.Area.GetType(), f.Inclusion)));
         Assert.Contains("\"fileType\": \"Plan\"", json, StringComparison.Ordinal);
     }

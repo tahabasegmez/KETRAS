@@ -15,13 +15,12 @@ namespace Ketras.Planning;
 public sealed record PlanFileResult(Plan Plan, IReadOnlyList<string> Skipped);
 
 /// <summary>
-/// QGroundControl's <c>.plan</c> JSON (plan version 1, mission version 2, geofence version 2): simple items, the
-/// fixed-wing landing pattern complex item, polygon and circle fences, and an empty rally list. Key names and the jump
-/// numbering (DO_JUMP param1 = the target's <c>doJumpId</c>) follow QGC's MissionController, MissionItem,
-/// LandingComplexItem and GeoFenceController. NaN parameters are written as null. The plan's altitude reference is QGC's
+/// The <c>.plan</c> JSON format (plan version 1, mission version 2, geofence version 2): simple items, the fixed-wing
+/// landing pattern complex item, polygon and circle fences, and an empty rally list. Jump numbering: DO_JUMP param1 is
+/// the target's <c>doJumpId</c>. NaN parameters are written as null. The plan's altitude reference is the format's
 /// altitude mode (relative 1, AMSL 2, calculated above terrain 3): each item keeps its value in <c>Altitude</c> and its
-/// wire value (relative, or AMSL) in <c>params[6]</c>. Settings QGC has no place for (the landing settings) go under a
-/// <c>ketras</c> key, which QGC ignores.
+/// wire value (relative, or AMSL) in <c>params[6]</c>. Settings the format has no place for (the landing settings) go
+/// under a <c>ketras</c> key, which other readers ignore.
 /// </summary>
 public static class PlanFileFormat
 {
@@ -128,7 +127,7 @@ public static class PlanFileFormat
 
         if ((string?)file["fileType"] != "Plan")
         {
-            throw new FormatException("The file is not a QGroundControl plan (fileType is not \"Plan\").");
+            throw new FormatException("The file is not a .plan mission file (fileType is not \"Plan\").");
         }
 
         var skipped = new List<string>();
@@ -375,7 +374,7 @@ public static class PlanFileFormat
     }
 
     /// <summary>
-    /// QGC's fixed-wing landing: loiter centre ("landingApproachCoordinate") and touchdown ("landCoordinate"). QGC's
+    /// The format's fixed-wing landing: loiter centre ("landingApproachCoordinate") and touchdown ("landCoordinate"). Its
     /// pattern is relative or AMSL only, so an above-terrain plan writes AMSL and keeps its own values under "ketras".
     /// </summary>
     private static JsonObject LandingPattern(MissionItem item, MissionSettings settings, Func<GeoPoint, double?>? groundAt)

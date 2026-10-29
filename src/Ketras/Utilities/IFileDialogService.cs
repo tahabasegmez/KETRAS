@@ -5,7 +5,7 @@ using Avalonia.Platform.Storage;
 namespace Ketras.Utilities;
 
 /// <summary>A kind of file the dialogs offer.</summary>
-/// <param name="Name">Shown to the operator, e.g. "QGroundControl plan".</param>
+/// <param name="Name">Shown to the operator, e.g. "Mission plan".</param>
 /// <param name="Extension">Without the dot, e.g. "plan".</param>
 public sealed record FileKind(string Name, string Extension);
 

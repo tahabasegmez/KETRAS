@@ -366,7 +366,7 @@
   <data name="PlanningCorners" xml:space="preserve"><value>{0} corners</value></data>
   <data name="PlanningOpenPlan" xml:space="preserve"><value>Open a .plan file</value></data>
   <data name="PlanningSavePlan" xml:space="preserve"><value>Save as a .plan file</value></data>
-  <data name="PlanFileKind" xml:space="preserve"><value>QGroundControl plan</value></data>
+  <data name="PlanFileKind" xml:space="preserve"><value>Mission plan</value></data>
   <data name="PlanOpened" xml:space="preserve"><value>Plan opened</value></data>
   <data name="PlanSaved" xml:space="preserve"><value>Plan saved</value></data>
   <data name="PlanNotOpened" xml:space="preserve"><value>Plan not opened</value></data>
