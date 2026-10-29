@@ -1,9 +1,7 @@
+using Ketras.Comms;
 using Ketras.Notifications;
 using Ketras.Settings;
 using Ketras.Shell;
-using Ketras.Station.Links;
-using Ketras.Station.Notifications;
-using Ketras.Station.Settings;
 using Ketras.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -138,13 +136,13 @@ public sealed class ViewModelTests
     {
         await using var app = AppFixture.Create();
         var settings = app.Get<SettingsViewModel>();
-        Assert.Equal(Station.Terrain.TerrainDownloadMode.Auto, settings.SelectedTerrainMode.Value);
+        Assert.Equal(Ketras.Terrain.TerrainDownloadMode.Auto, settings.SelectedTerrainMode.Value);
 
-        settings.SelectedTerrainMode = settings.TerrainModes.Single(m => m.Value == Station.Terrain.TerrainDownloadMode.Manual);
+        settings.SelectedTerrainMode = settings.TerrainModes.Single(m => m.Value == Ketras.Terrain.TerrainDownloadMode.Manual);
 
-        Assert.Equal("Manual", app.Get<SettingsStore>().Get(Station.Terrain.TerrainService.DownloadModeSetting));
+        Assert.Equal("Manual", app.Get<SettingsStore>().Get(Ketras.Terrain.TerrainService.DownloadModeSetting));
         var reopened = new SettingsViewModel(new SettingsStore(app.Get<StationPaths>(), NullLogger<SettingsStore>.Instance), app.Get<StationPaths>(), new UnitService());
-        Assert.Equal(Station.Terrain.TerrainDownloadMode.Manual, reopened.SelectedTerrainMode.Value);
+        Assert.Equal(Ketras.Terrain.TerrainDownloadMode.Manual, reopened.SelectedTerrainMode.Value);
     }
 
     [Fact]

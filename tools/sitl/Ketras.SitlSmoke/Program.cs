@@ -3,23 +3,24 @@
 // Usage: dotnet run --project tools/sitl/Ketras.SitlSmoke [-- --no-fly] [--keep] [--verbose]
 //   [--landing [--orbit cw|ccw] [--heading DEG]] [--world flat|terrain-low|…] [--speed N] [--wind S@D]
 // --landing flies the whole mission through its landing pattern and measures it instead of returning to launch.
+using Ketras;
+using Ketras.Commands;
+using Ketras.Comms;
 using Ketras.Mavlink.Logging;
 using Ketras.Mavlink.Messages;
 using Ketras.Model.Fences;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
 using Ketras.Model.Vehicles;
+using Ketras.Parameters;
+using Ketras.Planning;
+using Ketras.Planning.Missions;
+using Ketras.Settings;
+using Ketras.Setup;
+using Ketras.Simulation;
 using Ketras.Simulation.Px4Sitl;
-using Ketras.Station;
-using Ketras.Station.Commands;
-using Ketras.Station.Links;
-using Ketras.Station.Missions;
-using Ketras.Station.Parameters;
-using Ketras.Station.Settings;
-using Ketras.Station.Setup;
-using Ketras.Station.Simulation;
-using Ketras.Station.Vehicles;
 using Ketras.Terrain;
+using Ketras.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

@@ -1,7 +1,6 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Resources;
-using Ketras.Station.Simulation;
 
 namespace Ketras.Simulation;
 

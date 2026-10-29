@@ -2,7 +2,6 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Resources;
-using Ketras.Station.Notifications;
 
 namespace Ketras.Notifications;
 

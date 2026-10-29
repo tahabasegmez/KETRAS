@@ -5,8 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using Ketras.Controls;
 using Ketras.Parameters;
 using Ketras.Resources;
-using Ketras.Station.Parameters;
-using Ketras.Station.Setup;
 
 namespace Ketras.Setup;
 
@@ -162,7 +160,7 @@ public sealed partial class SummaryPageViewModel : ObservableObject
             var modes = report!.ModeGroups.Where(group => check.Affects(group.Key)).Select(group => group.Value.Description).ToList();
             var detail = string.Join(" · ", new[] { check.Component, modes.Count > 0 ? string.Format(CultureInfo.CurrentCulture, Strings.SummaryHealthModes, string.Join(", ", modes)) : null }
                 .Where(part => !string.IsNullOrEmpty(part)));
-            Health.Add(new HealthRow(check.Message, detail, check.Severity == Station.Notifications.NotificationSeverity.Error));
+            Health.Add(new HealthRow(check.Message, detail, check.Severity == Notifications.NotificationSeverity.Error));
         }
 
         HasHealthReport = report is not null;

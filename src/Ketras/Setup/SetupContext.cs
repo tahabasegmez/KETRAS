@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Ketras.Mavlink.Messages;
 using Ketras.Mavlink.Protocols;
-using Ketras.Station.Parameters;
-using Ketras.Station.Vehicles;
+using Ketras.Parameters;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Setup;
 
@@ -202,7 +202,7 @@ public sealed partial class SetupContext : ObservableObject, IDisposable
 
     private void OnConnection(bool connected) => _ui.Post(() => UpdateState());
 
-    private void OnHealth(Station.Events.HealthReport report) => _ui.Post(() => HealthChanged?.Invoke());
+    private void OnHealth(Events.HealthReport report) => _ui.Post(() => HealthChanged?.Invoke());
 
     private void OnMetadataLoaded(Model.Vehicles.VehicleId id, VehicleMetadata metadata) => _ui.Post(() =>
     {

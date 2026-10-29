@@ -15,11 +15,14 @@
     <PackageReference Include="Lucide.Avalonia" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="SharpCompress" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ketras.Station\Ketras.Station.csproj" />
-    <ProjectReference Include="..\Ketras.Simulation.Px4Sitl\Ketras.Simulation.Px4Sitl.csproj" />
+    <ProjectReference Include="..\Ketras.Model\Ketras.Model.csproj" />
+    <ProjectReference Include="..\Ketras.Mavlink\Ketras.Mavlink.csproj" />
+    <ProjectReference Include="..\Ketras.Rosbridge\Ketras.Rosbridge.csproj" />
+    <ProjectReference Include="..\Ketras.Terrain\Ketras.Terrain.csproj" />
     <ProjectReference Include="..\Ketras.Theme\Ketras.Theme.csproj" />
     <ProjectReference Include="..\Ketras.Controls.Instruments\Ketras.Controls.Instruments.csproj" />
     <ProjectReference Include="..\Ketras.Controls.Scene3D\Ketras.Controls.Scene3D.csproj" />
@@ -38,9 +41,21 @@
 
   <ItemGroup>
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Simulation\Px4Sitl\scripts\**" Link="sitl\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Ketras.Tests" />
+  </ItemGroup>
+
+  <!-- A custom build (QGroundControl's QGC_CUSTOM_DIR): the C# sources in <KetrasCustomDir>/src, a folder relative to the
+       repository root ("custom" unless set, e.g. -p:KetrasCustomDir=custom-example), are compiled into the application. -->
+  <PropertyGroup>
+    <KetrasCustomDir Condition="'$(KetrasCustomDir)' == ''">custom</KetrasCustomDir>
+    <KetrasCustomSources>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..\..', '$(KetrasCustomDir)', 'src'))</KetrasCustomSources>
+  </PropertyGroup>
+
+  <ItemGroup Condition="Exists('$(KetrasCustomSources)')">
+    <Compile Include="$(KetrasCustomSources)**\*.cs" Link="Custom\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

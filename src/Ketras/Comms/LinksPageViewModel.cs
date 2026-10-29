@@ -2,8 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Resources;
-using Ketras.Station.Links;
-using Ketras.Station.Simulation;
+using Ketras.Simulation;
 
 namespace Ketras.Comms;
 

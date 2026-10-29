@@ -1,4 +1,4 @@
-using Ketras.Station.Settings;
+using Ketras.Settings;
 using Ketras.Terrain;
 
 namespace Ketras.Tests.Settings;

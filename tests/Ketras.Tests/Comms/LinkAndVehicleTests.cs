@@ -1,10 +1,10 @@
+using Ketras.Comms;
 using Ketras.Mavlink.Logging;
 using Ketras.Model.Vehicles;
-using Ketras.Station.Links;
-using Ketras.Station.Missions;
-using Ketras.Station.Notifications;
-using Ketras.Station.Simulation;
-using Ketras.Station.Vehicles;
+using Ketras.Notifications;
+using Ketras.Planning;
+using Ketras.Simulation;
+using Ketras.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ketras.Tests.Comms;
@@ -140,7 +140,7 @@ public sealed class LinkAndVehicleTests
         var path = Path.Combine(station.Directory, "config", "links.json");
         File.WriteAllText(path, File.ReadAllText(path).Replace("\"tcp\"", "\"carrierPigeon\"", StringComparison.Ordinal));
 
-        var reopened = new LinkProfileStore(station.Get<Ketras.Station.Settings.StationPaths>(), Microsoft.Extensions.Logging.Abstractions.NullLogger<LinkProfileStore>.Instance);
+        var reopened = new LinkProfileStore(station.Get<Ketras.Settings.StationPaths>(), Microsoft.Extensions.Logging.Abstractions.NullLogger<LinkProfileStore>.Instance);
 
         Assert.Empty(reopened.Profiles);
         Assert.Equal("serial:/dev/ttyUSB0:57600", new LinkProfile { Name = "x", Kind = LinkKind.Serial, SerialPort = "/dev/ttyUSB0" }.Address);

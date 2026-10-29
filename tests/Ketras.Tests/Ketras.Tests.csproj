@@ -2,7 +2,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Ketras\Ketras.csproj" />
     <ProjectReference Include="..\..\src\Ketras.Mavlink.Testing\Ketras.Mavlink.Testing.csproj" />
-    <ProjectReference Include="..\..\plugins\Ketras.Plugins.Template\Ketras.Plugins.Template.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -10,6 +9,11 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <Using Include="Ketras.Tests.Support" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The example custom build's plugin; its registration (CustomBuild.cs) belongs to the application. -->
+    <Compile Include="..\..\custom-example\src\TemplatePlugin.cs" Link="API\TemplatePlugin.cs" />
   </ItemGroup>
 
   <ItemGroup>

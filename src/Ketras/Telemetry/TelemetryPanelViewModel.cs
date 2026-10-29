@@ -3,10 +3,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Model.Vehicles;
 using Ketras.Resources;
-using Ketras.Station.Settings;
-using Ketras.Station.Terrain;
-using Ketras.Station.Vehicles;
+using Ketras.Settings;
+using Ketras.Terrain;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Telemetry;
 

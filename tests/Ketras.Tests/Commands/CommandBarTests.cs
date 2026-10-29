@@ -5,10 +5,9 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Ketras.Commands;
+using Ketras.Comms;
 using Ketras.Mavlink.Messages;
 using Ketras.Shell;
-using Ketras.Station.Commands;
-using Ketras.Station.Links;
 
 namespace Ketras.Tests.Commands;
 

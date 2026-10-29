@@ -1,7 +1,6 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Ketras.Resources;
-using Ketras.Station.Simulation;
 
 namespace Ketras.Simulation;
 
@@ -40,10 +39,10 @@ public sealed partial class SimulatorOptionViewModel : ObservableObject
     public bool IsNumber => !IsChoice;
 
     /// <summary>The values to choose from.</summary>
-    public IReadOnlyList<Station.Simulation.SimulatorChoice> Choices { get; }
+    public IReadOnlyList<Simulation.SimulatorChoice> Choices { get; }
 
     /// <summary>The chosen value.</summary>
-    [ObservableProperty] public partial Station.Simulation.SimulatorChoice? SelectedChoice { get; set; }
+    [ObservableProperty] public partial Simulation.SimulatorChoice? SelectedChoice { get; set; }
 
     /// <summary>The number as typed.</summary>
     [ObservableProperty] public partial string Text { get; set; }
@@ -54,7 +53,7 @@ public sealed partial class SimulatorOptionViewModel : ObservableObject
     /// <summary>The value for the launch, in the invariant culture; the default while the typed number is not valid.</summary>
     public string Value => IsChoice ? SelectedChoice?.Value ?? _option.Default : TryNumber(out var number) ? number.ToString(CultureInfo.InvariantCulture) : _option.Default;
 
-    partial void OnSelectedChoiceChanged(Station.Simulation.SimulatorChoice? value) => _changed(this);
+    partial void OnSelectedChoiceChanged(Simulation.SimulatorChoice? value) => _changed(this);
 
     partial void OnTextChanged(string value)
     {

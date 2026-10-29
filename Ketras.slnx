@@ -1,7 +1,4 @@
 <Solution>
-  <Folder Name="/plugins/">
-    <Project Path="plugins/Ketras.Plugins.Template/Ketras.Plugins.Template.csproj" />
-  </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/Ketras.Samples.MapOnly/Ketras.Samples.MapOnly.csproj" />
   </Folder>
@@ -15,8 +12,6 @@
     <Project Path="src/Ketras.Mavlink/Ketras.Mavlink.csproj" />
     <Project Path="src/Ketras.Model/Ketras.Model.csproj" />
     <Project Path="src/Ketras.Rosbridge/Ketras.Rosbridge.csproj" />
-    <Project Path="src/Ketras.Simulation.Px4Sitl/Ketras.Simulation.Px4Sitl.csproj" />
-    <Project Path="src/Ketras.Station/Ketras.Station.csproj" />
     <Project Path="src/Ketras.Terrain/Ketras.Terrain.csproj" />
     <Project Path="src/Ketras.Theme/Ketras.Theme.csproj" />
   </Folder>

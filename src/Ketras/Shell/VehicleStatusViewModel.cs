@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Ketras.Station.Vehicles;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Shell;
 

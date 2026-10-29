@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
+using Ketras.Map;
 using Ketras.Model.Geo;
-using Ketras.Station.Imagery;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Ketras.Tests.Map;

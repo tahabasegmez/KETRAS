@@ -8,7 +8,6 @@ using Ketras.Settings;
 using Ketras.Setup;
 using Ketras.Shell;
 using Ketras.Simulation.Px4Sitl;
-using Ketras.Station;
 using Ketras.Telemetry;
 using Ketras.Utilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +16,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace Ketras;
 
 /// <summary>Registers the application: the station, PX4 SITL, and every screen's ViewModel.</summary>
-public static class AppServices
+public static partial class AppServices
 {
     /// <summary>
     /// Adds the station and the screens. A <see cref="IUiDispatcher"/> registered before keeps its place (tests run
@@ -27,6 +26,7 @@ public static class AppServices
     {
         services.AddKetrasStation();
         services.AddPx4Sitl();
+        AddCustom(services);
 
         services.TryAddSingleton<IUiDispatcher, AvaloniaUiDispatcher>();
         services.AddSingleton<UnitService>();
@@ -50,4 +50,7 @@ public static class AppServices
         services.AddSingleton<ShellViewModel>();
         return services;
     }
+
+    /// <summary>Registers what a custom build adds (its plugins); implemented in the folder named by KetrasCustomDir.</summary>
+    static partial void AddCustom(IServiceCollection services);
 }

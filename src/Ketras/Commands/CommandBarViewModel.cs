@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Ketras.Comms;
 using Ketras.Model.Vehicles;
 using Ketras.Resources;
-using Ketras.Station.Commands;
-using Ketras.Station.Links;
-using Ketras.Station.Ros;
-using Ketras.Station.Vehicles;
+using Ketras.Ros;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Commands;
 
@@ -102,7 +101,7 @@ public sealed class CommandBarViewModel : IDisposable
         }
     }
 
-    private void OnHealth(Station.Events.HealthReport report) => _ui.Post(UpdateAll);
+    private void OnHealth(Events.HealthReport report) => _ui.Post(UpdateAll);
 
     /// <summary>Snapshots come ten times a second; the buttons change only when the mode or arming does.</summary>
     private void OnSnapshot(VehicleSnapshot snapshot)

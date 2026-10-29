@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Parameters;
 using Ketras.Resources;
-using Ketras.Station.Parameters;
-using Ketras.Station.Setup;
 using Ketras.Utilities;
 
 namespace Ketras.Setup;
@@ -100,13 +98,13 @@ public sealed partial class SensorsPageViewModel : ObservableObject, IDisposable
     private readonly CalibrationWorkflow _calibration;
     private readonly VehicleSetupService _setup;
     private readonly IUiDispatcher _ui;
-    private readonly Action<string, Station.Notifications.NotificationSeverity> _log;
+    private readonly Action<string, Notifications.NotificationSeverity> _log;
     private SensorRowViewModel? _active;
     private CalibrationPhase _lastPhase;
 
     /// <summary>Follows <paramref name="context"/> and <paramref name="calibration"/>.</summary>
     public SensorsPageViewModel(SetupContext context, CalibrationWorkflow calibration, VehicleSetupService setup, IUiDispatcher ui,
-        Action<string, Station.Notifications.NotificationSeverity> log)
+        Action<string, Notifications.NotificationSeverity> log)
     {
         _context = context;
         _calibration = calibration;
@@ -211,7 +209,7 @@ public sealed partial class SensorsPageViewModel : ObservableObject, IDisposable
         IsAsking = false;
         if (_active is not null && !await _calibration.StartAsync(_active.Kind))
         {
-            _log(string.Format(CultureInfo.CurrentCulture, Strings.SensorsNotStarted, _active.Name, _calibration.Outcome), Station.Notifications.NotificationSeverity.Error);
+            _log(string.Format(CultureInfo.CurrentCulture, Strings.SensorsNotStarted, _active.Name, _calibration.Outcome), Notifications.NotificationSeverity.Error);
         }
 
         Refresh();
@@ -242,7 +240,7 @@ public sealed partial class SensorsPageViewModel : ObservableObject, IDisposable
         var result = await _setup.RebootAsync();
         _log(result.IsAccepted ? string.Format(CultureInfo.CurrentCulture, Strings.SetupActionDone, Strings.ParamsReboot)
             : string.Format(CultureInfo.CurrentCulture, Strings.SetupActionRefused, Strings.ParamsReboot, result.Message),
-            result.IsAccepted ? Station.Notifications.NotificationSeverity.Success : Station.Notifications.NotificationSeverity.Error);
+            result.IsAccepted ? Notifications.NotificationSeverity.Success : Notifications.NotificationSeverity.Error);
     }
 
     private void Ask(SensorRowViewModel sensor)
@@ -261,13 +259,13 @@ public sealed partial class SensorsPageViewModel : ObservableObject, IDisposable
             switch (phase)
             {
                 case CalibrationPhase.Done:
-                    _log(string.Format(CultureInfo.CurrentCulture, Strings.SensorsLogDone, name), Station.Notifications.NotificationSeverity.Success);
+                    _log(string.Format(CultureInfo.CurrentCulture, Strings.SensorsLogDone, name), Notifications.NotificationSeverity.Success);
                     break;
                 case CalibrationPhase.Failed:
-                    _log(string.Format(CultureInfo.CurrentCulture, Strings.SensorsLogFailed, name, _calibration.Outcome), Station.Notifications.NotificationSeverity.Error);
+                    _log(string.Format(CultureInfo.CurrentCulture, Strings.SensorsLogFailed, name, _calibration.Outcome), Notifications.NotificationSeverity.Error);
                     break;
                 case CalibrationPhase.Cancelled:
-                    _log(string.Format(CultureInfo.CurrentCulture, Strings.SensorsLogCancelled, name), Station.Notifications.NotificationSeverity.Warning);
+                    _log(string.Format(CultureInfo.CurrentCulture, Strings.SensorsLogCancelled, name), Notifications.NotificationSeverity.Warning);
                     break;
             }
         }

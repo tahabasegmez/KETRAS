@@ -2,12 +2,10 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Ketras.Notifications;
 using Ketras.Resources;
+using Ketras.Settings;
 using Ketras.Setup;
-using Ketras.Station.Notifications;
-using Ketras.Station.Parameters;
-using Ketras.Station.Settings;
-using Ketras.Station.Setup;
 using Ketras.Utilities;
 
 namespace Ketras.Parameters;
@@ -433,7 +431,7 @@ public sealed partial class ParametersPageViewModel : ObservableObject
         IsConfirming = true;
     }
 
-    private void Report(string action, Station.Commands.CommandResult result) =>
+    private void Report(string action, Commands.CommandResult result) =>
         _log(result.IsAccepted ? string.Format(CultureInfo.CurrentCulture, Strings.SetupActionDone, action)
             : string.Format(CultureInfo.CurrentCulture, Strings.SetupActionRefused, action, result.Message),
             result.IsAccepted ? NotificationSeverity.Success : NotificationSeverity.Error);

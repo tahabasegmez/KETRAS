@@ -1,5 +1,5 @@
 using Ketras.Mavlink.Messages;
-using Ketras.Station.Setup;
+using Ketras.Setup;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ketras.Tests.Setup;

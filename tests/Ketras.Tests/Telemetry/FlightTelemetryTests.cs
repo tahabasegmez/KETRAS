@@ -2,16 +2,16 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Ketras.Comms;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
 using Ketras.Model.Vehicles;
+using Ketras.Planning;
+using Ketras.Settings;
 using Ketras.Setup;
 using Ketras.Shell;
-using Ketras.Station.Links;
-using Ketras.Station.Missions;
-using Ketras.Station.Settings;
-using Ketras.Station.Vehicles;
 using Ketras.Telemetry;
+using Ketras.Vehicles;
 
 namespace Ketras.Tests.Telemetry;
 

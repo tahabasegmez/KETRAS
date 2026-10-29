@@ -3,16 +3,14 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Ketras.Comms;
 using Ketras.Controls;
 using Ketras.Mavlink.Messages;
 using Ketras.Parameters;
 using Ketras.Planning;
 using Ketras.Setup;
-using Ketras.Station.Links;
-using Ketras.Station.Parameters;
-using Ketras.Station.Setup;
-using Ketras.Station.Vehicles;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ketras.Tests.Setup;
@@ -207,7 +205,7 @@ public sealed class SetupTests
         page.Items.OfType<ParameterRowViewModel>().First().ToggleFavouriteCommand.Execute(null);
         page.SelectedGroup = page.Groups.Single(g => g.Key == "favourites");
         Assert.Equal(["GF_ACTION"], page.Items.OfType<ParameterRowViewModel>().Select(r => r.Field.Name));
-        Assert.Equal("GF_ACTION", app.Get<Station.Settings.SettingsStore>().Get(ParametersPageViewModel.FavouritesSetting));
+        Assert.Equal("GF_ACTION", app.Get<Ketras.Settings.SettingsStore>().Get(ParametersPageViewModel.FavouritesSetting));
     }
 
     [Fact]

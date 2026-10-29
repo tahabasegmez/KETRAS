@@ -2,8 +2,7 @@ using Ketras.Commands;
 using Ketras.Comms;
 using Ketras.Mavlink.Messages;
 using Ketras.Setup;
-using Ketras.Station.Links;
-using Ketras.Station.Vehicles;
+using Ketras.Vehicles;
 
 namespace Ketras.Tests.Vehicles;
 

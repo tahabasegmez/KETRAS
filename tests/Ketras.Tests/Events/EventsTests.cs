@@ -1,8 +1,8 @@
+using Ketras.Commands;
+using Ketras.Comms;
+using Ketras.Events;
 using Ketras.Mavlink.Messages;
-using Ketras.Station.Commands;
-using Ketras.Station.Events;
-using Ketras.Station.Links;
-using Ketras.Station.Notifications;
+using Ketras.Notifications;
 
 namespace Ketras.Tests.Events;
 

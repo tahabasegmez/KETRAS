@@ -1,11 +1,11 @@
 using System.Text.Json;
+using Ketras.API;
+using Ketras.Commands;
+using Ketras.Environment;
 using Ketras.Model.Environment;
 using Ketras.Model.Geo;
-using Ketras.Station.Commands;
-using Ketras.Station.Environment;
-using Ketras.Station.Notifications;
-using Ketras.Station.Plugins;
-using Ketras.Station.Settings;
+using Ketras.Notifications;
+using Ketras.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -42,24 +42,6 @@ public sealed class PluginAndStoreTests
         Assert.True(broken.Disposed);
         var notification = Assert.Single(station.Get<NotificationStore>().History, n => n.Source == "Plugins");
         Assert.Equal(("Plugin Broken did not start", "no server"), (notification.Title, notification.Detail));
-    }
-
-    [Fact]
-    public void The_plugin_folder_loads_only_enabled_plugins_and_survives_a_bad_assembly()
-    {
-        var directory = System.IO.Directory.CreateTempSubdirectory("ketras-plugins-").FullName;
-        foreach (var name in new[] { "NotEnabled", "Corrupt" })
-        {
-            System.IO.Directory.CreateDirectory(Path.Combine(directory, name));
-            File.WriteAllBytes(Path.Combine(directory, name, name + ".dll"), [1, 2, 3, 4]);
-        }
-
-        var options = Microsoft.Extensions.Options.Options.Create(new StationOptions { Plugins = { Directory = directory, Enabled = ["Corrupt"] } });
-        var loader = new PluginLoader(options, NullLogger<PluginLoader>.Instance);
-
-        Assert.Empty(loader.Load());
-        Assert.Empty(new PluginLoader(Microsoft.Extensions.Options.Options.Create(new StationOptions { Plugins = { Directory = Path.Combine(directory, "none") } }), NullLogger<PluginLoader>.Instance).Load());
-        System.IO.Directory.Delete(directory, recursive: true);
     }
 
     [Fact]

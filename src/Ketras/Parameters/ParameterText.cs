@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Text;
 using Ketras.Mavlink.Messages;
 using Ketras.Resources;
-using Ketras.Station.Parameters;
 
 namespace Ketras.Parameters;
 

@@ -2,9 +2,9 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Ketras.Model.Vehicles;
 using Ketras.Resources;
-using Ketras.Station.Vehicles;
 using Ketras.Telemetry;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Shell;
 

@@ -1,4 +1,4 @@
-using Ketras.Station.Settings;
+using Ketras.Settings;
 using Ketras.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

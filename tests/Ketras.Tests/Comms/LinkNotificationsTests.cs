@@ -1,8 +1,8 @@
+using Ketras.Comms;
 using Ketras.Mavlink.Messages;
-using Ketras.Station.Links;
-using Ketras.Station.Notifications;
-using Ketras.Station.Simulation;
-using Ketras.Station.Vehicles;
+using Ketras.Notifications;
+using Ketras.Simulation;
+using Ketras.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ketras.Tests.Comms;

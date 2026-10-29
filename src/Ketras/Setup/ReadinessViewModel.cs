@@ -3,10 +3,11 @@ using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Ketras.Model.Missions;
 using Ketras.Model.Vehicles;
+using Ketras.Planning;
+using Ketras.Planning.Missions;
 using Ketras.Resources;
-using Ketras.Station.Missions;
-using Ketras.Station.Vehicles;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Setup;
 
@@ -106,7 +107,7 @@ public sealed class ReadinessViewModel : IDisposable
         var report = vehicle?.Health;
         var group = vehicle?.ModeGroupOf(vehicle.Snapshot.Mode);
         var failing = report is not null && group is { } g && !report.CanArm(g)
-            ? report.ChecksFor(g).Count(check => check.Severity == Station.Notifications.NotificationSeverity.Error)
+            ? report.ChecksFor(g).Count(check => check.Severity == Notifications.NotificationSeverity.Error)
             : (int?)null;
         arming.Level = vehicle is null || report is null || group is null ? CheckLevel.Unknown : failing is null ? CheckLevel.Pass : CheckLevel.Error;
         arming.Detail = vehicle is null ? string.Empty

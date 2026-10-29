@@ -2,14 +2,12 @@ using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Ketras.Commands;
 using Ketras.Comms;
 using Ketras.Model.Geo;
+using Ketras.Notifications;
 using Ketras.Shell;
 using Ketras.Simulation;
-using Ketras.Station.Commands;
-using Ketras.Station.Links;
-using Ketras.Station.Notifications;
-using Ketras.Station.Simulation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -24,7 +22,7 @@ public sealed class ConnectionTests
         var changes = 0;
         var version = new SimulatorOptionViewModel(new SimulatorOption("version", "PX4 version", "help", "v1.17.0")
         {
-            Choices = [new Station.Simulation.SimulatorChoice("v1.17.0", "v1.17.0"), new Station.Simulation.SimulatorChoice("v1.16.0", "v1.16.0")]
+            Choices = [new Ketras.Simulation.SimulatorChoice("v1.17.0", "v1.17.0"), new Ketras.Simulation.SimulatorChoice("v1.16.0", "v1.16.0")]
         }, _ => changes++);
         Assert.Equal(string.Empty, version.Error);
         changes = 0;
@@ -115,7 +113,7 @@ public sealed class ConnectionTests
         await AppFixture.WaitForAsync(() => screen.Status.IsConnected);
         var commands = app.Get<CommandService>();
         await commands.ExecuteAsync(new CommandRequest(commands.Commands.Single(c => c.Id == "arm")));
-        await AppFixture.WaitForAsync(() => app.Get<Station.Vehicles.VehicleRegistry>().Active!.Snapshot.IsArmed);
+        await AppFixture.WaitForAsync(() => app.Get<Ketras.Vehicles.VehicleRegistry>().Active!.Snapshot.IsArmed);
 
         screen.Status.DisconnectCommand.Execute(null);
         Assert.True(screen.Status.IsConfirming);

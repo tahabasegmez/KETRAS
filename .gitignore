@@ -14,3 +14,6 @@ artifacts/
 # Markdown stays local
 *.md
 !/README.md
+
+# A custom build of your own (see custom-example/)
+/custom/

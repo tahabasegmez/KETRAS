@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Model.Environment;
 using Ketras.Resources;
-using Ketras.Station.Environment;
 using Ketras.Utilities;
 
 namespace Ketras.Environment.Weather;

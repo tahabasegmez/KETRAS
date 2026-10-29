@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Parameters;
 using Ketras.Resources;
-using Ketras.Station.Settings;
-using Ketras.Station.Vehicles;
+using Ketras.Settings;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Setup;
 
@@ -94,7 +94,7 @@ public sealed partial class BatteryCalculatorViewModel(SetupContext context, str
         }
 
         if (_reading is not { } reading || context.Shown(Parameter) is not { } current
-            || Station.Setup.RcRules.BatteryFactor(measured, current, reading) is not { } factor)
+            || Setup.RcRules.BatteryFactor(measured, current, reading) is not { } factor)
         {
             Problem = Strings.PowerNoReading;
             return;

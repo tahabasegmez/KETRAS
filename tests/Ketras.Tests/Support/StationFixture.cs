@@ -1,9 +1,8 @@
+using Ketras.Comms;
 using Ketras.Mavlink;
 using Ketras.Mavlink.Messages;
 using Ketras.Mavlink.Testing;
-using Ketras.Station;
-using Ketras.Station.Links;
-using Ketras.Station.Settings;
+using Ketras.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -96,12 +95,12 @@ internal sealed class StationFixture : IAsyncDisposable
     }
 
     /// <summary>Connects to the fake vehicle and waits until its parameters are loaded.</summary>
-    public async Task<Ketras.Station.Vehicles.Vehicle> ConnectAsync()
+    public async Task<Ketras.Vehicles.Vehicle> ConnectAsync()
     {
         var connected = await Get<ConnectionService>().ConnectAsync(new LinkProfile { Name = "Fake", Kind = LinkKind.Udp, Port = 14550 });
         Assert.True(connected);
-        await WaitForAsync(() => Get<Ketras.Station.Vehicles.VehicleRegistry>().Active is { Parameters.IsLoaded: true });
-        return Get<Ketras.Station.Vehicles.VehicleRegistry>().Active!;
+        await WaitForAsync(() => Get<Ketras.Vehicles.VehicleRegistry>().Active is { Parameters.IsLoaded: true });
+        return Get<Ketras.Vehicles.VehicleRegistry>().Active!;
     }
 
     public static async Task WaitForAsync(Func<Task<bool>> condition, TimeSpan? timeout = null)

@@ -2,11 +2,11 @@ using System.Net;
 using System.Text;
 using Ketras.Mavlink.Messages;
 using Ketras.Mavlink.Protocols;
-using Ketras.Station.Notifications;
-using Ketras.Station.Parameters;
-using Ketras.Station.Settings;
-using Ketras.Station.Setup;
-using Ketras.Station.Vehicles;
+using Ketras.Notifications;
+using Ketras.Parameters;
+using Ketras.Settings;
+using Ketras.Setup;
+using Ketras.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -223,8 +223,8 @@ public sealed class ParameterTests
         Assert.Equal(["FW_AIRSPD_MAX"], pending.Pending.Keys);
 
         station.Vehicle.ReadOnlyParameters.Clear();
-        var commands = station.Get<Ketras.Station.Commands.CommandService>();
-        await commands.ExecuteAsync(new Ketras.Station.Commands.CommandRequest(commands.Commands.Single(c => c.Id == "arm")));
+        var commands = station.Get<Ketras.Commands.CommandService>();
+        await commands.ExecuteAsync(new Ketras.Commands.CommandRequest(commands.Commands.Single(c => c.Id == "arm")));
         await StationFixture.WaitForAsync(() => vehicle.Snapshot.IsArmed);
         Assert.Equal(EditBlock.Armed, ParameterRules.WhyNotEditable(vehicle));
         Assert.Empty(await pending.ApplyAsync());

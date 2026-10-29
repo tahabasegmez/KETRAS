@@ -1,6 +1,6 @@
+using Ketras.Commands;
 using Ketras.Mavlink.Messages;
-using Ketras.Station.Commands;
-using Ketras.Station.Vehicles;
+using Ketras.Vehicles;
 
 namespace Ketras.Tests.Commands;
 
@@ -22,7 +22,7 @@ public sealed class CommandTests
         Assert.True(rtl.IsAccepted);
         Assert.True(station.Vehicle.IsArmed);
         await StationFixture.WaitForAsync(() => station.Get<VehicleRegistry>().Active!.Snapshot.Mode == "AUTO.RTL");
-        Assert.Contains(station.Get<Ketras.Station.Notifications.NotificationStore>().History, n => n.Title == "Arm accepted");
+        Assert.Contains(station.Get<Ketras.Notifications.NotificationStore>().History, n => n.Title == "Arm accepted");
     }
 
     [Fact]

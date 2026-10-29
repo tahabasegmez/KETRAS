@@ -1,8 +1,8 @@
 using System.Buffers.Binary;
 using System.Text;
+using Ketras.Events;
 using Ketras.Mavlink.Protocols;
 using Ketras.Mavlink.Testing;
-using Ketras.Station.Events;
 
 namespace Ketras.Tests.Support;
 

@@ -1,6 +1,6 @@
 using Ketras.Mavlink.Messages;
-using Ketras.Station.Parameters;
-using Ketras.Station.Setup;
+using Ketras.Parameters;
+using Ketras.Setup;
 
 namespace Ketras.Tests.Setup;
 
@@ -128,8 +128,8 @@ public sealed class ActuatorTests
         Assert.True(testing.IsSequenceRunning);
         Assert.Equal("Motor 1 +0.15", testing.SequenceText);
 
-        var commands = station.Get<Ketras.Station.Commands.CommandService>();
-        await commands.ExecuteAsync(new Ketras.Station.Commands.CommandRequest(commands.Commands.Single(c => c.Id == "arm")));
+        var commands = station.Get<Ketras.Commands.CommandService>();
+        await commands.ExecuteAsync(new Ketras.Commands.CommandRequest(commands.Commands.Single(c => c.Id == "arm")));
         await StationFixture.WaitForAsync(() => !testing.IsEnabled);
         Assert.Equal(EditBlock.Armed, ParameterRules.WhyNotEditable(vehicle));
         Assert.False(testing.IsSequenceRunning);

@@ -1,14 +1,12 @@
 using System.Globalization;
 using Ketras.Controls;
 using Ketras.Mavlink.Messages;
+using Ketras.Notifications;
 using Ketras.Parameters;
 using Ketras.Resources;
-using Ketras.Station.Notifications;
-using Ketras.Station.Parameters;
-using Ketras.Station.Settings;
-using Ketras.Station.Setup;
-using Ketras.Station.Vehicles;
+using Ketras.Settings;
 using Ketras.Utilities;
+using Ketras.Vehicles;
 
 namespace Ketras.Setup;
 

@@ -1,10 +1,9 @@
 using System.Net;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
-using Ketras.Station.Missions;
-using Ketras.Station.Notifications;
-using Ketras.Station.Settings;
-using Ketras.Station.Terrain;
+using Ketras.Notifications;
+using Ketras.Planning;
+using Ketras.Settings;
 using Ketras.Terrain;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -133,12 +132,12 @@ public sealed class TerrainTests : IDisposable
     public void Flat_ground_holds_while_a_simulator_runs_a_world_without_terrain_and_no_other_link_is_up()
     {
         var simulator = new Comms.LinkAndVehicleTests.FakeSimulator();
-        var link = new Ketras.Station.Links.LinkStatus(Ketras.Station.Links.LinkState.Connected, new Ketras.Station.Links.LinkProfile { Name = "sim", Kind = Ketras.Station.Links.LinkKind.Simulator, SimulatorId = "fake" });
-        var radio = new Ketras.Station.Links.LinkStatus(Ketras.Station.Links.LinkState.Connected, new Ketras.Station.Links.LinkProfile { Name = "radio", Kind = Ketras.Station.Links.LinkKind.Serial });
+        var link = new Ketras.Comms.LinkStatus(Ketras.Comms.LinkState.Connected, new Ketras.Comms.LinkProfile { Name = "sim", Kind = Ketras.Comms.LinkKind.Simulator, SimulatorId = "fake" });
+        var radio = new Ketras.Comms.LinkStatus(Ketras.Comms.LinkState.Connected, new Ketras.Comms.LinkProfile { Name = "radio", Kind = Ketras.Comms.LinkKind.Serial });
 
-        Assert.False(SimulatorGroundWorker.IsFlat(Ketras.Station.Links.LinkStatus.Disconnected, [simulator]));
+        Assert.False(SimulatorGroundWorker.IsFlat(Ketras.Comms.LinkStatus.Disconnected, [simulator]));
         simulator.Run("flat");
-        Assert.True(SimulatorGroundWorker.IsFlat(Ketras.Station.Links.LinkStatus.Disconnected, [simulator]));
+        Assert.True(SimulatorGroundWorker.IsFlat(Ketras.Comms.LinkStatus.Disconnected, [simulator]));
         Assert.True(SimulatorGroundWorker.IsFlat(link, [simulator]));
         Assert.False(SimulatorGroundWorker.IsFlat(radio, [simulator]));
         simulator.Run("terrain");

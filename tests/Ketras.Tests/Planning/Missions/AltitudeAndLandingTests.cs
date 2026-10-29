@@ -2,7 +2,8 @@ using Ketras.Mavlink.Messages;
 using Ketras.Model.Geo;
 using Ketras.Model.Missions;
 using Ketras.Model.Planning;
-using Ketras.Station.Missions;
+using Ketras.Planning;
+using Ketras.Planning.Missions;
 
 namespace Ketras.Tests.Planning.Missions;
 
@@ -102,7 +103,7 @@ public sealed class AltitudeAndLandingTests
     [Fact]
     public void Switching_the_plans_reference_converts_it_and_an_item_without_terrain_stops_it()
     {
-        var plans = new PlanStore(new Ketras.Station.Notifications.NotificationStore(TimeProvider.System));
+        var plans = new PlanStore(new Ketras.Notifications.NotificationStore(TimeProvider.System));
         plans.Apply(_ => new Plan { Mission = Waypoint(AltitudeReference.RelativeToHome, 100) }, PlanChange.Mission);
 
         Assert.Null(plans.SetAltitudeReference(AltitudeReference.AboveTerrain, Ground));

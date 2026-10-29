@@ -2,8 +2,7 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Ketras.Resources;
-using Ketras.Station.Settings;
-using Ketras.Station.Terrain;
+using Ketras.Terrain;
 using Ketras.Utilities;
 
 namespace Ketras.Settings;

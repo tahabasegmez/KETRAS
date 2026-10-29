@@ -4,9 +4,9 @@ using Avalonia.Headless.XUnit;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Ketras.Notifications;
 using Ketras.Settings;
 using Ketras.Shell;
-using Ketras.Station.Notifications;
 
 namespace Ketras.Tests.Shell;
 

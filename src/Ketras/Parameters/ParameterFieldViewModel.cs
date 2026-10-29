@@ -119,7 +119,7 @@ public sealed partial class ParameterFieldViewModel : ObservableObject
             Text = ParameterText.Number(value, t, metadata);
             Display = ParameterText.Format(value, t, metadata);
             SelectedChoice = Choices.FirstOrDefault(c => c.Value == Math.Round(value));
-            IsModified = Station.Parameters.ParameterRules.IsModified(value, metadata);
+            IsModified = Parameters.ParameterRules.IsModified(value, metadata);
             Tooltip = ParameterText.Describe(Name, t, metadata);
         }
         else

@@ -1,5 +1,5 @@
-using Ketras.Station.Links;
-using Ketras.Station.Vehicles;
+using Ketras.Comms;
+using Ketras.Vehicles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ketras.Tests.Comms;
