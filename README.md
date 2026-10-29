@@ -46,9 +46,10 @@ flight goes wrong, and can start a PX4 simulator for you so you can try everythi
   Gazebo window when you want to watch.
 
 ### Extend
-- Plugins add commands, station actions and environment providers (traffic, zones, points of interest, weather).
+- A custom build adds plugins: commands, station actions and environment providers (traffic, zones, points of
+  interest, weather), compiled into the application as QGroundControl's custom builds are. Start from
+  [custom-example/](custom-example/).
 - Vehicle-side ROS 2 systems are reached through rosbridge.
-- The libraries work on their own: use the MAVLink stack, the station logic or the map control in your own app.
 
 ---
 
@@ -127,27 +128,21 @@ for the keys and defaults.
 ## Project layout
 
 ```
-src/
-  Ketras.App                 the desktop application (Avalonia, MVVM)
-  Ketras.Station             all ground station behaviour, no UI
-  Ketras.Mavlink             MAVLink framing, transports, vehicle sessions and protocols
-  Ketras.Mavlink.Testing     a fake vehicle for tests
-  Ketras.Model               plain records and pure rules (missions, fences, limits)
-  Ketras.Terrain             Copernicus DEM tiles
-  Ketras.Rosbridge           rosbridge client
-  Ketras.Simulation.Px4Sitl  PX4 SITL in Docker
-  Ketras.Controls.Map        map control with mission editing
-  Ketras.Controls.Scene3D    3D view over terrain (OpenGL)
-  Ketras.Controls.Instruments attitude indicator and wind compass
-  Ketras.Theme               colours, sizes and control styles
-plugins/   Ketras.Plugins.Template — start here for your own plugin
-samples/   Ketras.Samples.MapOnly — the map control used on its own
-tools/     MAVLink code generator, SITL smoke run
-tests/     unit, station end-to-end, headless UI and architecture tests
+src/Ketras/          the application (Avalonia, MVVM), one folder per feature, as in QGroundControl:
+  Mavlink/           MAVLink framing, messages and protocol clients
+  Comms/             links, transports, connection diagnostics, telemetry logs; MockLink/ (a fake vehicle)
+  Vehicles/          vehicles, telemetry, limits, flight monitoring
+  Planning/          plans, missions, fences, .plan files and the planning screen
+  Parameters/ Setup/ parameters and vehicle setup
+  Map/ Scene3D/      the map and the 3D view over terrain (OpenGL)
+  Telemetry/         instruments and the telemetry panel
+  Terrain/           Copernicus DEM tiles and terrain checks
+  Simulation/        simulators; Px4Sitl/ runs PX4 SITL in Docker
+  …                  Commands, Events, Environment, Notifications, Ros, Settings, Shell, Theme, …
+custom-example/      a custom build with one plugin: start here for your own
+tests/Ketras.Tests/  unit, station end-to-end and headless UI tests, in the same folders
+tools/               MAVLink code generator, SITL smoke run
 ```
-
-The station logic has no UI dependency, and the controls have no dependency on the station, so each part can be
-reused alone. Architecture tests enforce these boundaries.
 
 ---
 
